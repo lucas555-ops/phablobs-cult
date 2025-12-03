@@ -15,203 +15,167 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-// Генерация уникального фона на основе хэша
-function generateBackground(hash: number): { gradient: string; rotation: number; pattern: string } {
-  // Phantom цветовая палитра
+// Генерация цветового градиента на основе хэша
+function generateGradient(hash: number): { color1: string; color2: string; angle: number } {
   const PHANTOM_COLORS = [
-    ['#00C2FF', '#8B5CF6'], // Голубой → Фиолетовый
-    ['#8B5CF6', '#EC4899'], // Фиолетовый → Розовый
-    ['#F59E0B', '#EF4444'], // Янтарный → Красный
-    ['#10B981', '#06B6D4'], // Изумрудный → Бирюзовый
-    ['#06B6D4', '#8B5CF6'], // Бирюзовый → Фиолетовый
-    ['#EC4899', '#F97316'], // Розовый → Оранжевый
-    ['#EF4444', '#8B5CF6'], // Красный → Фиолетовый
-    ['#F97316', '#00C2FF'], // Оранжевый → Голубой
+    ['#00C2FF', '#8B5CF6'], // Cyan → Purple (основной Phantom)
+    ['#8B5CF6', '#EC4899'], // Purple → Pink
+    ['#F59E0B', '#EF4444'], // Amber → Red
+    ['#10B981', '#06B6D4'], // Emerald → Cyan
+    ['#EC4899', '#F97316'], // Pink → Orange
+    ['#6366F1', '#8B5CF6'], // Indigo → Purple
   ]
   
-  // Выбор градиента на основе хэша
   const colorPair = PHANTOM_COLORS[hash % PHANTOM_COLORS.length]
-  const rotation = (hash >> 8) % 360
-  
-  // Выбор паттерна (радиальный или линейный)
-  const patternType = (hash >> 16) % 3
-  
-  let gradient = ''
-  
-  if (patternType === 0) {
-    // Радиальный градиент
-    gradient = `
-      <radialGradient id="bg" cx="50%" cy="50%" r="70%">
-        <stop offset="0%" stop-color="${colorPair[0]}" stop-opacity="0.7"/>
-        <stop offset="100%" stop-color="${colorPair[1]}" stop-opacity="0.4"/>
-      </radialGradient>
-    `
-  } else if (patternType === 1) {
-    // Линейный градиент
-    gradient = `
-      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="${colorPair[0]}" stop-opacity="0.6"/>
-        <stop offset="100%" stop-color="${colorPair[1]}" stop-opacity="0.6"/>
-      </linearGradient>
-    `
-  } else {
-    // Диагональный с тремя точками
-    gradient = `
-      <linearGradient id="bg" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="${colorPair[0]}" stop-opacity="0.5"/>
-        <stop offset="50%" stop-color="${colorPair[1]}" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="${colorPair[0]}" stop-opacity="0.5"/>
-      </linearGradient>
-    `
-  }
+  const angle = (hash >> 8) % 360
   
   return {
-    gradient,
-    rotation,
-    pattern: patternType === 0 ? 'radial' : 'linear'
+    color1: colorPair[0],
+    color2: colorPair[1],
+    angle
   }
 }
 
-// Генерация водяного знака
-function generateWatermark(hash: number): { text: string; position: string; style: string } {
-  const positions = ['bottom-right', 'bottom-left', 'top-right', 'center']
-  const position = positions[hash % positions.length]
-  
-  // Генерация уникального номера Phablob
-  const phablobNumber = (hash % 9999).toString().padStart(4, '0')
-  const text = `PHABLOBS #${phablobNumber}`
-  
-  // Стиль текста
-  const fontSize = 32 + ((hash >> 8) % 8) // 32-40px
-  const opacity = 0.5 + ((hash >> 12) % 30) / 100 // 0.5-0.8
-  
-  let x = '50%'
-  let y = '50%'
-  let anchor = 'middle'
-  
-  switch(position) {
-    case 'bottom-right':
-      x = '85%'
-      y = '92%'
-      anchor = 'end'
-      break
-    case 'bottom-left':
-      x = '15%'
-      y = '92%'
-      anchor = 'start'
-      break
-    case 'top-right':
-      x = '85%'
-      y = '8%'
-      anchor = 'end'
-      break
-    case 'center':
-      x = '50%'
-      y = '50%'
-      anchor = 'middle'
-      break
-  }
-  
-  const style = `
-    <text 
-      x="${x}" 
-      y="${y}" 
-      text-anchor="${anchor}" 
-      font-family="Arial Black, sans-serif" 
-      font-weight="900"
-      font-size="${fontSize}"
-      fill="white"
-      fill-opacity="${opacity}"
-      filter="url(#textShadow)"
-      letter-spacing="2"
-    >
-      ${text}
-    </text>
-  `
-  
-  return { text, position, style }
-}
-
-// Генерация полного SVG - ИСПРАВЛЕННЫЙ ПОРЯДОК СЛОЁВ
+// Генерация SVG с Phantom аватаром
 function generateAvatarSVG(publicKey: string): string {
   const hash = generateHash(publicKey)
-  const bg = generateBackground(hash)
-  const watermark = generateWatermark(hash)
+  const gradient = generateGradient(hash)
+  const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // Проверяем путь к картинке
-  const imagePath = `${process.env.NEXT_PUBLIC_APP_URL || 'https://phablobs.cult'}/phantom-avatar.png`
-  
-  // Уменьшаем непрозрачность фона, чтобы картинка была видна
-  const bgOpacity = 0.3 // Фон будет полупрозрачным
+  // Используем локальный SVG файл с привидением
+  const phantomAvatarUrl = `/phantom-base.svg`
   
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
-    ${bg.gradient}
+    <!-- Градиенты для фона -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${gradient.color1}" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="${gradient.color2}" stop-opacity="0.9"/>
+    </linearGradient>
     
-    <!-- Фильтры для эффектов -->
-    <filter id="blur">
-      <feGaussianBlur stdDeviation="3" />
-    </filter>
+    <!-- Градиент для текста -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#E0E0E0"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
     
-    <filter id="textShadow">
-      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="black" flood-opacity="0.5"/>
-    </filter>
-    
+    <!-- Фильтры -->
     <filter id="glow">
-      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
       <feMerge>
         <feMergeNode in="coloredBlur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
     
-    <!-- Маска для круглой картинки -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="black" flood-opacity="0.8"/>
+    </filter>
+    
+    <filter id="textShadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="black" flood-opacity="0.9"/>
+    </filter>
+    
+    <!-- Маска для круглого аватара -->
     <clipPath id="circleClip">
-      <circle cx="300" cy="300" r="250"/>
+      <circle cx="400" cy="380" r="220"/>
     </clipPath>
+    
+    <!-- Паттерн для мемного фона (опционально) -->
+    <pattern id="memePattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="25" cy="25" r="15" fill="${gradient.color1}" opacity="0.1"/>
+      <circle cx="75" cy="75" r="20" fill="${gradient.color2}" opacity="0.1"/>
+    </pattern>
   </defs>
   
-  <!-- СЛОЙ 1: Полупрозрачный фон -->
-  <rect width="600" height="600" fill="url(#bg)" opacity="${bgOpacity}" transform="rotate(${bg.rotation} 300 300)"/>
+  <!-- СЛОЙ 1: Основной фон с градиентом -->
+  <rect width="800" height="800" fill="url(#bgGrad)"/>
   
-  <!-- СЛОЙ 2: Картинка Phantom аватара (ОСНОВНОЙ СЛОЙ) -->
+  <!-- СЛОЙ 2: Паттерн мемов (опционально) -->
+  <rect width="800" height="800" fill="url(#memePattern)"/>
+  
+  <!-- СЛОЙ 3: Тень под аватаром -->
+  <circle cx="400" cy="390" r="235" fill="black" opacity="0.3" filter="url(#glow)"/>
+  
+  <!-- СЛОЙ 4: Белый круг для аватара -->
+  <circle cx="400" cy="380" r="230" fill="white" filter="url(#shadow)"/>
+  
+  <!-- СЛОЙ 5: Phantom аватар в круге -->
   <g clip-path="url(#circleClip)">
     <image 
-      href="${imagePath}" 
-      x="50" 
-      y="50" 
-      width="500" 
-      height="500" 
+      href="${phantomAvatarUrl}" 
+      x="180" 
+      y="160" 
+      width="440" 
+      height="440" 
       preserveAspectRatio="xMidYMid meet"
     />
   </g>
   
-  <!-- СЛОЙ 3: Декоративный градиентный оверлей поверх картинки -->
-  <circle cx="300" cy="300" r="250" fill="url(#bg)" opacity="0.2" filter="url(#glow)"/>
+  <!-- СЛОЙ 6: Тонкая обводка аватара -->
+  <circle cx="400" cy="380" r="230" fill="none" stroke="white" stroke-width="3" opacity="0.5"/>
   
-  <!-- СЛОЙ 4: Водяной знак -->
-  ${watermark.style}
-  
-  <!-- СЛОЙ 5: Декоративная обводка -->
-  <circle cx="300" cy="300" r="252" fill="none" stroke="url(#bg)" stroke-width="4" opacity="0.5"/>
-  
-  <!-- Дополнительный текст внизу -->
+  <!-- СЛОЙ 7: Большая надпись PHABLOBS вверху -->
   <text 
-    x="50%" 
-    y="96%" 
+    x="400" 
+    y="120" 
+    text-anchor="middle" 
+    font-family="Arial Black, Impact, sans-serif" 
+    font-weight="900"
+    font-size="72"
+    fill="url(#textGrad)"
+    filter="url(#textShadow)"
+    letter-spacing="8"
+  >
+    PHABLOBS
+  </text>
+  
+  <!-- СЛОЙ 8: Номер Phablob внизу -->
+  <text 
+    x="400" 
+    y="680" 
+    text-anchor="middle" 
+    font-family="Arial Black, sans-serif" 
+    font-weight="900"
+    font-size="56"
+    fill="white"
+    filter="url(#textShadow)"
+    letter-spacing="4"
+  >
+    #${phablobNumber}
+  </text>
+  
+  <!-- СЛОЙ 9: Маленький текст внизу -->
+  <text 
+    x="400" 
+    y="740" 
     text-anchor="middle" 
     font-family="Arial, sans-serif" 
-    font-size="14"
+    font-size="20"
     fill="white"
-    fill-opacity="0.6"
+    fill-opacity="0.8"
   >
     phablobs.cult
   </text>
+  
+  <!-- СЛОЙ 10: Декоративные элементы (звёздочки/блики) -->
+  <circle cx="200" cy="200" r="4" fill="white" opacity="0.6">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="600" cy="250" r="3" fill="white" opacity="0.5">
+    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="150" cy="500" r="3" fill="white" opacity="0.4">
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="650" cy="550" r="4" fill="white" opacity="0.5">
+    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
 </svg>`
 }
 
-// Альтернативный вариант: проверяем наличие картинки и генерируем соответствующий SVG
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -227,9 +191,6 @@ export async function GET(
       )
     }
 
-    // Проверяем, есть ли картинка (просто генерируем SVG с reference)
-    // Если картинки нет на сервере, браузер покажет fallback
-    
     // Генерация SVG
     const svgContent = generateAvatarSVG(address)
 
@@ -243,26 +204,16 @@ export async function GET(
   } catch (error) {
     console.error('Error generating avatar:', error)
     
-    // Fallback без картинки
-    const hash = generateHash(params.address || 'fallback')
-    const bg = generateBackground(hash)
-    
+    // Fallback SVG
     const fallbackSVG = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    ${bg.gradient}
-  </defs>
-  
-  <rect width="600" height="600" fill="url(#bg)"/>
-  
-  <circle cx="300" cy="300" r="250" fill="#000" opacity="0.3"/>
-  
-  <text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="48" fill="white" opacity="0.7">
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="800" fill="#8B5CF6"/>
+  <circle cx="400" cy="400" r="230" fill="white" opacity="0.9"/>
+  <text x="400" y="120" text-anchor="middle" font-family="Arial Black" font-size="72" fill="white">
     PHABLOBS
   </text>
-  
-  <text x="50%" y="60%" text-anchor="middle" font-family="Arial" font-size="24" fill="white" opacity="0.5">
-    ${params.address?.substring(0, 8) || 'Wallet'}...
+  <text x="400" y="700" text-anchor="middle" font-family="Arial" font-size="24" fill="white">
+    Error loading avatar
   </text>
 </svg>`
     
