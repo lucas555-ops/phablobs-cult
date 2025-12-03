@@ -426,39 +426,38 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
     }
   }, [open])
 
-  const handleConnect = async () => {
-    if (!hasPhantom) {
-      window.open('https://phantom.app/', '_blank')
-      return
-    }
-
-    try {
-      setWalletState('connecting')
-      setError(null)
-      
-      const { solana } = window
-      if (!solana) throw new Error('Phantom wallet not found')
-
-      const response = await solana.connect()
-      const key = response.publicKey.toString()
-      
-      if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
-        throw new Error('Invalid public key')
-      }
-
-      setPubkey(key)
-      // Генерируем мемный аватар локально
-      setPhantomAvatarUrl(createMemeAvatarDataURL(key))
-      setWalletState('connected')
-      
-      // Запускаем анимацию рисования
-      setIsDrawing(true)
-      setTimeout(() => setIsDrawing(false), 2000)
-    } catch (err) {
-      setWalletState('error')
-      setError(err instanceof Error ? err.message : 'Failed to connect')
-    }
+const handleConnect = async () => {
+  if (!hasPhantom) {
+    window.open('https://phantom.app/', '_blank')
+    return
   }
+
+  try {
+    setWalletState('connecting')
+    setError(null)
+    
+    const { solana } = window
+    if (!solana) throw new Error('Phantom wallet not found')
+
+    const response = await solana.connect()
+    const key = response.publicKey.toString()
+    
+    if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
+      throw new Error('Invalid public key')
+    }
+
+    setPubkey(key)
+    // Используем API с водяным знаком
+    setPhantomAvatarUrl(`/api/avatar/phantom/${key}`)
+    
+    setWalletState('connected')
+    setIsDrawing(true)
+    setTimeout(() => setIsDrawing(false), 2000)
+  } catch (err) {
+    setWalletState('error')
+    setError(err instanceof Error ? err.message : 'Failed to connect')
+  }
+}
 
   const handleCopy = () => {
     if (pubkey) {
