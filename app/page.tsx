@@ -145,7 +145,12 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
 
         <div className="text-center space-y-6">
           <div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">Reveal Your Phablob</h3>
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
+  Reveal Your Phantom Avatar
+</h3>
+<p className="text-sm text-gray-400 mt-2">
+  Every Phantom wallet has a unique, deterministic avatar. This is yours.
+</p>
             <p className="text-sm text-gray-400 mt-2">Your AI twin is waiting in your Phantom wallet</p>
           </div>
 
@@ -248,9 +253,9 @@ export default function PhablobsCult() {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            17 million AI faces. One cult.<br />
-            <span className="text-cyan-400">Your Phantom twin already exists.</span>
-          </p>
+  17 million Phantom users. 17 million unique avatars.<br />
+  <span className="text-cyan-400">Your blob already exists. Time to reveal it.</span>
+</p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" onClick={() => setModalOpen(true)} className="group">
