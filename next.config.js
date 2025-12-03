@@ -2,7 +2,17 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatar.phantom.app',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.phantom.app',
+      },
+    ],
+    unoptimized: true, // SVG не требует оптимизации
   },
   headers: async () => [
     {
