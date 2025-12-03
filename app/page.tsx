@@ -236,25 +236,71 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
                 </div>
               </div>
 
-              {/* Кнопки действий */}
-              <div className="flex flex-col gap-3">
-                <Button 
-                  onClick={handleShare} 
-                  className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:shadow-[0_0_20px_rgba(0,255,240,0.3)]"
-                  size="lg"
-                >
-                  <Twitter className="w-5 h-5 mr-2" /> 
-                  Share Avatar
-                </Button>
-                
-                <Button 
-                  onClick={onClose}
-                  variant="outline"
-                  className="w-full border-purple-600 text-purple-400 hover:bg-purple-600/10"
-                >
-                  View Gallery
-                </Button>
-              </div>
+            // В RevealModal компоненте, замени секцию с кнопками:
+
+const handleDownload = () => {
+  if (!phantomAvatarUrl) return
+  
+  // Создаем временную ссылку для скачивания
+  const link = document.createElement('a')
+  link.href = phantomAvatarUrl
+  link.download = `phablobs-${pubkey?.substring(0, 8)}.svg`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+const handleShareToTwitter = async () => {
+  if (!pubkey) return
+  
+  try {
+    const response = await fetch('/api/avatar/share', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ publicKey: pubkey, avatarUrl: phantomAvatarUrl })
+    })
+    
+    const data = await response.json()
+    if (data.twitterUrl) {
+      window.open(data.twitterUrl, '_blank')
+    }
+  } catch (error) {
+    console.error('Share failed:', error)
+    // Fallback
+    const text = `I revealed my Phablobs avatar! 🎭 #PhablobsCult\n\nReveal yours at phablobs.cult`
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
+  }
+}
+
+// Замени кнопки на:
+<div className="flex flex-col gap-3">
+  <Button 
+    onClick={handleShareToTwitter} 
+    className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:shadow-[0_0_20px_rgba(0,255,240,0.3)]"
+    size="lg"
+  >
+    <Twitter className="w-5 h-5 mr-2" /> 
+    Share on Twitter
+  </Button>
+  
+  <div className="grid grid-cols-2 gap-3">
+    <Button 
+      onClick={handleDownload}
+      variant="outline"
+      className="border-purple-600 text-purple-400 hover:bg-purple-600/10"
+    >
+      Download SVG
+    </Button>
+    
+    <Button 
+      onClick={onClose}
+      variant="ghost"
+      className="text-gray-400 hover:bg-gray-800"
+    >
+      Close
+    </Button>
+  </div>
+</div>
 
               <p className="text-xs text-cyan-400/70">
                 🔮 Your Phantom avatar is now part of the Phablobs Cult
