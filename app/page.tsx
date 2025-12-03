@@ -7,7 +7,8 @@ import { Loader2, ExternalLink, AlertCircle, Twitter, Users, Zap, Eye, Share2, C
 interface WindowWithSolana extends Window {
   solana?: {
     isPhantom?: boolean
-    connect: () => Promise<{ publicKey: { toString: () => string } }>
+    isConnected?: boolean
+    connect: (options?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toString: () => string } }>
     disconnect: () => Promise<void>
   }
 }
