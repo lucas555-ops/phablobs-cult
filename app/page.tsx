@@ -99,18 +99,81 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   }, [open])
 
   const handleConnect = async () => {
-    if (!hasPhantom) {
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      
-      if (isMobile) {
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
-        const url = isIOS 
-          ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
-          : 'https://play.google.com/store/apps/details?id=app.phantom'
-        window.open(url, '_blank')
-      } else {
-        window.open('https://phantom.app/', '_blank')
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    
+    // На мобильных устройствах всегда пытаемся использовать deeplink
+    if (isMobile) {
+      try {
+        setWalletState('connecting')
+        setError(null)
+        setImageLoaded(false)
+        
+        // Формируем deeplink для подключения к Phantom
+        const currentUrl = window.location.href
+        const dappUrl = encodeURIComponent(currentUrl)
+        
+        // Deeplink для Phantom с параметром connect
+        const deeplink = `https://phantom.app/ul/browse/${dappUrl}?ref=${dappUrl}`
+        
+        // Пытаемся открыть Phantom
+        window.location.href = deeplink
+        
+        // Ждем возврата из приложения и проверяем подключение
+        let attempts = 0
+        const maxAttempts = 5
+        
+        const checkConnection = setInterval(() => {
+          attempts++
+          
+          if (window.solana?.isPhantom) {
+            clearInterval(checkConnection)
+            
+            window.solana.connect()
+              .then(response => {
+                const key = response.publicKey.toString()
+                
+                if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
+                  throw new Error('Invalid public key')
+                }
+
+                setPubkey(key)
+                const url = `/api/phablob/${key}?t=${Date.now()}`
+                setPhantomAvatarUrl(url)
+                
+                setWalletState('connected')
+                setIsDrawing(true)
+                setTimeout(() => setIsDrawing(false), 1500)
+              })
+              .catch(err => {
+                setWalletState('error')
+                setError(err instanceof Error ? err.message : 'Failed to connect')
+              })
+          } else if (attempts >= maxAttempts) {
+            // Если после 5 секунд не подключились, предлагаем установить
+            clearInterval(checkConnection)
+            setWalletState('idle')
+            
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+            const storeUrl = isIOS 
+              ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
+              : 'https://play.google.com/store/apps/details?id=app.phantom'
+            
+            if (confirm('Phantom wallet not detected. Would you like to install it?')) {
+              window.open(storeUrl, '_blank')
+            }
+          }
+        }, 1000)
+        
+      } catch (err) {
+        setWalletState('error')
+        setError(err instanceof Error ? err.message : 'Failed to connect')
       }
+      return
+    }
+    
+    // На десктопе проверяем наличие расширения
+    if (!hasPhantom) {
+      window.open('https://phantom.app/', '_blank')
       return
     }
 
@@ -331,26 +394,18 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
                 size="lg" 
                 isLoading={walletState === 'connecting'}
               >
-                {hasPhantom ? (
-                  <>
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 mr-2 bg-gradient-to-r from-cyan-400 to-purple-600 rounded" />
-                    <span className="text-sm sm:text-base">Connect Phantom Wallet</span>
-                  </>
-                ) : (
-                  <>
-                    <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    <span className="text-sm sm:text-base">Install Phantom Wallet</span>
-                  </>
-                )}
+                <div className="w-4 h-4 sm:w-5 sm:h-5 mr-2 bg-gradient-to-r from-cyan-400 to-purple-600 rounded" />
+                <span className="text-sm sm:text-base">
+                  {walletState === 'connecting' ? 'Opening Phantom...' : 'Connect Phantom Wallet'}
+                </span>
               </Button>
 
-              {!hasPhantom && (
-                <div className="p-3 sm:p-4 bg-purple-600/5 border border-purple-600/20 rounded-xl">
-                  <p className="text-xs text-gray-400 text-center">
-                    Phantom wallet is required to see your official avatar with Phablobs watermark.
-                  </p>
-                </div>
-              )}
+              <div className="p-3 sm:p-4 bg-purple-600/5 border border-purple-600/20 rounded-xl">
+                <p className="text-xs text-gray-400 text-center">
+                  Phantom wallet is required to see your official avatar with Phablobs watermark.
+                  {isMobile && <span className="block mt-1 text-cyan-400">Tap the button to open Phantom app</span>}
+                </p>
+              </div>
 
               <div className="text-center">
                 <p className="text-xs text-gray-500">
@@ -396,6 +451,7 @@ const Stats = () => {
 // Main App
 export default function PhablobsCult() {
   const [modalOpen, setModalOpen] = useState(false)
+  const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
   return (
     <div className="min-h-screen bg-black text-white">
