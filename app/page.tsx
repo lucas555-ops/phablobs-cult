@@ -86,8 +86,32 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setHasPhantom(!!window.solana?.isPhantom)
+      
+      // На мобильных автоматически пытаемся подключиться, если уже было разрешение
+      if (isMobile && window.solana?.isPhantom && open && walletState === 'idle') {
+        // Небольшая задержка, чтобы Phantom успел инициализироваться
+        setTimeout(() => {
+          window.solana?.connect({ onlyIfTrusted: true })
+            .then(response => {
+              const key = response.publicKey.toString()
+              
+              if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
+                setPubkey(key)
+                const url = `/api/phablob/${key}?t=${Date.now()}`
+                setPhantomAvatarUrl(url)
+                setWalletState('connected')
+                setIsDrawing(true)
+                setTimeout(() => setIsDrawing(false), 1500)
+              }
+            })
+            .catch(() => {
+              // Не удалось тихо подключиться - это нормально
+              // Пользователь нажмет кнопку для подключения
+            })
+        }, 500)
+      }
     }
-  }, [])
+  }, [open])
 
   useEffect(() => {
     if (open) {
@@ -111,7 +135,15 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
           setError(null)
           setImageLoaded(false)
           
-          const response = await window.solana.connect()
+          // Сначала пытаемся подключиться без запроса (если уже подключались)
+          let response
+          try {
+            response = await window.solana.connect({ onlyIfTrusted: true })
+          } catch {
+            // Если не получилось тихо подключиться, запрашиваем разрешение
+            response = await window.solana.connect({ onlyIfTrusted: false })
+          }
+          
           const key = response.publicKey.toString()
           
           if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
@@ -127,17 +159,23 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
           setTimeout(() => setIsDrawing(false), 1500)
         } catch (err) {
           setWalletState('error')
-          setError(err instanceof Error ? err.message : 'Failed to connect')
+          if (err instanceof Error) {
+            // Более понятные сообщения об ошибках
+            if (err.message.includes('User rejected')) {
+              setError('Connection cancelled. Please try again.')
+            } else {
+              setError(err.message)
+            }
+          } else {
+            setError('Failed to connect')
+          }
         }
       } else {
         // Если window.solana НЕ доступен - открываем сайт через Phantom browser
         const currentUrl = window.location.href
         const phantomUrl = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=phablobs`
         
-        // Показываем инструкцию пользователю
-        const message = 'Opening Phantom app...\n\nAfter opening, tap "Connect" button again to generate your avatar.'
-        
-        // Пытаемся открыть Phantom app
+        // Открываем в Phantom
         window.location.href = phantomUrl
         
         // Через 2 секунды проверяем, открылось ли приложение
