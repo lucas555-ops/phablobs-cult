@@ -1,6 +1,8 @@
+// app/api/avatar/phantom/[address]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { generatePhantomStyleAvatar } from '@/lib/phantom-fallback'
 
-// Validate Solana address
+// Валидация Solana адреса
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
 }
@@ -12,7 +14,7 @@ export async function GET(
   try {
     const address = params.address
 
-    // Validate input
+    // Валидация входа
     if (!isValidSolanaAddress(address)) {
       return NextResponse.json(
         { error: 'Invalid Solana address format' },
@@ -20,22 +22,8 @@ export async function GET(
       )
     }
 
-    // Fetch from Phantom API
-    const phantomUrl = `https://avatar.phantom.app/${address}`
-    
-    const response = await fetch(phantomUrl, {
-      headers: {
-        'User-Agent': 'Phablobs-Cult/1.0',
-      },
-      // Cache на 1 год - аватары не меняются
-      next: { revalidate: 31536000 }
-    })
-
-    if (!response.ok) {
-      throw new Error('Phantom API failed')
-    }
-
-    const svgContent = await response.text()
+    // Используем твой существующий генератор
+    const svgContent = generatePhantomStyleAvatar(address)
 
     return new NextResponse(svgContent, {
       headers: {
@@ -45,23 +33,16 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('Error fetching Phantom avatar:', error)
-
-    // Fallback: простой градиент если Phantom API недоступен
-    const fallbackSVG = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="512" height="512" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="grad">
-      <stop offset="0%" stop-color="#00fff0"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
-    </radialGradient>
-  </defs>
-  <rect width="400" height="400" fill="#000"/>
-  <circle cx="200" cy="200" r="150" fill="url(#grad)" opacity="0.8"/>
-</svg>`
-
+    console.error('Error generating Phantom avatar:', error)
+    
+    // Fallback простой аватар
+    const fallbackSVG = `
+      <svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="200" cy="200" r="180" fill="#8b5cf6" opacity="0.7" />
+      </svg>
+    `
+    
     return new NextResponse(fallbackSVG, {
-      status: 200,
       headers: {
         'Content-Type': 'image/svg+xml',
         'Cache-Control': 'public, max-age=300',
