@@ -5,12 +5,25 @@
       "headers": [
         {
           "key": "X-Frame-Options",
-          "value": "ALLOW"
+          "value": "SAMEORIGIN"
         },
         {
           "key": "Content-Security-Policy",
-          "value": "frame-ancestors 'self' https://*.phantom.app"
+          "value": "frame-ancestors 'self' https://*.phantom.app https://phantom.app"
         },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/api/:path*",
+      "headers": [
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
@@ -18,6 +31,10 @@
         {
           "key": "Access-Control-Allow-Methods",
           "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type"
         }
       ]
     }
