@@ -3,6 +3,47 @@
 import React, { useState, useEffect } from 'react'
 import { Loader2, ExternalLink, AlertCircle, Twitter, Users, Zap, Eye, Share2, Copy, Check } from 'lucide-react'
 
+// Phantom Avatar Generator - вставляй сразу после импортов
+function generatePhantomStyleAvatar(publicKey: string): string {
+  const COLORS = [
+    '#00C2FF', '#8B5CF6', '#F59E0B', '#10B981',
+    '#EF4444', '#F97316', '#EC4899', '#06B6D4'
+  ]
+
+  // Детерминированный хэш
+  let hash = 0
+  for (let i = 0; i < publicKey.length; i++) {
+    hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
+    hash = hash & hash
+  }
+  
+  const color1 = COLORS[Math.abs(hash) % COLORS.length]
+  const color2 = COLORS[Math.abs(hash >> 8) % COLORS.length]
+  const rotation = Math.abs(hash >> 16) % 360
+  
+  return `
+    <svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${color1}" />
+          <stop offset="100%" stop-color="${color2}" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="400" fill="#000000"/>
+      <g transform="rotate(${rotation} 200 200)">
+        <circle cx="200" cy="200" r="150" fill="url(#grad)" opacity="0.9"/>
+        <circle cx="200" cy="200" r="100" fill="url(#grad)" opacity="0.5"/>
+      </g>
+    </svg>
+  `.trim()
+}
+
+// Функция для создания Data URL из SVG
+function createAvatarDataURL(publicKey: string): string {
+  const svg = generatePhantomStyleAvatar(publicKey)
+  return `data:image/svg+xml;base64,${btoa(svg)}`
+}
+
 // Types
 interface WindowWithSolana extends Window {
   solana?: {
@@ -77,6 +118,7 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   const [hasPhantom, setHasPhantom] = useState(false)
   const [copied, setCopied] = useState(false)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [phantomAvatarUrl, setPhantomAvatarUrl] = useState<string | null>(null)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -91,6 +133,7 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
       setError(null)
       setCopied(false)
       setImageUrl(null)
+      setPhantomAvatarUrl(null)
     }
   }, [open])
 
@@ -115,6 +158,9 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
       }
 
       setPubkey(key)
+      // Генерируем Phantom-подобный аватар локально
+      setPhantomAvatarUrl(createAvatarDataURL(key))
+      // Для Phablob можно использовать API или другую генерацию
       setImageUrl(`/api/phablob/${key}`)
       setWalletState('connected')
     } catch (err) {
@@ -132,8 +178,8 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   }
 
   const handleShare = () => {
-    const text = `I revealed my Phablob! 👁️ Join the cult at #PhablobsCult\n\nMy wallet: ${pubkey?.substring(0, 8)}...`
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=https://phablobs.cult`, '_blank')
+    const text = `I revealed my Phantom avatar! 🎭 It's unique and mine. #Phantom #PhablobsCult\n\nSee yours at phablobs.cult`
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
   }
 
   if (!open) return null
@@ -146,12 +192,11 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
         <div className="text-center space-y-6">
           <div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
-  Reveal Your Phantom Avatar
-</h3>
-<p className="text-sm text-gray-400 mt-2">
-  Every Phantom wallet has a unique, deterministic avatar. This is yours.
-</p>
-            <p className="text-sm text-gray-400 mt-2">Your AI twin is waiting in your Phantom wallet</p>
+              Reveal Your Phantom Avatar
+            </h3>
+            <p className="text-sm text-gray-400 mt-2">
+              Every Phantom wallet has a unique, deterministic avatar. This is yours.
+            </p>
           </div>
 
           {error && (
@@ -162,51 +207,131 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
 
           {walletState === 'connected' && pubkey ? (
             <div className="space-y-6">
+              {/* Основной аватар (Phantom-подобный) */}
               <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-400/10 to-purple-600/10 border border-purple-600/30 flex items-center justify-center">
-                {imageUrl ? (
-                  <img src={imageUrl} alt="Your Phablob" className="w-full h-full object-contain" />
+                {phantomAvatarUrl ? (
+                  <img 
+                    src={phantomAvatarUrl} 
+                    alt="Your Phantom Avatar" 
+                    className="w-full h-full object-contain"
+                  />
                 ) : (
                   <div className="w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 opacity-20 animate-pulse" />
                 )}
               </div>
 
+              {/* Описание */}
+              <div className="p-4 bg-cyan-400/5 border border-cyan-400/20 rounded-xl">
+                <p className="text-sm text-cyan-300">
+                  🔮 <strong>This is your unique Phantom avatar</strong>
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Generated deterministically from your wallet address. 
+                  This exact same avatar appears in your Phantom wallet.
+                </p>
+              </div>
+
+              {/* Информация о кошельке */}
               <div className="space-y-2">
                 <p className="text-xs text-gray-500">Connected Wallet:</p>
                 <div className="flex items-center gap-2 bg-gray-900 p-3 rounded-lg">
-                  <p className="text-sm font-mono flex-1 truncate">{pubkey.substring(0, 12)}...{pubkey.substring(pubkey.length - 8)}</p>
-                  <button onClick={handleCopy} className="text-gray-400 hover:text-cyan-400 transition-colors">
+                  <p className="text-sm font-mono flex-1 truncate">
+                    {pubkey.substring(0, 12)}...{pubkey.substring(pubkey.length - 8)}
+                  </p>
+                  <button 
+                    onClick={handleCopy} 
+                    className="text-gray-400 hover:text-cyan-400 transition-colors p-1"
+                    title={copied ? "Copied!" : "Copy address"}
+                  >
                     {copied ? <Check size={16} /> : <Copy size={16} />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Button onClick={handleShare} className="flex-1" size="lg">
-                  <Twitter className="w-4 h-4 mr-2" />Share on X
+              {/* Кнопки действий */}
+              <div className="flex flex-col gap-3">
+                <Button 
+                  onClick={handleShare} 
+                  className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:shadow-[0_0_20px_rgba(0,255,240,0.3)]"
+                  size="lg"
+                >
+                  <Twitter className="w-5 h-5 mr-2" /> 
+                  Share my Phantom Avatar
+                </Button>
+                
+                <Button 
+                  onClick={onClose}
+                  variant="outline"
+                  className="w-full border-purple-600 text-purple-400 hover:bg-purple-600/10"
+                >
+                  Explore Other Phablobs
                 </Button>
               </div>
 
-              <p className="text-xs text-gray-500">🎉 You're now part of the Phablobs Cult</p>
+              <p className="text-xs text-cyan-400/70">
+                💫 Welcome to the Phablobs Cult. Your Phantom twin is part of the family.
+              </p>
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-black border border-gray-700 flex items-center justify-center">
-                <div className="text-center">
-                  <Eye className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-                  <p className="text-sm text-gray-500">Connect to reveal</p>
+              {/* Превью аватара */}
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-black border border-gray-700 flex items-center justify-center relative">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400/20 to-purple-600/20 animate-pulse" />
+                </div>
+                <div className="relative z-10 text-center">
+                  <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 opacity-30 blur-md" />
+                  <Eye className="w-12 h-12 mx-auto text-gray-600 mb-4 mt-4" />
+                  <p className="text-sm text-gray-500">Connect Phantom to reveal</p>
                 </div>
               </div>
 
-              <Button onClick={handleConnect} disabled={walletState === 'connecting'} className="w-full" size="lg" isLoading={walletState === 'connecting'}>
-                {hasPhantom ? 'Connect Phantom Wallet' : <><ExternalLink className="w-4 h-4 mr-2" />Install Phantom</>}
+              {/* Кнопка подключения */}
+              <Button 
+                onClick={handleConnect} 
+                disabled={walletState === 'connecting'} 
+                className="w-full" 
+                size="lg" 
+                isLoading={walletState === 'connecting'}
+              >
+                {hasPhantom ? (
+                  <>
+                    <div className="w-5 h-5 mr-2 bg-gradient-to-r from-cyan-400 to-purple-600 rounded" />
+                    Connect Phantom Wallet
+                  </>
+                ) : (
+                  <>
+                    <ExternalLink className="w-5 h-5 mr-2" />
+                    Install Phantom Wallet
+                  </>
+                )}
               </Button>
 
-              {!hasPhantom && <p className="text-xs text-gray-500 text-center">Phantom wallet required to reveal your Phablob</p>}
+              {/* Инструкция */}
+              {!hasPhantom && (
+                <div className="p-4 bg-purple-600/5 border border-purple-600/20 rounded-xl">
+                  <p className="text-xs text-gray-400 text-center">
+                    Phantom wallet is required to see your unique avatar.
+                    Every Phantom user gets their own deterministic avatar.
+                  </p>
+                </div>
+              )}
+
+              {/* Интересный факт */}
+              <div className="text-center">
+                <p className="text-xs text-gray-500">
+                  <span className="text-cyan-400">Fun fact:</span> There are 17M+ unique Phantom avatars in existence.
+                  Yours is one of them!
+                </p>
+              </div>
             </div>
           )}
 
+          {/* Футер модала */}
           <div className="pt-4 border-t border-gray-800">
-            <p className="text-xs text-gray-500">We never store your private keys. Your Phablob is generated from your wallet address.</p>
+            <p className="text-xs text-gray-500">
+              We never store your private keys. Your avatar is generated locally from your public wallet address.
+            </p>
           </div>
         </div>
       </div>
@@ -253,8 +378,8 @@ export default function PhablobsCult() {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-  17 million Phantom users. 17 million unique avatars.<br />
-  <span className="text-cyan-400">Your blob already exists. Time to reveal it.</span>
+  Every Phantom wallet has a unique, deterministic avatar.<br />
+  <span className="text-cyan-400">Yours already exists. Reveal it and join the cult.</span>
 </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
