@@ -12,27 +12,9 @@ const nextConfig = {
         hostname: 'api.phantom.app',
       },
     ],
-    unoptimized: true, // SVG не требует оптимизации
+    unoptimized: true,
   },
-  headers: async () => [
-    {
-      source: '/(.*)',
-      headers: [
-        {
-          key: 'X-Content-Type-Options',
-          value: 'nosniff',
-        },
-        {
-          key: 'X-Frame-Options',
-          value: 'DENY',
-        },
-        {
-          key: 'X-XSS-Protection',
-          value: '1; mode=block',
-        },
-      ],
-    },
-  ],
+  // Удалены конфликтующие заголовки - они установлены в vercel.json
 }
 
 module.exports = nextConfig
