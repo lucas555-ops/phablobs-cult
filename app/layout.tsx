@@ -9,10 +9,11 @@ export const metadata: Metadata = {
   description: 'Your Phantom twin already exists. Reveal your unique AI-generated Phablob and join the cult.',
   keywords: ['Phablobs', 'Phantom', 'Solana', 'AI', 'NFT', 'Web3', 'Cult', 'Meme'],
   authors: [{ name: 'Phablobs Cult' }],
+  manifest: '/manifest.json',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://phablobs.cult',
+    url: 'https://phablobs-cult.vercel.app',
     title: 'Phablobs Cult',
     description: '17M AI faces. One cult. Your Phantom twin already exists.',
     siteName: 'Phablobs Cult',
@@ -31,6 +32,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="solana:wallet" content="phantom" />
+        <meta name="dapp:name" content="Phablobs Cult" />
+        <meta name="dapp:icon" content="/icon.png" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   )
