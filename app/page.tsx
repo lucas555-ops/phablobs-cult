@@ -304,13 +304,15 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
             <div className="space-y-4 sm:space-y-6">
               <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-400/10 to-purple-600/10 border border-purple-600/30 flex items-center justify-center relative">
                 {isDrawing && (
-                  <div className="absolute inset-0 animate-draw" style={{
-                    background: `linear-gradient(90deg, transparent 50%, rgba(0,0,0,0.3) 50%)`,
-                    backgroundSize: '200% 100%',
-                  }} />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-20">
+                    <div className="text-center">
+                      <div className="w-16 h-16 border-4 border-white/20 border-t-cyan-400 rounded-full animate-spin mx-auto mb-4" />
+                      <p className="text-cyan-400 font-bold text-lg">Generating your Phablob...</p>
+                    </div>
+                  </div>
                 )}
                 
-                {!imageLoaded && (
+                {!imageLoaded && !isDrawing && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-12 h-12 border-2 border-white/20 border-t-cyan-400 rounded-full animate-spin" />
                   </div>
@@ -320,7 +322,7 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
                   <img 
                     src={phantomAvatarUrl} 
                     alt="Your Official Phantom Avatar" 
-                    className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => {
                       setImageLoaded(true)
                       setIsDrawing(false)
