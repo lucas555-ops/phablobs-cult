@@ -102,72 +102,56 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   }, [open])
 
   const handleConnect = async () => {
-    // На мобильных устройствах всегда пытаемся использовать deeplink
+    // На мобильных устройствах проверяем, открыт ли сайт в Phantom browser
     if (isMobile) {
-      try {
-        setWalletState('connecting')
-        setError(null)
-        setImageLoaded(false)
-        
-        // Формируем deeplink для подключения к Phantom
-        const currentUrl = window.location.href
-        const dappUrl = encodeURIComponent(currentUrl)
-        
-        // Deeplink для Phantom с параметром connect
-        const deeplink = `https://phantom.app/ul/browse/${dappUrl}?ref=${dappUrl}`
-        
-        // Пытаемся открыть Phantom
-        window.location.href = deeplink
-        
-        // Ждем возврата из приложения и проверяем подключение
-        let attempts = 0
-        const maxAttempts = 5
-        
-        const checkConnection = setInterval(() => {
-          attempts++
+      // Если window.solana доступен - значит мы в Phantom browser
+      if (window.solana?.isPhantom) {
+        try {
+          setWalletState('connecting')
+          setError(null)
+          setImageLoaded(false)
           
-          if (window.solana?.isPhantom) {
-            clearInterval(checkConnection)
-            
-            window.solana.connect()
-              .then(response => {
-                const key = response.publicKey.toString()
-                
-                if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
-                  throw new Error('Invalid public key')
-                }
-
-                setPubkey(key)
-                const url = `/api/phablob/${key}?t=${Date.now()}`
-                setPhantomAvatarUrl(url)
-                
-                setWalletState('connected')
-                setIsDrawing(true)
-                setTimeout(() => setIsDrawing(false), 1500)
-              })
-              .catch(err => {
-                setWalletState('error')
-                setError(err instanceof Error ? err.message : 'Failed to connect')
-              })
-          } else if (attempts >= maxAttempts) {
-            // Если после 5 секунд не подключились, предлагаем установить
-            clearInterval(checkConnection)
-            setWalletState('idle')
-            
-            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
-            const storeUrl = isIOS 
-              ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
-              : 'https://play.google.com/store/apps/details?id=app.phantom'
-            
-            if (confirm('Phantom wallet not detected. Would you like to install it?')) {
-              window.open(storeUrl, '_blank')
-            }
+          const response = await window.solana.connect()
+          const key = response.publicKey.toString()
+          
+          if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
+            throw new Error('Invalid public key')
           }
-        }, 1000)
+
+          setPubkey(key)
+          const url = `/api/phablob/${key}?t=${Date.now()}`
+          setPhantomAvatarUrl(url)
+          
+          setWalletState('connected')
+          setIsDrawing(true)
+          setTimeout(() => setIsDrawing(false), 1500)
+        } catch (err) {
+          setWalletState('error')
+          setError(err instanceof Error ? err.message : 'Failed to connect')
+        }
+      } else {
+        // Если window.solana НЕ доступен - открываем сайт через Phantom browser
+        const currentUrl = window.location.href
+        const phantomUrl = `https://phantom.app/ul/browse/${encodeURIComponent(currentUrl)}?ref=phablobs`
         
-      } catch (err) {
-        setWalletState('error')
-        setError(err instanceof Error ? err.message : 'Failed to connect')
+        // Показываем инструкцию пользователю
+        const message = 'Opening Phantom app...\n\nAfter opening, tap "Connect" button again to generate your avatar.'
+        
+        // Пытаемся открыть Phantom app
+        window.location.href = phantomUrl
+        
+        // Через 2 секунды проверяем, открылось ли приложение
+        setTimeout(() => {
+          // Если пользователь все еще на странице, значит Phantom не установлен
+          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+          const storeUrl = isIOS 
+            ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
+            : 'https://play.google.com/store/apps/details?id=app.phantom'
+          
+          if (confirm('Phantom wallet not found. Would you like to install it?')) {
+            window.open(storeUrl, '_blank')
+          }
+        }, 3000)
       }
       return
     }
@@ -403,8 +387,16 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
 
               <div className="p-3 sm:p-4 bg-purple-600/5 border border-purple-600/20 rounded-xl">
                 <p className="text-xs text-gray-400 text-center">
-                  Phantom wallet is required to see your official avatar with Phablobs watermark.
-                  {isMobile && <span className="block mt-1 text-cyan-400">Tap the button to open Phantom app</span>}
+                  {isMobile && !window.solana?.isPhantom ? (
+                    <>
+                      Tap the button to open this page in Phantom browser.
+                      <span className="block mt-2 text-cyan-400 font-semibold">
+                        Then tap "Connect" again to reveal your avatar!
+                      </span>
+                    </>
+                  ) : (
+                    'Phantom wallet is required to see your official avatar with Phablobs watermark.'
+                  )}
                 </p>
               </div>
 
