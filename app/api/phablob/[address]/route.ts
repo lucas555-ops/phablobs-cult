@@ -139,7 +139,7 @@ function generateAvatarSVG(publicKey: string): string {
   const watermark = generateWatermark(hash)
   
   // Проверяем путь к картинке
-  const imagePath = '/phantom-avatar.png'
+  const imagePath = `${process.env.NEXT_PUBLIC_APP_URL || 'https://phablobs.cult'}/phantom-avatar.png`
   
   // Уменьшаем непрозрачность фона, чтобы картинка была видна
   const bgOpacity = 0.3 // Фон будет полупрозрачным
