@@ -79,6 +79,9 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   const [phantomAvatarUrl, setPhantomAvatarUrl] = useState<string | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
+  
+  // Проверка мобильного устройства
+  const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -99,8 +102,6 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   }, [open])
 
   const handleConnect = async () => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    
     // На мобильных устройствах всегда пытаемся использовать deeplink
     if (isMobile) {
       try {
@@ -451,7 +452,6 @@ const Stats = () => {
 // Main App
 export default function PhablobsCult() {
   const [modalOpen, setModalOpen] = useState(false)
-  const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
   return (
     <div className="min-h-screen bg-black text-white">
