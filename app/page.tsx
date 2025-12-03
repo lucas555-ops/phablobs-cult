@@ -3,336 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import { Loader2, ExternalLink, AlertCircle, Twitter, Users, Zap, Eye, Share2, Copy, Check, Sparkles } from 'lucide-react'
 
-// Мемный генератор аватаров в стиле "нарисовано от руки"
-function generateMemeAvatar(publicKey: string): string {
-  // Детерминированный хэш
-  let hash = 0
-  for (let i = 0; i < publicKey.length; i++) {
-    hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
-    hash = hash & hash
-  }
-
-  // Варианты деталей
-  const EYE_TYPES = ['dot', 'circle', 'line', 'ellipse', 'star', 'heart']
-  const MOUTH_TYPES = ['smile', 'frown', 'neutral', 'open', 'teeth', 'tongue']
-  const NOSE_TYPES = ['dot', 'line', 'triangle', 'circle', 'none']
-  const HAIR_TYPES = ['spiky', 'curly', 'bald', 'mohawk', 'afro', 'long']
-  const ACCESSORIES = ['glasses', 'sunglasses', 'eyePatch', 'mask', 'none', 'none', 'none']
-
-  // Выбор на основе хэша
-  const eyeType = EYE_TYPES[Math.abs(hash) % EYE_TYPES.length]
-  const mouthType = MOUTH_TYPES[Math.abs(hash >> 4) % MOUTH_TYPES.length]
-  const noseType = NOSE_TYPES[Math.abs(hash >> 8) % NOSE_TYPES.length]
-  const hairType = HAIR_TYPES[Math.abs(hash >> 12) % HAIR_TYPES.length]
-  const accessory = ACCESSORIES[Math.abs(hash >> 16) % ACCESSORIES.length]
-
-  // Цвета - черно-белый стиль с редкими цветными акцентами
-  const colors = [
-    '#000000', // черный
-    '#333333', // темно-серый
-    '#666666', // серый
-    '#FF6B6B', // красный (редко)
-    '#4ECDC4', // бирюзовый (редко)
-    '#FFD166', // желтый (редко)
-  ]
-  const lineColor = colors[Math.abs(hash >> 20) % 3] // обычно черный/серый
-  const accentColor = Math.abs(hash) % 10 === 0 ? colors[3 + Math.abs(hash >> 24) % 3] : lineColor
-
-  // Размеры и позиции на основе хэша
-  const faceX = 200
-  const faceY = 200
-  const faceSize = 120 + (Math.abs(hash >> 2) % 40)
-  const eyeY = faceY - 30
-  const mouthY = faceY + 40
-  const eyeSpacing = 40 + (Math.abs(hash >> 6) % 20)
-
-  // Вспомогательные функции генерации деталей
-  const generateFacePath = () => {
-    const points = []
-    const irregularity = 10 + (hash % 15)
-    
-    for (let i = 0; i < 12; i++) {
-      const angle = (i * Math.PI * 2) / 12
-      const radius = faceSize + (hash >> (i * 2)) % irregularity
-      const px = faceX + Math.cos(angle) * radius
-      const py = faceY + Math.sin(angle) * radius * 1.2 // Овал
-      points.push(`${i === 0 ? 'M' : 'L'} ${px} ${py}`)
-    }
-    
-    return points.join(' ') + ' Z'
-  }
-
-  const generateEyes = () => {
-    const leftX = faceX - eyeSpacing
-    const rightX = faceX + eyeSpacing
-    
-    switch(eyeType) {
-      case 'dot':
-        return `
-          <circle cx="${leftX}" cy="${eyeY}" r="6" fill="${lineColor}"/>
-          <circle cx="${rightX}" cy="${eyeY}" r="6" fill="${lineColor}"/>
-        `
-      case 'circle':
-        return `
-          <circle cx="${leftX}" cy="${eyeY}" r="8" fill="none" stroke="${lineColor}" stroke-width="3"/>
-          <circle cx="${rightX}" cy="${eyeY}" r="8" fill="none" stroke="${lineColor}" stroke-width="3"/>
-        `
-      case 'line':
-        return `
-          <line x1="${leftX - 8}" y1="${eyeY}" x2="${leftX + 8}" y2="${eyeY}" stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-          <line x1="${rightX - 8}" y1="${eyeY}" x2="${rightX + 8}" y2="${eyeY}" stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-        `
-      case 'ellipse':
-        return `
-          <ellipse cx="${leftX}" cy="${eyeY}" rx="10" ry="6" fill="none" stroke="${lineColor}" stroke-width="3"/>
-          <ellipse cx="${rightX}" cy="${eyeY}" rx="10" ry="6" fill="none" stroke="${lineColor}" stroke-width="3"/>
-        `
-      case 'star':
-        const generateStar = (cx: number, cy: number, size: number) => {
-          let points = ''
-          for (let i = 0; i < 5; i++) {
-            const angle = (i * Math.PI * 2) / 5 - Math.PI / 2
-            const radius = size * (i % 2 === 0 ? 2 : 1)
-            const px = cx + Math.cos(angle) * radius
-            const py = cy + Math.sin(angle) * radius
-            points += `${px},${py} `
-          }
-          return points
-        }
-        return `
-          <polygon points="${generateStar(leftX, eyeY, 6)}" fill="${accentColor}" stroke="${lineColor}" stroke-width="2"/>
-          <polygon points="${generateStar(rightX, eyeY, 6)}" fill="${accentColor}" stroke="${lineColor}" stroke-width="2"/>
-        `
-      case 'heart':
-        return `
-          <path d="M ${leftX} ${eyeY} q -5 -8, -10 0 t -10 0" fill="${accentColor}" stroke="${lineColor}" stroke-width="2"/>
-          <path d="M ${rightX} ${eyeY} q -5 -8, -10 0 t -10 0" fill="${accentColor}" stroke="${lineColor}" stroke-width="2"/>
-        `
-      default:
-        return ''
-    }
-  }
-
-  const generateMouth = () => {
-    const width = 30 + (hash % 20)
-    const height = 10 + ((hash >> 4) % 15)
-    
-    switch(mouthType) {
-      case 'smile':
-        return `
-          <path d="M ${faceX - width} ${mouthY} 
-                  Q ${faceX} ${mouthY + height}, ${faceX + width} ${mouthY}"
-                fill="none" stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-        `
-      case 'frown':
-        return `
-          <path d="M ${faceX - width} ${mouthY} 
-                  Q ${faceX} ${mouthY - height}, ${faceX + width} ${mouthY}"
-                fill="none" stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-        `
-      case 'neutral':
-        return `
-          <line x1="${faceX - width}" y1="${mouthY}" x2="${faceX + width}" y2="${mouthY}" 
-                stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-        `
-      case 'open':
-        return `
-          <ellipse cx="${faceX}" cy="${mouthY}" rx="${width}" ry="${height}" 
-                  fill="${accentColor}" stroke="${lineColor}" stroke-width="3"/>
-          <line x1="${faceX}" y1="${mouthY - height/2}" x2="${faceX}" y2="${mouthY + height/2}" 
-                stroke="${lineColor}" stroke-width="2"/>
-        `
-      case 'teeth':
-        const generateTeeth = () => {
-          let teeth = ''
-          const toothCount = 6 + (hash % 6)
-          const toothWidth = (width * 2) / toothCount
-          
-          for (let i = 0; i < toothCount; i++) {
-            const toothX = faceX - width + i * toothWidth
-            teeth += `
-              <rect x="${toothX}" y="${mouthY}" width="${toothWidth - 2}" height="6" 
-                    fill="white" stroke="${lineColor}" stroke-width="1"/>
-            `
-          }
-          return teeth
-        }
-        return `
-          <path d="M ${faceX - width} ${mouthY} 
-                  Q ${faceX} ${mouthY + height}, ${faceX + width} ${mouthY}"
-                fill="none" stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-          ${generateTeeth()}
-        `
-      case 'tongue':
-        return `
-          <path d="M ${faceX - width} ${mouthY} 
-                  Q ${faceX} ${mouthY + height}, ${faceX + width} ${mouthY}"
-                fill="none" stroke="${lineColor}" stroke-width="4" stroke-linecap="round"/>
-          <ellipse cx="${faceX}" cy="${mouthY + height/2}" rx="${width/2}" ry="${height}" 
-                  fill="${accentColor}" stroke="${lineColor}" stroke-width="2"/>
-        `
-      default:
-        return ''
-    }
-  }
-
-  const generateNose = () => {
-    switch(noseType) {
-      case 'dot':
-        return `<circle cx="${faceX}" cy="${faceY}" r="4" fill="${lineColor}"/>`
-      case 'line':
-        return `<line x1="${faceX}" y1="${faceY - 10}" x2="${faceX}" y2="${faceY + 5}" 
-                      stroke="${lineColor}" stroke-width="3" stroke-linecap="round"/>`
-      case 'triangle':
-        return `<polygon points="${faceX},${faceY - 8} ${faceX - 6},${faceY + 4} ${faceX + 6},${faceY + 4}" 
-                         fill="none" stroke="${lineColor}" stroke-width="3"/>`
-      case 'circle':
-        return `<circle cx="${faceX}" cy="${faceY}" r="6" fill="none" stroke="${lineColor}" stroke-width="3"/>`
-      default:
-        return ''
-    }
-  }
-
-  const generateHair = () => {
-    const topY = faceY - faceSize
-    const spikes = 5 + (hash % 8)
-    const curlRadius = 15 + (hash % 10)
-    
-    switch(hairType) {
-      case 'spiky':
-        let spikesPath = ''
-        for (let i = 0; i < spikes; i++) {
-          const angle = (i * Math.PI * 2) / spikes
-          const px = faceX + Math.cos(angle) * 40
-          const py = topY + Math.sin(angle) * 20
-          spikesPath += `L ${px} ${py} `
-        }
-        return `<path d="M ${faceX} ${topY} ${spikesPath} Z" fill="${lineColor}"/>`
-      
-      case 'curly':
-        let curls = ''
-        for (let i = 0; i < 3; i++) {
-          const offset = (i - 1) * 25
-          curls += `<circle cx="${faceX + offset}" cy="${topY + 15}" r="${curlRadius}" 
-                           fill="none" stroke="${lineColor}" stroke-width="4"/>`
-        }
-        return curls
-      
-      case 'mohawk':
-        return `
-          <rect x="${faceX - 20}" y="${topY}" width="40" height="30" fill="${lineColor}"/>
-          <polygon points="${faceX - 20},${topY} ${faceX},${topY - 30} ${faceX + 20},${topY}" fill="${lineColor}"/>
-        `
-      
-      case 'afro':
-        return `<circle cx="${faceX}" cy="${topY + 15}" r="45" fill="${lineColor}"/>`
-      
-      case 'long':
-        return `
-          <rect x="${faceX - 30}" y="${topY}" width="60" height="60" fill="${lineColor}"/>
-          <path d="M ${faceX - 30} ${topY + 60} 
-                  Q ${faceX} ${topY + 90}, ${faceX + 30} ${topY + 60}" 
-                fill="${lineColor}"/>
-        `
-      
-      default: // bald
-        return ''
-    }
-  }
-
-  const generateAccessory = () => {
-    switch(accessory) {
-      case 'glasses':
-        return `
-          <rect x="${faceX - 45}" y="${faceY - 40}" width="30" height="15" rx="5" 
-                fill="none" stroke="${lineColor}" stroke-width="3"/>
-          <rect x="${faceX + 15}" y="${faceY - 40}" width="30" height="15" rx="5" 
-                fill="none" stroke="${lineColor}" stroke-width="3"/>
-          <line x1="${faceX - 15}" y1="${faceY - 32}" x2="${faceX + 15}" y2="${faceY - 32}" 
-                stroke="${lineColor}" stroke-width="3"/>
-        `
-      case 'sunglasses':
-        return `
-          <rect x="${faceX - 50}" y="${faceY - 35}" width="35" height="20" rx="3" 
-                fill="#333" stroke="${lineColor}" stroke-width="3"/>
-          <rect x="${faceX + 15}" y="${faceY - 35}" width="35" height="20" rx="3" 
-                fill="#333" stroke="${lineColor}" stroke-width="3"/>
-          <line x1="${faceX - 15}" y1="${faceY - 25}" x2="${faceX + 15}" y2="${faceY - 25}" 
-                stroke="${lineColor}" stroke-width="3"/>
-        `
-      case 'eyePatch':
-        return `
-          <circle cx="${faceX - 30}" cy="${faceY - 25}" r="15" fill="black"/>
-          <path d="M ${faceX - 45} ${faceY - 25} 
-                  Q ${faceX - 30} ${faceY - 10}, ${faceX - 15} ${faceY - 25}" 
-                fill="black"/>
-          <line x1="${faceX - 45}" y1="${faceY - 25}" x2="${faceX - 55}" y2="${faceY - 15}" 
-                stroke="${lineColor}" stroke-width="2"/>
-        `
-      case 'mask':
-        return `
-          <path d="M ${faceX - 40} ${faceY} 
-                  Q ${faceX} ${faceY + 30}, ${faceX + 40} ${faceY}" 
-                fill="#4ECDC4" stroke="${lineColor}" stroke-width="2"/>
-          <line x1="${faceX - 40}" y1="${faceY}" x2="${faceX - 45}" y2="${faceY - 15}" 
-                stroke="${lineColor}" stroke-width="2"/>
-          <line x1="${faceX + 40}" y1="${faceY}" x2="${faceX + 45}" y2="${faceY - 15}" 
-                stroke="${lineColor}" stroke-width="2"/>
-        `
-      default:
-        return ''
-    }
-  }
-
-  // Генерация SVG
-  return `
-    <svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-      <!-- Белый фон -->
-      <rect width="400" height="400" fill="white"/>
-      
-      <!-- "Грязный" фон для эффекта бумаги -->
-      <rect width="400" height="400" fill="url(#paper)" opacity="0.1"/>
-      
-      <!-- Лицо (овал с неровными краями) -->
-      <path d="${generateFacePath()}" 
-            fill="none" 
-            stroke="${lineColor}" 
-            stroke-width="4" 
-            stroke-linecap="round"
-            stroke-linejoin="round"/>
-      
-      <!-- Волосы -->
-      ${generateHair()}
-      
-      <!-- Глаза -->
-      ${generateEyes()}
-      
-      <!-- Нос -->
-      ${generateNose()}
-      
-      <!-- Рот -->
-      ${generateMouth()}
-      
-      <!-- Аксессуары -->
-      ${generateAccessory()}
-      
-      <!-- Текстура бумаги -->
-      <defs>
-        <filter id="paper">
-          <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" result="noise"/>
-          <feColorMatrix type="saturate" values="0"/>
-        </filter>
-      </defs>
-    </svg>
-  `.trim()
-}
-
-// Функция для создания Data URL
-function createMemeAvatarDataURL(publicKey: string): string {
-  const svg = generateMemeAvatar(publicKey)
-  return `data:image/svg+xml;base64,${btoa(svg)}`
-}
-
 // Types
 interface WindowWithSolana extends Window {
   solana?: {
@@ -408,6 +78,7 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
   const [copied, setCopied] = useState(false)
   const [phantomAvatarUrl, setPhantomAvatarUrl] = useState<string | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -423,41 +94,44 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
       setCopied(false)
       setPhantomAvatarUrl(null)
       setIsDrawing(false)
+      setImageLoaded(false)
     }
   }, [open])
 
-const handleConnect = async () => {
-  if (!hasPhantom) {
-    window.open('https://phantom.app/', '_blank')
-    return
-  }
-
-  try {
-    setWalletState('connecting')
-    setError(null)
-    
-    const { solana } = window
-    if (!solana) throw new Error('Phantom wallet not found')
-
-    const response = await solana.connect()
-    const key = response.publicKey.toString()
-    
-    if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
-      throw new Error('Invalid public key')
+  const handleConnect = async () => {
+    if (!hasPhantom) {
+      window.open('https://phantom.app/', '_blank')
+      return
     }
 
-    setPubkey(key)
-    // Используем API с водяным знаком
-    setPhantomAvatarUrl(`/api/avatar/phantom/${key}`)
-    
-    setWalletState('connected')
-    setIsDrawing(true)
-    setTimeout(() => setIsDrawing(false), 2000)
-  } catch (err) {
-    setWalletState('error')
-    setError(err instanceof Error ? err.message : 'Failed to connect')
+    try {
+      setWalletState('connecting')
+      setError(null)
+      setImageLoaded(false)
+      
+      const { solana } = window
+      if (!solana) throw new Error('Phantom wallet not found')
+
+      const response = await solana.connect()
+      const key = response.publicKey.toString()
+      
+      if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(key)) {
+        throw new Error('Invalid public key')
+      }
+
+      setPubkey(key)
+      // Используем API с водяным знаком - добавляем timestamp для предотвращения кеширования
+      const url = `/api/avatar/phantom/${key}?t=${Date.now()}`
+      setPhantomAvatarUrl(url)
+      
+      setWalletState('connected')
+      setIsDrawing(true)
+      setTimeout(() => setIsDrawing(false), 1500)
+    } catch (err) {
+      setWalletState('error')
+      setError(err instanceof Error ? err.message : 'Failed to connect')
+    }
   }
-}
 
   const handleCopy = () => {
     if (pubkey) {
@@ -468,7 +142,7 @@ const handleConnect = async () => {
   }
 
   const handleShare = () => {
-    const text = `I revealed my unique Phantom meme face! 🎭 #PhantomFaces #PhablobsCult\n\nGenerate yours at phablobs.cult`
+    const text = `I revealed my official Phantom avatar with Phablobs watermark! 🔮 #Phantom #PhablobsCult\n\nReveal yours at phablobs.cult`
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
   }
 
@@ -482,11 +156,10 @@ const handleConnect = async () => {
         <div className="text-center space-y-6">
           <div>
             <h3 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
-              Your Meme Phantom Face
+              Official Phantom Avatar
             </h3>
             <p className="text-sm text-gray-400 mt-2">
-              Every Phantom wallet gets a unique, hand-drawn meme face. 
-              <br/>This is yours. Own it. Share it. Meme it.
+              Your unique Phantom wallet avatar with exclusive Phablobs watermark
             </p>
           </div>
 
@@ -498,19 +171,35 @@ const handleConnect = async () => {
 
           {walletState === 'connected' && pubkey ? (
             <div className="space-y-6">
-              {/* Основной аватар (мемный) */}
-              <div className="aspect-square rounded-2xl overflow-hidden bg-white border-2 border-purple-600/30 flex items-center justify-center relative">
+              {/* Основной аватар с API */}
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-400/10 to-purple-600/10 border border-purple-600/30 flex items-center justify-center relative">
                 {isDrawing && (
                   <div className="absolute inset-0 animate-draw" style={{
-                    background: `linear-gradient(90deg, transparent 50%, white 50%)`,
+                    background: `linear-gradient(90deg, transparent 50%, rgba(0,0,0,0.3) 50%)`,
                     backgroundSize: '200% 100%',
                   }} />
                 )}
+                
+                {!imageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 border-2 border-white/20 border-t-cyan-400 rounded-full animate-spin" />
+                  </div>
+                )}
+                
                 {phantomAvatarUrl ? (
                   <img 
                     src={phantomAvatarUrl} 
-                    alt="Your Meme Face" 
-                    className="w-full h-full object-contain relative z-10"
+                    alt="Your Official Phantom Avatar" 
+                    className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={() => {
+                      setImageLoaded(true)
+                      setIsDrawing(false)
+                    }}
+                    onError={() => {
+                      // Fallback если API не работает
+                      setImageLoaded(true)
+                      setError('Failed to load avatar. Please try again.')
+                    }}
                   />
                 ) : (
                   <div className="w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 opacity-20 animate-pulse" />
@@ -521,12 +210,12 @@ const handleConnect = async () => {
               <div className="p-4 bg-cyan-400/5 border border-cyan-400/20 rounded-xl">
                 <p className="text-sm text-cyan-300 flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  <strong>This is your unique meme face</strong>
+                  <strong>Official Phantom Avatar + Phablobs Watermark</strong>
                   <Sparkles className="w-4 h-4" />
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  Generated deterministically from your wallet address. 
-                  This exact same face can be regenerated anytime.
+                  This is your unique Phantom wallet avatar with exclusive Phablobs branding.
+                  Generated deterministically from your wallet address.
                 </p>
               </div>
 
@@ -555,7 +244,7 @@ const handleConnect = async () => {
                   size="lg"
                 >
                   <Twitter className="w-5 h-5 mr-2" /> 
-                  Share my Meme Face
+                  Share Avatar
                 </Button>
                 
                 <Button 
@@ -563,25 +252,25 @@ const handleConnect = async () => {
                   variant="outline"
                   className="w-full border-purple-600 text-purple-400 hover:bg-purple-600/10"
                 >
-                  Explore Other Faces
+                  View Gallery
                 </Button>
               </div>
 
               <p className="text-xs text-cyan-400/70">
-                💫 Welcome to the Phablobs Cult. Your meme face is now part of the memeverse.
+                🔮 Your Phantom avatar is now part of the Phablobs Cult
               </p>
             </div>
           ) : (
             <div className="space-y-6">
               {/* Превью аватара */}
-              <div className="aspect-square rounded-2xl overflow-hidden bg-white border-2 border-gray-700 flex items-center justify-center relative">
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-400/10 to-purple-600/10 border border-purple-600/30 flex items-center justify-center relative">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse" />
+                  <div className="w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400/20 to-purple-600/20 animate-pulse" />
                 </div>
                 <div className="relative z-10 text-center">
-                  <div className="w-24 h-24 mx-auto rounded-full bg-gray-300 opacity-30 blur-md" />
-                  <Eye className="w-12 h-12 mx-auto text-gray-400 mb-4 mt-4" />
-                  <p className="text-sm text-gray-600 font-medium">Connect Phantom to reveal</p>
+                  <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 opacity-30 blur-md" />
+                  <Eye className="w-12 h-12 mx-auto text-gray-600 mb-4 mt-4" />
+                  <p className="text-sm text-gray-500">Connect Phantom to reveal</p>
                 </div>
               </div>
 
@@ -610,8 +299,8 @@ const handleConnect = async () => {
               {!hasPhantom && (
                 <div className="p-4 bg-purple-600/5 border border-purple-600/20 rounded-xl">
                   <p className="text-xs text-gray-400 text-center">
-                    Phantom wallet is required to generate your unique meme face.
-                    Every Phantom user gets their own hand-drawn character.
+                    Phantom wallet is required to see your official avatar with Phablobs watermark.
+                    Every Phantom user gets a unique avatar.
                   </p>
                 </div>
               )}
@@ -619,8 +308,8 @@ const handleConnect = async () => {
               {/* Интересный факт */}
               <div className="text-center">
                 <p className="text-xs text-gray-500">
-                  <span className="text-cyan-400">Meme fact:</span> There are 17M+ unique meme faces waiting to be revealed.
-                  Each one is as unique as your wallet.
+                  <span className="text-cyan-400">Did you know:</span> Phantom generates a unique avatar for every wallet.
+                  We add an exclusive Phablobs watermark to yours.
                 </p>
               </div>
             </div>
@@ -629,7 +318,7 @@ const handleConnect = async () => {
           {/* Футер модала */}
           <div className="pt-4 border-t border-gray-800">
             <p className="text-xs text-gray-500">
-              We never store your private keys. Your meme face is generated locally from your public wallet address.
+              We never store your private keys. Your avatar is generated from your public wallet address.
             </p>
           </div>
         </div>
@@ -641,7 +330,7 @@ const handleConnect = async () => {
 // Stats Component
 const Stats = () => {
   const stats = [
-    { label: 'Meme Faces', value: '17M+', icon: Eye },
+    { label: 'Unique Avatars', value: '17M+', icon: Eye },
     { label: 'Phantom Users', value: '17M', icon: Users },
     { label: 'Cult Members', value: 'Growing', icon: Zap }
   ]
@@ -677,13 +366,13 @@ export default function PhablobsCult() {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Every Phantom wallet has a unique, hand-drawn meme face.<br />
-            <span className="text-cyan-400">Your meme face already exists. Reveal and meme it.</span>
+            Every Phantom wallet has a unique avatar.<br />
+            <span className="text-cyan-400">Reveal yours with exclusive Phablobs watermark.</span>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" onClick={() => setModalOpen(true)} className="group">
-              <Eye className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />Reveal Your Meme Face
+              <Eye className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />Reveal Your Avatar
             </Button>
             <Button size="lg" variant="outline" onClick={() => window.open('https://twitter.com/search?q=%23PhablobsCult', '_blank')}>
               <Twitter className="w-5 h-5 mr-2" />Join the Cult
@@ -695,8 +384,8 @@ export default function PhablobsCult() {
 
         <section className="w-full max-w-6xl space-y-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-2">The Meme Gallery</h2>
-            <p className="text-gray-400">Random meme faces from the cult</p>
+            <h2 className="text-3xl font-bold mb-2">Avatar Gallery</h2>
+            <p className="text-gray-400">Unique Phantom avatars with Phablobs watermark</p>
           </div>
           
           <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
@@ -711,9 +400,9 @@ export default function PhablobsCult() {
           
           <div className="space-y-6">
             {[
-              { icon: Eye, title: 'REVEAL YOUR MEME FACE', desc: 'Connect Phantom. Generate your unique hand-drawn character.' },
-              { icon: Share2, title: 'SHARE TO TIMELINE', desc: 'Post your meme face on X with #PhantomFaces #PhablobsCult.' },
-              { icon: Users, title: 'JOIN THE MEMEVERSE', desc: 'Discord → Telegram → Twitter Spaces. Find your face-buddies.' }
+              { icon: Eye, title: 'REVEAL YOUR AVATAR', desc: 'Connect Phantom to reveal your unique avatar with Phablobs watermark.' },
+              { icon: Share2, title: 'SHARE TO TIMELINE', desc: 'Post your watermarked avatar on X with #PhablobsCult.' },
+              { icon: Users, title: 'JOIN THE COMMUNITY', desc: 'Discord → Telegram → Twitter Spaces. Connect with other cult members.' }
             ].map((step, i) => (
               <div key={i} className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/20 rounded-2xl p-6 text-left flex gap-4 hover:border-purple-600/40 transition-all">
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 flex items-center justify-center text-black font-bold text-xl">{i + 1}</div>
@@ -727,12 +416,12 @@ export default function PhablobsCult() {
             ))}
           </div>
 
-          <Button size="lg" variant="outline" onClick={() => setModalOpen(true)}>Start the Ritual</Button>
+          <Button size="lg" variant="outline" onClick={() => setModalOpen(true)}>Reveal Your Avatar</Button>
         </section>
 
         <footer className="text-center text-gray-500 text-sm max-w-2xl space-y-4">
-          <p>Phablobs are unique meme faces generated from Phantom wallet addresses. This is a community-driven cult celebrating web3 identity through memes.</p>
-          <p>Not affiliated with Phantom Labs. Built by the community, for the memes.</p>
+          <p>Phablobs adds exclusive watermark to your Phantom wallet avatar. This is a community-driven cult celebrating web3 identity.</p>
+          <p>Not affiliated with Phantom Labs. Built by the community, for the community.</p>
           <div className="flex gap-6 justify-center text-gray-400">
             <a href="https://twitter.com/search?q=%23PhablobsCult" target="_blank" rel="noopener" className="hover:text-cyan-400 transition-colors">Twitter</a>
             <a href="#" className="hover:text-cyan-400 transition-colors">Discord</a>
@@ -758,7 +447,7 @@ export default function PhablobsCult() {
           100% { background-position: 0 0; }
         }
         .animate-draw {
-          animation: draw 2s ease-out forwards;
+          animation: draw 1.5s ease-out forwards;
         }
       `}</style>
     </div>
