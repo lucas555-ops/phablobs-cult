@@ -1,4 +1,75 @@
-// Reveal Modal Component - ИСПРАВЛЕННАЯ ВЕРСИЯ
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { Loader2, ExternalLink, AlertCircle, Twitter, Users, Zap, Eye, Share2, Copy, Check, Sparkles, Download } from 'lucide-react'
+
+// Types
+interface WindowWithSolana extends Window {
+  solana?: {
+    isPhantom?: boolean
+    connect: () => Promise<{ publicKey: { toString: () => string } }>
+    disconnect: () => Promise<void>
+  }
+}
+
+declare const window: WindowWithSolana
+
+type WalletState = 'idle' | 'connecting' | 'connected' | 'error'
+
+// Utility
+const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ')
+
+// Button Component
+const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: 'default' | 'outline' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+  isLoading?: boolean
+}> = ({ children, className, variant = 'default', size = 'md', isLoading = false, disabled, ...props }) => {
+  const baseStyles = 'inline-flex items-center justify-center font-semibold transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed'
+  
+  const variants = {
+    default: 'bg-gradient-to-r from-cyan-400 to-purple-600 text-black hover:shadow-[0_0_30px_rgba(0,255,240,0.3)] hover:scale-105',
+    outline: 'border-2 border-purple-600 text-purple-400 hover:bg-purple-600/10',
+    ghost: 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+  }
+  
+  const sizes = {
+    sm: 'px-4 py-2 text-sm',
+    md: 'px-6 py-3 text-base',
+    lg: 'px-8 py-4 text-lg'
+  }
+
+  return (
+    <button className={cn(baseStyles, variants[variant], sizes[size], className)} disabled={disabled || isLoading} {...props}>
+      {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Loading...</> : children}
+    </button>
+  )
+}
+
+// Phablob Card Component
+const PhablobCard: React.FC<{ id: number; onClick?: () => void }> = ({ id, onClick }) => {
+  const [isLoading, setIsLoading] = useState(true)
+  
+  const getGradient = (id: number) => {
+    const hue = (id * 137) % 360
+    return { from: `hsl(${hue}, 70%, 50%)`, to: `hsl(${(hue + 60) % 360}, 80%, 40%)` }
+  }
+
+  const gradient = getGradient(id)
+
+  return (
+    <button onClick={onClick} className="group relative w-full aspect-square rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all duration-300 hover:scale-105">
+      <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-110" style={{ background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})`, opacity: 0.3 }} />
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        {isLoading && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" /></div>}
+        <div className="w-3/4 h-3/4 rounded-full" style={{ background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})`, filter: 'blur(2px)' }} onLoad={() => setIsLoading(false)} />
+      </div>
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ boxShadow: `0 0 40px ${gradient.from}` }} />
+    </button>
+  )
+}
+
+// Reveal Modal Component
 const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [walletState, setWalletState] = useState<WalletState>('idle')
   const [pubkey, setPubkey] = useState<string | null>(null)
@@ -29,18 +100,15 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
 
   const handleConnect = async () => {
     if (!hasPhantom) {
-      // Проверка мобильного устройства
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
       
       if (isMobile) {
-        // Открыть Phantom App Store / Google Play
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
         const url = isIOS 
           ? 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977'
           : 'https://play.google.com/store/apps/details?id=app.phantom'
         window.open(url, '_blank')
       } else {
-        // Десктоп - открыть сайт Phantom
         window.open('https://phantom.app/', '_blank')
       }
       return
@@ -187,7 +255,7 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
                   <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  This is your unique Phantom wallet avatar with exclusive Phablobs branding.
+                  Your unique Phantom wallet avatar with exclusive Phablobs branding.
                 </p>
               </div>
 
@@ -300,6 +368,133 @@ const RevealModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+// Stats Component
+const Stats = () => {
+  const stats = [
+    { label: 'Unique Avatars', value: '17M+', icon: Eye },
+    { label: 'Phantom Users', value: '17M', icon: Users },
+    { label: 'Cult Members', value: 'Growing', icon: Zap }
+  ]
+
+  return (
+    <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
+      {stats.map((stat, i) => (
+        <div key={i} className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/20 rounded-2xl p-6 text-center hover:border-purple-600/40 transition-all">
+          <stat.icon className="w-8 h-8 mx-auto mb-3 text-cyan-400" />
+          <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">{stat.value}</div>
+          <div className="text-sm text-gray-400 mt-1">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Main App
+export default function PhablobsCult() {
+  const [modalOpen, setModalOpen] = useState(false)
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-48 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" />
+        <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <main className="relative z-10 px-6 py-12 flex flex-col items-center gap-16">
+        <header className="text-center max-w-4xl space-y-8">
+          <h1 className="text-6xl md:text-8xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-600 to-cyan-400 animate-gradient drop-shadow-[0_0_30px_rgba(0,255,240,0.3)]">
+            PHABLOBS CULT
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            Every Phantom wallet has a unique avatar.<br />
+            <span className="text-cyan-400">Reveal yours with exclusive Phablobs watermark.</span>
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" onClick={() => setModalOpen(true)} className="group">
+              <Eye className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />Reveal Your Avatar
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => window.open('https://twitter.com/search?q=%23PhablobsCult', '_blank')}>
+              <Twitter className="w-5 h-5 mr-2" />Join the Cult
+            </Button>
+          </div>
+        </header>
+
+        <Stats />
+
+        <section className="w-full max-w-6xl space-y-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-2">Avatar Gallery</h2>
+            <p className="text-gray-400">Unique Phantom avatars with Phablobs watermark</p>
+          </div>
+          
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <PhablobCard key={i} id={i + 1} onClick={() => setModalOpen(true)} />
+            ))}
+          </div>
+        </section>
+
+        <section className="max-w-2xl text-center space-y-8">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">The Cult Code</h2>
+          
+          <div className="space-y-6">
+            {[
+              { icon: Eye, title: 'REVEAL YOUR AVATAR', desc: 'Connect Phantom to reveal your unique avatar with Phablobs watermark.' },
+              { icon: Share2, title: 'SHARE TO TIMELINE', desc: 'Post your watermarked avatar on X with #PhablobsCult.' },
+              { icon: Users, title: 'JOIN THE COMMUNITY', desc: 'Discord → Telegram → Twitter Spaces. Connect with other cult members.' }
+            ].map((step, i) => (
+              <div key={i} className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/20 rounded-2xl p-6 text-left flex gap-4 hover:border-purple-600/40 transition-all">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 flex items-center justify-center text-black font-bold text-xl">{i + 1}</div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                    <step.icon className="w-5 h-5 text-cyan-400" />{step.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Button size="lg" variant="outline" onClick={() => setModalOpen(true)}>Reveal Your Avatar</Button>
+        </section>
+
+        <footer className="text-center text-gray-500 text-sm max-w-2xl space-y-4">
+          <p>Phablobs adds exclusive watermark to your Phantom wallet avatar. Community-driven cult celebrating web3 identity.</p>
+          <p>Not affiliated with Phantom Labs. Built by the community, for the community.</p>
+          <div className="flex gap-6 justify-center text-gray-400">
+            <a href="https://twitter.com/search?q=%23PhablobsCult" target="_blank" rel="noopener" className="hover:text-cyan-400 transition-colors">Twitter</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">Discord</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">Telegram</a>
+          </div>
+        </footer>
+      </main>
+
+      <RevealModal open={modalOpen} onClose={() => setModalOpen(false)} />
+
+      <style>{`
+        @keyframes gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes draw {
+          0% { background-position: 100% 0; }
+          100% { background-position: 0 0; }
+        }
+        .animate-draw {
+          animation: draw 1.5s ease-out forwards;
+        }
+      `}</style>
     </div>
   )
 }
