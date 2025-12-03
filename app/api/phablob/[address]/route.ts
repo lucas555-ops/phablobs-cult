@@ -1,11 +1,6 @@
 // app/api/avatar/phantom/[address]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { generatePhantomStyleAvatar } from '@/lib/phantom-fallback'
-
-// Валидация Solana адреса
-function isValidSolanaAddress(address: string): boolean {
-  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
-}
+import { generateMemeAvatar } from '@/lib/meme-avatar-generator' // Создашь потом
 
 export async function GET(
   request: NextRequest,
@@ -14,16 +9,16 @@ export async function GET(
   try {
     const address = params.address
 
-    // Валидация входа
-    if (!isValidSolanaAddress(address)) {
+    // Валидация Solana адреса
+    if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
       return NextResponse.json(
         { error: 'Invalid Solana address format' },
         { status: 400 }
       )
     }
 
-    // Используем твой существующий генератор
-    const svgContent = generatePhantomStyleAvatar(address)
+    // Генерируем мемный аватар
+    const svgContent = generateMemeAvatar(address)
 
     return new NextResponse(svgContent, {
       headers: {
@@ -33,7 +28,7 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('Error generating Phantom avatar:', error)
+    console.error('Error generating meme avatar:', error)
     
     // Fallback простой аватар
     const fallbackSVG = `
