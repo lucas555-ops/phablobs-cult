@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readFileSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
 function isValidSolanaAddress(address: string): boolean {
@@ -15,39 +15,82 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-function generateGradient(hash: number): { color1: string; color2: string } {
+function generateGradient(hash: number): { color1: string; color2: string; index: number; name: string } {
+  // 12 УНИКАЛЬНЫХ ГРАДИЕНТОВ вместо 6!
   const PHANTOM_COLORS = [
-    ['#00C2FF', '#8B5CF6'], // Cyan → Purple
-    ['#8B5CF6', '#EC4899'], // Purple → Pink
-    ['#F59E0B', '#EF4444'], // Amber → Red
-    ['#10B981', '#06B6D4'], // Emerald → Cyan
-    ['#EC4899', '#F97316'], // Pink → Orange
-    ['#6366F1', '#8B5CF6'], // Indigo → Purple
+    // Оригинальные 6:
+    { colors: ['#00C2FF', '#8B5CF6'], name: 'Cyber Dream', angle: 135 },      // 0: Cyan → Purple
+    { colors: ['#8B5CF6', '#EC4899'], name: 'Mystic Fusion', angle: 90 },     // 1: Purple → Pink
+    { colors: ['#F59E0B', '#EF4444'], name: 'Phoenix Fire', angle: 45 },      // 2: Amber → Red
+    { colors: ['#10B981', '#06B6D4'], name: 'Ocean Breeze', angle: 180 },     // 3: Emerald → Cyan
+    { colors: ['#EC4899', '#F97316'], name: 'Sunset Glow', angle: 225 },      // 4: Pink → Orange
+    { colors: ['#6366F1', '#8B5CF6'], name: 'Royal Phantom', angle: 270 },    // 5: Indigo → Purple
+    
+    // Новые 6 уникальных:
+    { colors: ['#14F195', '#9945FF'], name: 'Solana Vibes', angle: 60 },      // 6: Solana Green → Purple
+    { colors: ['#FF6B9D', '#C084FC'], name: 'Candy Dreams', angle: 120 },     // 7: Hot Pink → Light Purple
+    { colors: ['#FFD700', '#FF1493'], name: 'Golden Sunset', angle: 150 },    // 8: Gold → Deep Pink
+    { colors: ['#00FFF0', '#7B2FFF'], name: 'Neon Nights', angle: 200 },      // 9: Cyan → Deep Purple
+    { colors: ['#FF4500', '#FFD700'], name: 'Fire Blaze', angle: 315 },       // 10: Orange Red → Gold
+    { colors: ['#1E90FF', '#FF69B4'], name: 'Electric Rose', angle: 0 },      // 11: Dodger Blue → Hot Pink
   ]
   
-  const colorPair = PHANTOM_COLORS[hash % PHANTOM_COLORS.length]
-  return { color1: colorPair[0], color2: colorPair[1] }
+  const index = hash % PHANTOM_COLORS.length
+  const gradient = PHANTOM_COLORS[index]
+  return { 
+    color1: gradient.colors[0], 
+    color2: gradient.colors[1], 
+    index,
+    name: gradient.name
+  }
 }
 
-// Кэшируем Base64 аватара
-let cachedAvatarBase64: string | null = null
+// Кэшируем Base64 аватаров
+const cachedAvatars: Record<string, string> = {}
 
-function getPhantomAvatarDataUrl(): string {
-  if (cachedAvatarBase64) {
-    return cachedAvatarBase64
+function getPhantomAvatarDataUrl(gradientIndex: number): string {
+  // Для новых градиентов (6-11) используем маппинг на старые аватары (0-5)
+  const avatarIndex = gradientIndex % 6
+  
+  const specificAvatarName = `phantom-avatar-${avatarIndex}.png`
+  const specificAvatarPath = join(process.cwd(), 'public', specificAvatarName)
+  
+  if (existsSync(specificAvatarPath)) {
+    if (cachedAvatars[specificAvatarName]) {
+      console.log(`✅ Using cached avatar: ${specificAvatarName} for gradient ${gradientIndex}`)
+      return cachedAvatars[specificAvatarName]
+    }
+    
+    try {
+      const avatarBuffer = readFileSync(specificAvatarPath)
+      const base64 = avatarBuffer.toString('base64')
+      cachedAvatars[specificAvatarName] = `data:image/png;base64,${base64}`
+      
+      console.log(`✅ Loaded specific avatar: ${specificAvatarName} for gradient ${gradientIndex}`)
+      return cachedAvatars[specificAvatarName]
+    } catch (error) {
+      console.error(`❌ Error loading ${specificAvatarName}:`, error)
+    }
+  }
+  
+  const defaultAvatarName = 'phantom-avatar.png'
+  const defaultAvatarPath = join(process.cwd(), 'public', defaultAvatarName)
+  
+  if (cachedAvatars[defaultAvatarName]) {
+    console.log(`✅ Using default cached avatar: ${defaultAvatarName}`)
+    return cachedAvatars[defaultAvatarName]
   }
   
   try {
-    const avatarPath = join(process.cwd(), 'public', 'phantom-avatar.png')
-    const avatarBuffer = readFileSync(avatarPath)
+    const avatarBuffer = readFileSync(defaultAvatarPath)
     const base64 = avatarBuffer.toString('base64')
-    cachedAvatarBase64 = `data:image/png;base64,${base64}`
+    cachedAvatars[defaultAvatarName] = `data:image/png;base64,${base64}`
     
-    console.log('✅ Phantom avatar loaded:', avatarPath)
-    return cachedAvatarBase64
+    console.log(`✅ Loaded default avatar: ${defaultAvatarName}`)
+    return cachedAvatars[defaultAvatarName]
   } catch (error) {
     console.error('❌ Failed to load phantom-avatar.png:', error)
-    throw new Error('phantom-avatar.png not found in /public/')
+    throw new Error('No phantom avatar found in /public/')
   }
 }
 
@@ -56,8 +99,9 @@ function generateAvatarSVG(publicKey: string): string {
   const gradient = generateGradient(hash)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // Ваша картинка из public/phantom-avatar.png
-  const phantomAvatarDataUrl = getPhantomAvatarDataUrl()
+  const phantomAvatarDataUrl = getPhantomAvatarDataUrl(gradient.index)
+  
+  console.log(`🎨 Gradient ${gradient.index}: ${gradient.name} (${gradient.color1} → ${gradient.color2})`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
@@ -165,12 +209,11 @@ export async function GET(
 
     const svgContent = generateAvatarSVG(address)
 
-    // PNG конвертация через Sharp с правильными настройками
     if (format === 'png') {
       try {
         const sharp = require('sharp')
         const pngBuffer = await sharp(Buffer.from(svgContent), {
-          density: 300  // Увеличиваем плотность для лучшего рендеринга шрифтов
+          density: 300
         })
           .png({
             quality: 100,
@@ -187,7 +230,6 @@ export async function GET(
         })
       } catch (error) {
         console.error('Sharp error:', error)
-        // Если Sharp не работает, возвращаем SVG
         return new NextResponse(svgContent, {
           headers: {
             'Content-Type': 'image/svg+xml',
@@ -219,5 +261,3 @@ export async function GET(
     })
   }
 }
-
-
