@@ -44,7 +44,6 @@ export default function PhablobsCult() {
     if (!generatedUrl || !walletAddress) return
     
     try {
-      // Скачиваем PNG версию
       const response = await fetch(`${generatedUrl}?format=png`)
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -66,7 +65,6 @@ export default function PhablobsCult() {
     
     const text = `I just revealed my Phablob! 🎭\n\n17M Phantom users, 17M unique AI blobs.\n\nReveal yours 👉 phablobs.cult\n\n#PhablobsCult #Phantom #Solana`
     
-    // Открываем Twitter с текстом
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
   }
 
