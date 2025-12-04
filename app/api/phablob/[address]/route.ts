@@ -36,17 +36,14 @@ function generateGradient(hash: number): { color1: string; color2: string; angle
   }
 }
 
-// Генерация SVG с Phantom аватаром
+// Генерация SVG с Phantom аватаром (INLINE!)
 function generateAvatarSVG(publicKey: string): string {
   const hash = generateHash(publicKey)
   const gradient = generateGradient(hash)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // Используем локальный SVG файл с привидением
-  const phantomAvatarUrl = `/phantom-base.svg`
-  
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <!-- Градиенты для фона -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -78,22 +75,22 @@ function generateAvatarSVG(publicKey: string): string {
       <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="black" flood-opacity="0.9"/>
     </filter>
     
-    <!-- Маска для круглого аватара -->
-    <clipPath id="circleClip">
-      <circle cx="400" cy="380" r="220"/>
-    </clipPath>
+    <filter id="blobShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.2)"/>
+    </filter>
     
-    <!-- Паттерн для мемного фона (опционально) -->
+    <!-- Паттерн для мемного фона -->
     <pattern id="memePattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-      <circle cx="25" cy="25" r="15" fill="${gradient.color1}" opacity="0.1"/>
-      <circle cx="75" cy="75" r="20" fill="${gradient.color2}" opacity="0.1"/>
+      <circle cx="25" cy="25" r="15" fill="${gradient.color1}" opacity="0.08"/>
+      <circle cx="75" cy="75" r="20" fill="${gradient.color2}" opacity="0.08"/>
+      <circle cx="50" cy="80" r="12" fill="${gradient.color1}" opacity="0.05"/>
     </pattern>
   </defs>
   
   <!-- СЛОЙ 1: Основной фон с градиентом -->
   <rect width="800" height="800" fill="url(#bgGrad)"/>
   
-  <!-- СЛОЙ 2: Паттерн мемов (опционально) -->
+  <!-- СЛОЙ 2: Паттерн мемов -->
   <rect width="800" height="800" fill="url(#memePattern)"/>
   
   <!-- СЛОЙ 3: Тень под аватаром -->
@@ -102,16 +99,51 @@ function generateAvatarSVG(publicKey: string): string {
   <!-- СЛОЙ 4: Белый круг для аватара -->
   <circle cx="400" cy="380" r="230" fill="white" filter="url(#shadow)"/>
   
-  <!-- СЛОЙ 5: Phantom аватар в круге -->
-  <g clip-path="url(#circleClip)">
-    <image 
-      href="${phantomAvatarUrl}" 
-      x="180" 
-      y="160" 
-      width="440" 
-      height="440" 
-      preserveAspectRatio="xMidYMid meet"
-    />
+  <!-- СЛОЙ 5: PHANTOM BLOB INLINE (центрирован и масштабирован) -->
+  <g transform="translate(400, 380)">
+    <g transform="scale(0.52) translate(-400, -400)" filter="url(#blobShadow)">
+      <!-- Тело привидения -->
+      <path d="M 400 80 
+               C 180 80, 80 180, 80 360
+               L 80 620
+               C 80 660, 110 680, 144 670
+               L 170 656
+               C 184 670, 216 670, 230 656
+               L 256 644
+               C 270 656, 304 656, 318 644
+               L 344 636
+               C 358 648, 392 648, 406 636
+               L 432 644
+               C 446 656, 480 656, 494 644
+               L 520 656
+               C 534 670, 566 670, 580 656
+               L 606 670
+               C 640 680, 670 660, 670 620
+               L 670 360
+               C 670 180, 570 80, 400 80 Z"
+            fill="white" 
+            opacity="0.95"/>
+      
+      <!-- Левый глаз -->
+      <ellipse cx="300" cy="280" rx="44" ry="70" fill="#7C3AED"/>
+      
+      <!-- Правый глаз -->
+      <ellipse cx="500" cy="280" rx="44" ry="70" fill="#7C3AED"/>
+      
+      <!-- Блик в левом глазу -->
+      <ellipse cx="310" cy="260" rx="16" ry="24" fill="white" opacity="0.4"/>
+      
+      <!-- Блик в правом глазу -->
+      <ellipse cx="510" cy="260" rx="16" ry="24" fill="white" opacity="0.4"/>
+      
+      <!-- Улыбка (опционально) -->
+      <path d="M 300 400 Q 400 440 500 400" 
+            stroke="#7C3AED" 
+            stroke-width="6" 
+            fill="none" 
+            opacity="0.3"
+            stroke-linecap="round"/>
+    </g>
   </g>
   
   <!-- СЛОЙ 6: Тонкая обводка аватара -->
@@ -204,16 +236,24 @@ export async function GET(
   } catch (error) {
     console.error('Error generating avatar:', error)
     
-    // Fallback SVG
+    // Fallback SVG с привидением
     const fallbackSVG = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <rect width="800" height="800" fill="#8B5CF6"/>
   <circle cx="400" cy="400" r="230" fill="white" opacity="0.9"/>
-  <text x="400" y="120" text-anchor="middle" font-family="Arial Black" font-size="72" fill="white">
+  
+  <!-- Простое привидение для fallback -->
+  <g transform="translate(400, 400) scale(0.5) translate(-400, -400)">
+    <path d="M 400 80 C 180 80, 80 180, 80 360 L 80 620 C 80 660, 110 680, 144 670 L 170 656 C 184 670, 216 670, 230 656 L 256 644 C 270 656, 304 656, 318 644 L 344 636 C 358 648, 392 648, 406 636 L 432 644 C 446 656, 480 656, 494 644 L 520 656 C 534 670, 566 670, 580 656 L 606 670 C 640 680, 670 660, 670 620 L 670 360 C 670 180, 570 80, 400 80 Z" fill="white" opacity="0.9"/>
+    <ellipse cx="300" cy="280" rx="40" ry="65" fill="#7C3AED"/>
+    <ellipse cx="500" cy="280" rx="40" ry="65" fill="#7C3AED"/>
+  </g>
+  
+  <text x="400" y="120" text-anchor="middle" font-family="Arial Black" font-size="72" fill="white" letter-spacing="8">
     PHABLOBS
   </text>
   <text x="400" y="700" text-anchor="middle" font-family="Arial" font-size="24" fill="white">
-    Error loading avatar
+    Error loading - showing fallback
   </text>
 </svg>`
     
