@@ -45,10 +45,6 @@ function generateAvatarSVG(publicKey: string): string {
     <filter id="textShadow">
       <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
     </filter>
-    
-    <filter id="circleShadow">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="black" flood-opacity="0.5"/>
-    </filter>
   </defs>
   
   <!-- СЛОЙ 1: ГРАДИЕНТНЫЙ ФОН -->
@@ -71,10 +67,7 @@ function generateAvatarSVG(publicKey: string): string {
   <text x="280" y="720" font-family="Arial Black" font-size="48" fill="white" opacity="0.07" transform="rotate(5 280 720)">PHABLOBS</text>
   <text x="680" y="380" font-family="Arial Black" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
   
-  <!-- СЛОЙ 3: БЕЛЫЙ КРУГ ДЛЯ АВАТАРА -->
-  <circle cx="400" cy="400" r="180" fill="white" filter="url(#circleShadow)" opacity="0.95"/>
-  
-  <!-- СЛОЙ 4: PNG АВАТАР -->
+  <!-- СЛОЙ 3: PNG АВАТАР (БЕЗ БЕЛОГО КРУГА!) -->
   <image 
     href="${phantomAvatarUrl}" 
     x="220" 
@@ -84,7 +77,7 @@ function generateAvatarSVG(publicKey: string): string {
     preserveAspectRatio="xMidYMid meet"
   />
   
-  <!-- СЛОЙ 5: ГЛАВНАЯ НАДПИСЬ PHABLOBS ВВЕРХУ -->
+  <!-- СЛОЙ 4: ГЛАВНАЯ НАДПИСЬ PHABLOBS ВВЕРХУ -->
   <text 
     x="400" 
     y="90" 
@@ -99,7 +92,7 @@ function generateAvatarSVG(publicKey: string): string {
     PHABLOBS
   </text>
   
-  <!-- СЛОЙ 6: НОМЕР PHABLOB -->
+  <!-- СЛОЙ 5: НОМЕР PHABLOB -->
   <text 
     x="400" 
     y="720" 
@@ -114,7 +107,7 @@ function generateAvatarSVG(publicKey: string): string {
     #${phablobNumber}
   </text>
   
-  <!-- СЛОЙ 7: МАЛЕНЬКИЙ ТЕКСТ -->
+  <!-- СЛОЙ 6: МАЛЕНЬКИЙ ТЕКСТ -->
   <text 
     x="400" 
     y="760" 
