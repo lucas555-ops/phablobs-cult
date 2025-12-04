@@ -27,12 +27,13 @@ function generateGradient(hash: number): { color1: string; color2: string } {
   return { color1: colorPair[0], color2: colorPair[1] }
 }
 
-function generateAvatarSVG(publicKey: string): string {
+function generateAvatarSVG(publicKey: string, baseUrl: string): string {
   const hash = generateHash(publicKey)
   const gradient = generateGradient(hash)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  const phantomAvatarUrl = '/phantom-avatar.png'
+  // Используем АБСОЛЮТНЫЙ URL (критично для SSR!)
+  const phantomAvatarUrl = `${baseUrl}/phantom-avatar.png`
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -67,7 +68,7 @@ function generateAvatarSVG(publicKey: string): string {
   <text x="280" y="720" font-family="Arial Black" font-size="48" fill="white" opacity="0.07" transform="rotate(5 280 720)">PHABLOBS</text>
   <text x="680" y="380" font-family="Arial Black" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
   
-  <!-- СЛОЙ 3: PNG АВАТАР (БЕЗ БЕЛОГО КРУГА!) -->
+  <!-- СЛОЙ 3: PNG АВАТАР (АБСОЛЮТНЫЙ URL!) -->
   <image 
     href="${phantomAvatarUrl}" 
     x="220" 
@@ -130,6 +131,13 @@ export async function GET(
     const address = params.address
     const { searchParams } = new URL(request.url)
     const format = searchParams.get('format') || 'svg'
+    
+    // Получаем базовый URL (критично для абсолютного пути!)
+    const baseUrl = new URL(request.url).origin
+    
+    console.log('🔍 Generating avatar for:', address)
+    console.log('🌐 Base URL:', baseUrl)
+    console.log('📁 Avatar URL:', `${baseUrl}/phantom-avatar.png`)
 
     if (!isValidSolanaAddress(address)) {
       return NextResponse.json(
@@ -138,7 +146,7 @@ export async function GET(
       )
     }
 
-    const svgContent = generateAvatarSVG(address)
+    const svgContent = generateAvatarSVG(address, baseUrl)
 
     // Если нужен PNG
     if (format === 'png') {
@@ -166,7 +174,7 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('Error:', error)
+    console.error('💥 Error:', error)
     
     const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
   <rect width="800" height="800" fill="#8B5CF6"/>
