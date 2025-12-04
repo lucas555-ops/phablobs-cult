@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Валидация Solana адреса
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
 }
 
-// Генерация детерминированного хэша
 function generateHash(publicKey: string): number {
   let hash = 0
   for (let i = 0; i < publicKey.length; i++) {
@@ -15,10 +13,9 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-// Генерация цветового градиента на основе хэша
-function generateGradient(hash: number): { color1: string; color2: string; angle: number } {
+function generateGradient(hash: number): { color1: string; color2: string } {
   const PHANTOM_COLORS = [
-    ['#00C2FF', '#8B5CF6'], // Cyan → Purple (основной Phantom)
+    ['#00C2FF', '#8B5CF6'], // Cyan → Purple
     ['#8B5CF6', '#EC4899'], // Purple → Pink
     ['#F59E0B', '#EF4444'], // Amber → Red
     ['#10B981', '#06B6D4'], // Emerald → Cyan
@@ -27,151 +24,94 @@ function generateGradient(hash: number): { color1: string; color2: string; angle
   ]
   
   const colorPair = PHANTOM_COLORS[hash % PHANTOM_COLORS.length]
-  const angle = (hash >> 8) % 360
-  
-  return {
-    color1: colorPair[0],
-    color2: colorPair[1],
-    angle
-  }
+  return { color1: colorPair[0], color2: colorPair[1] }
 }
 
-// Генерация SVG с Phantom аватаром (INLINE!)
 function generateAvatarSVG(publicKey: string): string {
   const hash = generateHash(publicKey)
   const gradient = generateGradient(hash)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
+  // URL к PNG аватару (Vercel автоматически обслуживает файлы из /public)
+  const phantomAvatarUrl = '/phantom-avatar.png'
+  
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Градиенты для фона -->
+    <!-- Градиент для фона -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${gradient.color1}" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="${gradient.color2}" stop-opacity="0.9"/>
-    </linearGradient>
-    
-    <!-- Градиент для текста -->
-    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#FFFFFF"/>
-      <stop offset="50%" stop-color="#E0E0E0"/>
-      <stop offset="100%" stop-color="#FFFFFF"/>
+      <stop offset="0%" stop-color="${gradient.color1}" stop-opacity="1"/>
+      <stop offset="100%" stop-color="${gradient.color2}" stop-opacity="1"/>
     </linearGradient>
     
     <!-- Фильтры -->
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    
-    <filter id="shadow">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="black" flood-opacity="0.8"/>
-    </filter>
-    
     <filter id="textShadow">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="black" flood-opacity="0.9"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
     </filter>
     
-    <filter id="blobShadow">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.2)"/>
+    <filter id="avatarShadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="black" flood-opacity="0.5"/>
     </filter>
-    
-    <!-- Паттерн для мемного фона -->
-    <pattern id="memePattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-      <circle cx="25" cy="25" r="15" fill="${gradient.color1}" opacity="0.08"/>
-      <circle cx="75" cy="75" r="20" fill="${gradient.color2}" opacity="0.08"/>
-      <circle cx="50" cy="80" r="12" fill="${gradient.color1}" opacity="0.05"/>
-    </pattern>
   </defs>
   
-  <!-- СЛОЙ 1: Основной фон с градиентом -->
+  <!-- СЛОЙ 1: ПОЛНЫЙ КВАДРАТНЫЙ ФОН С ГРАДИЕНТОМ -->
   <rect width="800" height="800" fill="url(#bgGrad)"/>
   
-  <!-- СЛОЙ 2: Паттерн мемов -->
-  <rect width="800" height="800" fill="url(#memePattern)"/>
+  <!-- СЛОЙ 2: ВОДЯНЫЕ ЗНАКИ В РАЗБРОС (КОЛЛАЖ) -->
+  <!-- PHANTOM водяные знаки -->
+  <text x="100" y="150" font-family="Arial Black" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
+  <text x="600" y="200" font-family="Arial Black" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
+  <text x="50" y="500" font-family="Arial Black" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
+  <text x="550" y="650" font-family="Arial Black" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
   
-  <!-- СЛОЙ 3: Тень под аватаром -->
-  <circle cx="400" cy="390" r="235" fill="black" opacity="0.3" filter="url(#glow)"/>
+  <!-- PHABLOBS водяные знаки -->
+  <text x="200" y="80" font-family="Arial Black" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
+  <text x="450" y="120" font-family="Arial Black" font-size="38" fill="white" opacity="0.06" transform="rotate(-12 450 120)">PHABLOBS</text>
+  <text x="120" y="380" font-family="Arial Black" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
+  <text x="580" y="480" font-family="Arial Black" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
+  <text x="280" y="720" font-family="Arial Black" font-size="48" fill="white" opacity="0.07" transform="rotate(5 280 720)">PHABLOBS</text>
   
-  <!-- СЛОЙ 4: Белый круг для аватара -->
-  <circle cx="400" cy="380" r="230" fill="white" filter="url(#shadow)"/>
+  <!-- Дополнительные маленькие водяные знаки -->
+  <text x="350" y="280" font-family="Arial Black" font-size="32" fill="white" opacity="0.05" transform="rotate(-20 350 280)">PHANTOM</text>
+  <text x="680" y="380" font-family="Arial Black" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
+  <text x="40" y="680" font-family="Arial Black" font-size="35" fill="white" opacity="0.06" transform="rotate(-5 40 680)">PHANTOM</text>
   
-  <!-- СЛОЙ 5: PHANTOM BLOB INLINE (центрирован и масштабирован) -->
-  <g transform="translate(400, 380)">
-    <g transform="scale(0.52) translate(-400, -400)" filter="url(#blobShadow)">
-      <!-- Тело привидения -->
-      <path d="M 400 80 
-               C 180 80, 80 180, 80 360
-               L 80 620
-               C 80 660, 110 680, 144 670
-               L 170 656
-               C 184 670, 216 670, 230 656
-               L 256 644
-               C 270 656, 304 656, 318 644
-               L 344 636
-               C 358 648, 392 648, 406 636
-               L 432 644
-               C 446 656, 480 656, 494 644
-               L 520 656
-               C 534 670, 566 670, 580 656
-               L 606 670
-               C 640 680, 670 660, 670 620
-               L 670 360
-               C 670 180, 570 80, 400 80 Z"
-            fill="white" 
-            opacity="0.95"/>
-      
-      <!-- Левый глаз -->
-      <ellipse cx="300" cy="280" rx="44" ry="70" fill="#7C3AED"/>
-      
-      <!-- Правый глаз -->
-      <ellipse cx="500" cy="280" rx="44" ry="70" fill="#7C3AED"/>
-      
-      <!-- Блик в левом глазу -->
-      <ellipse cx="310" cy="260" rx="16" ry="24" fill="white" opacity="0.4"/>
-      
-      <!-- Блик в правом глазу -->
-      <ellipse cx="510" cy="260" rx="16" ry="24" fill="white" opacity="0.4"/>
-      
-      <!-- Улыбка (опционально) -->
-      <path d="M 300 400 Q 400 440 500 400" 
-            stroke="#7C3AED" 
-            stroke-width="6" 
-            fill="none" 
-            opacity="0.3"
-            stroke-linecap="round"/>
-    </g>
-  </g>
+  <!-- СЛОЙ 3: БЕЛЫЙ КРУГ ДЛЯ АВАТАРА (С ТЕНЬЮ) -->
+  <circle cx="400" cy="400" r="180" fill="white" filter="url(#avatarShadow)" opacity="0.95"/>
   
-  <!-- СЛОЙ 6: Тонкая обводка аватара -->
-  <circle cx="400" cy="380" r="230" fill="none" stroke="white" stroke-width="3" opacity="0.5"/>
+  <!-- СЛОЙ 4: PHANTOM АВАТАР ИЗ /public/phantom-avatar.png -->
+  <image 
+    href="${phantomAvatarUrl}" 
+    x="220" 
+    y="220" 
+    width="360" 
+    height="360"
+    preserveAspectRatio="xMidYMid meet"
+  />
   
-  <!-- СЛОЙ 7: Большая надпись PHABLOBS вверху -->
+  <!-- СЛОЙ 5: ГЛАВНАЯ НАДПИСЬ PHABLOBS ВВЕРХУ -->
   <text 
     x="400" 
-    y="120" 
+    y="90" 
     text-anchor="middle" 
-    font-family="Arial Black, Impact, sans-serif" 
+    font-family="Arial Black, Impact" 
     font-weight="900"
-    font-size="72"
-    fill="url(#textGrad)"
+    font-size="68"
+    fill="white"
     filter="url(#textShadow)"
-    letter-spacing="8"
+    letter-spacing="6"
   >
     PHABLOBS
   </text>
   
-  <!-- СЛОЙ 8: Номер Phablob внизу -->
+  <!-- СЛОЙ 6: НОМЕР PHABLOB -->
   <text 
     x="400" 
-    y="680" 
+    y="720" 
     text-anchor="middle" 
-    font-family="Arial Black, sans-serif" 
+    font-family="Arial Black" 
     font-weight="900"
-    font-size="56"
+    font-size="52"
     fill="white"
     filter="url(#textShadow)"
     letter-spacing="4"
@@ -179,32 +119,18 @@ function generateAvatarSVG(publicKey: string): string {
     #${phablobNumber}
   </text>
   
-  <!-- СЛОЙ 9: Маленький текст внизу -->
+  <!-- СЛОЙ 7: МАЛЕНЬКИЙ ТЕКСТ -->
   <text 
     x="400" 
-    y="740" 
+    y="760" 
     text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-size="20"
+    font-family="Arial" 
+    font-size="18"
     fill="white"
-    fill-opacity="0.8"
+    opacity="0.9"
   >
     phablobs.cult
   </text>
-  
-  <!-- СЛОЙ 10: Декоративные элементы (звёздочки/блики) -->
-  <circle cx="200" cy="200" r="4" fill="white" opacity="0.6">
-    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="600" cy="250" r="3" fill="white" opacity="0.5">
-    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="3s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="150" cy="500" r="3" fill="white" opacity="0.4">
-    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="650" cy="550" r="4" fill="white" opacity="0.5">
-    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.8s" repeatCount="indefinite"/>
-  </circle>
 </svg>`
 }
 
@@ -214,53 +140,56 @@ export async function GET(
 ) {
   try {
     const address = params.address
+    const { searchParams } = new URL(request.url)
+    const format = searchParams.get('format') || 'svg'
 
-    // Валидация
     if (!isValidSolanaAddress(address)) {
       return NextResponse.json(
-        { error: 'Invalid Solana address format' },
+        { error: 'Invalid Solana address' },
         { status: 400 }
       )
     }
 
-    // Генерация SVG
     const svgContent = generateAvatarSVG(address)
+
+    // Если нужен PNG
+    if (format === 'png') {
+      try {
+        const sharp = require('sharp')
+        const pngBuffer = await sharp(Buffer.from(svgContent))
+          .png()
+          .toBuffer()
+        
+        return new NextResponse(pngBuffer, {
+          headers: {
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+          },
+        })
+      } catch (error) {
+        console.error('Sharp not available:', error)
+        // Возвращаем SVG если sharp не работает
+      }
+    }
 
     return new NextResponse(svgContent, {
       headers: {
         'Content-Type': 'image/svg+xml',
         'Cache-Control': 'public, max-age=31536000, immutable',
-        'CDN-Cache-Control': 'public, max-age=31536000',
       },
     })
   } catch (error) {
-    console.error('Error generating avatar:', error)
+    console.error('Error:', error)
     
-    // Fallback SVG с привидением
-    const fallbackSVG = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
   <rect width="800" height="800" fill="#8B5CF6"/>
-  <circle cx="400" cy="400" r="230" fill="white" opacity="0.9"/>
-  
-  <!-- Простое привидение для fallback -->
-  <g transform="translate(400, 400) scale(0.5) translate(-400, -400)">
-    <path d="M 400 80 C 180 80, 80 180, 80 360 L 80 620 C 80 660, 110 680, 144 670 L 170 656 C 184 670, 216 670, 230 656 L 256 644 C 270 656, 304 656, 318 644 L 344 636 C 358 648, 392 648, 406 636 L 432 644 C 446 656, 480 656, 494 644 L 520 656 C 534 670, 566 670, 580 656 L 606 670 C 640 680, 670 660, 670 620 L 670 360 C 670 180, 570 80, 400 80 Z" fill="white" opacity="0.9"/>
-    <ellipse cx="300" cy="280" rx="40" ry="65" fill="#7C3AED"/>
-    <ellipse cx="500" cy="280" rx="40" ry="65" fill="#7C3AED"/>
-  </g>
-  
-  <text x="400" y="120" text-anchor="middle" font-family="Arial Black" font-size="72" fill="white" letter-spacing="8">
-    PHABLOBS
-  </text>
-  <text x="400" y="700" text-anchor="middle" font-family="Arial" font-size="24" fill="white">
-    Error loading - showing fallback
-  </text>
+  <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error</text>
 </svg>`
     
     return new NextResponse(fallbackSVG, {
       headers: {
         'Content-Type': 'image/svg+xml',
-        'Cache-Control': 'public, max-age=300',
+        'Cache-Control': 'no-cache',
       },
     })
   }
