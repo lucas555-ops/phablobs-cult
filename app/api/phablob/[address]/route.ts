@@ -77,20 +77,20 @@ function generateAvatarSVG(publicKey: string): string {
   
   <!-- СЛОЙ 2: ВОДЯНЫЕ ЗНАКИ -->
   <!-- PHANTOM водяные знаки -->
-  <text x="100" y="150" font-family="Arial Black" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
-  <text x="600" y="200" font-family="Arial Black" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
-  <text x="50" y="500" font-family="Arial Black" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
-  <text x="550" y="650" font-family="Arial Black" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
-  <text x="350" y="280" font-family="Arial Black" font-size="32" fill="white" opacity="0.05" transform="rotate(-20 350 280)">PHANTOM</text>
-  <text x="40" y="680" font-family="Arial Black" font-size="35" fill="white" opacity="0.06" transform="rotate(-5 40 680)">PHANTOM</text>
+  <text x="100" y="150" font-family="Arial, sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
+  <text x="600" y="200" font-family="Arial, sans-serif" font-weight="900" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
+  <text x="50" y="500" font-family="Arial, sans-serif" font-weight="900" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
+  <text x="550" y="650" font-family="Arial, sans-serif" font-weight="900" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
+  <text x="350" y="280" font-family="Arial, sans-serif" font-weight="900" font-size="32" fill="white" opacity="0.05" transform="rotate(-20 350 280)">PHANTOM</text>
+  <text x="40" y="680" font-family="Arial, sans-serif" font-weight="900" font-size="35" fill="white" opacity="0.06" transform="rotate(-5 40 680)">PHANTOM</text>
   
   <!-- PHABLOBS водяные знаки -->
-  <text x="200" y="80" font-family="Arial Black" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
-  <text x="450" y="120" font-family="Arial Black" font-size="38" fill="white" opacity="0.06" transform="rotate(-12 450 120)">PHABLOBS</text>
-  <text x="120" y="380" font-family="Arial Black" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
-  <text x="580" y="480" font-family="Arial Black" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
-  <text x="280" y="720" font-family="Arial Black" font-size="48" fill="white" opacity="0.07" transform="rotate(5 280 720)">PHABLOBS</text>
-  <text x="680" y="380" font-family="Arial Black" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
+  <text x="200" y="80" font-family="Arial, sans-serif" font-weight="900" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
+  <text x="450" y="120" font-family="Arial, sans-serif" font-weight="900" font-size="38" fill="white" opacity="0.06" transform="rotate(-12 450 120)">PHABLOBS</text>
+  <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
+  <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
+  <text x="280" y="720" font-family="Arial, sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.07" transform="rotate(5 280 720)">PHABLOBS</text>
+  <text x="680" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
   
   <!-- СЛОЙ 3: ВАША КАРТИНКА (360x360, по центру) -->
   <image 
@@ -107,7 +107,7 @@ function generateAvatarSVG(publicKey: string): string {
     x="400" 
     y="90" 
     text-anchor="middle" 
-    font-family="Arial Black, Impact" 
+    font-family="Arial, sans-serif" 
     font-weight="900" 
     font-size="68" 
     fill="white" 
@@ -122,7 +122,7 @@ function generateAvatarSVG(publicKey: string): string {
     x="400" 
     y="720" 
     text-anchor="middle" 
-    font-family="Arial Black" 
+    font-family="Arial, sans-serif" 
     font-weight="900" 
     font-size="52" 
     fill="white" 
@@ -137,7 +137,7 @@ function generateAvatarSVG(publicKey: string): string {
     x="400" 
     y="760" 
     text-anchor="middle" 
-    font-family="Arial" 
+    font-family="Arial, sans-serif" 
     font-size="18" 
     fill="white" 
     opacity="0.9"
@@ -165,22 +165,35 @@ export async function GET(
 
     const svgContent = generateAvatarSVG(address)
 
-    // PNG конвертация через Sharp
+    // PNG конвертация через Sharp с правильными настройками
     if (format === 'png') {
       try {
         const sharp = require('sharp')
-        const pngBuffer = await sharp(Buffer.from(svgContent))
-          .png()
+        const pngBuffer = await sharp(Buffer.from(svgContent), {
+          density: 300  // Увеличиваем плотность для лучшего рендеринга шрифтов
+        })
+          .png({
+            quality: 100,
+            compressionLevel: 6
+          })
           .toBuffer()
         
         return new NextResponse(pngBuffer, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
+            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
           },
         })
       } catch (error) {
         console.error('Sharp error:', error)
+        // Если Sharp не работает, возвращаем SVG
+        return new NextResponse(svgContent, {
+          headers: {
+            'Content-Type': 'image/svg+xml',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+          },
+        })
       }
     }
 
