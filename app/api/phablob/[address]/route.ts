@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
@@ -27,16 +29,38 @@ function generateGradient(hash: number): { color1: string; color2: string } {
   return { color1: colorPair[0], color2: colorPair[1] }
 }
 
-function generateAvatarSVG(publicKey: string, baseUrl: string): string {
+// Кэшируем Base64 аватара
+let cachedAvatarBase64: string | null = null
+
+function getPhantomAvatarDataUrl(): string {
+  if (cachedAvatarBase64) {
+    return cachedAvatarBase64
+  }
+  
+  try {
+    const avatarPath = join(process.cwd(), 'public', 'phantom-avatar.png')
+    const avatarBuffer = readFileSync(avatarPath)
+    const base64 = avatarBuffer.toString('base64')
+    cachedAvatarBase64 = `data:image/png;base64,${base64}`
+    
+    console.log('✅ Phantom avatar loaded:', avatarPath)
+    return cachedAvatarBase64
+  } catch (error) {
+    console.error('❌ Failed to load phantom-avatar.png:', error)
+    throw new Error('phantom-avatar.png not found in /public/')
+  }
+}
+
+function generateAvatarSVG(publicKey: string): string {
   const hash = generateHash(publicKey)
   const gradient = generateGradient(hash)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // Используем АБСОЛЮТНЫЙ URL (критично для SSR!)
-  const phantomAvatarUrl = `${baseUrl}/phantom-avatar.png`
+  // Ваша картинка из public/phantom-avatar.png
+  const phantomAvatarDataUrl = getPhantomAvatarDataUrl()
   
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="${gradient.color1}" stop-opacity="1"/>
@@ -48,10 +72,10 @@ function generateAvatarSVG(publicKey: string, baseUrl: string): string {
     </filter>
   </defs>
   
-  <!-- СЛОЙ 1: ГРАДИЕНТНЫЙ ФОН -->
+  <!-- СЛОЙ 1: ГРАДИЕНТНЫЙ ФОН (800x800) -->
   <rect width="800" height="800" fill="url(#bgGrad)"/>
   
-  <!-- СЛОЙ 2: ВОДЯНЫЕ ЗНАКИ (КОЛЛАЖ) -->
+  <!-- СЛОЙ 2: ВОДЯНЫЕ ЗНАКИ -->
   <!-- PHANTOM водяные знаки -->
   <text x="100" y="150" font-family="Arial Black" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
   <text x="600" y="200" font-family="Arial Black" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
@@ -68,9 +92,9 @@ function generateAvatarSVG(publicKey: string, baseUrl: string): string {
   <text x="280" y="720" font-family="Arial Black" font-size="48" fill="white" opacity="0.07" transform="rotate(5 280 720)">PHABLOBS</text>
   <text x="680" y="380" font-family="Arial Black" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
   
-  <!-- СЛОЙ 3: PNG АВАТАР (АБСОЛЮТНЫЙ URL!) -->
+  <!-- СЛОЙ 3: ВАША КАРТИНКА (360x360, по центру) -->
   <image 
-    href="${phantomAvatarUrl}" 
+    href="${phantomAvatarDataUrl}" 
     x="220" 
     y="220" 
     width="360" 
@@ -78,7 +102,7 @@ function generateAvatarSVG(publicKey: string, baseUrl: string): string {
     preserveAspectRatio="xMidYMid meet"
   />
   
-  <!-- СЛОЙ 4: ГЛАВНАЯ НАДПИСЬ PHABLOBS ВВЕРХУ -->
+  <!-- СЛОЙ 4: ТЕКСТ PHABLOBS (вверху) -->
   <text 
     x="400" 
     y="90" 
@@ -93,7 +117,7 @@ function generateAvatarSVG(publicKey: string, baseUrl: string): string {
     PHABLOBS
   </text>
   
-  <!-- СЛОЙ 5: НОМЕР PHABLOB -->
+  <!-- СЛОЙ 5: НОМЕР (внизу) -->
   <text 
     x="400" 
     y="720" 
@@ -108,7 +132,7 @@ function generateAvatarSVG(publicKey: string, baseUrl: string): string {
     #${phablobNumber}
   </text>
   
-  <!-- СЛОЙ 6: МАЛЕНЬКИЙ ТЕКСТ -->
+  <!-- СЛОЙ 6: URL (самый низ) -->
   <text 
     x="400" 
     y="760" 
@@ -131,13 +155,6 @@ export async function GET(
     const address = params.address
     const { searchParams } = new URL(request.url)
     const format = searchParams.get('format') || 'svg'
-    
-    // Получаем базовый URL (критично для абсолютного пути!)
-    const baseUrl = new URL(request.url).origin
-    
-    console.log('🔍 Generating avatar for:', address)
-    console.log('🌐 Base URL:', baseUrl)
-    console.log('📁 Avatar URL:', `${baseUrl}/phantom-avatar.png`)
 
     if (!isValidSolanaAddress(address)) {
       return NextResponse.json(
@@ -146,9 +163,9 @@ export async function GET(
       )
     }
 
-    const svgContent = generateAvatarSVG(address, baseUrl)
+    const svgContent = generateAvatarSVG(address)
 
-    // Если нужен PNG
+    // PNG конвертация через Sharp
     if (format === 'png') {
       try {
         const sharp = require('sharp')
@@ -163,7 +180,7 @@ export async function GET(
           },
         })
       } catch (error) {
-        console.error('Sharp not available:', error)
+        console.error('Sharp error:', error)
       }
     }
 
@@ -174,11 +191,11 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('💥 Error:', error)
+    console.error('Error:', error)
     
     const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
   <rect width="800" height="800" fill="#8B5CF6"/>
-  <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error generating avatar</text>
+  <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error: ${error instanceof Error ? error.message : 'Unknown error'}</text>
 </svg>`
     
     return new NextResponse(fallbackSVG, {
