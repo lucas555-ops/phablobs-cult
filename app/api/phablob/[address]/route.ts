@@ -1,42 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
-
-function isValidSolanaAddress(address: string): boolean {
-  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
-}
-
-function generateHash(publicKey: string): number {
-  let hash = 0
-  for (let i = 0; i < publicKey.length; i++) {
-    hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
-    hash = hash & hash
-  }
-  return Math.abs(hash)
-}
-
-function generateGradient(hash: number): { color1: string; color2: string } {
-  const PHANTOM_COLORS = [
-    ['#00C2FF', '#8B5CF6'], // Cyan → Purple
-    ['#8B5CF6', '#EC4899'], // Purple → Pink
-    ['#F59E0B', '#EF4444'], // Amber → Red
-    ['#10B981', '#06B6D4'], // Emerald → Cyan
-    ['#EC4899', '#F97316'], // Pink → Orange
-    ['#6366F1', '#8B5CF6'], // Indigo → Purple
-  ]
-  
-  const colorPair = PHANTOM_COLORS[hash % PHANTOM_COLORS.length]
-  return { color1: colorPair[0], color2: colorPair[1] }
-}
-
 function generateAvatarSVG(publicKey: string): string {
   const hash = generateHash(publicKey)
   const gradient = generateGradient(hash)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // URL к PNG аватару (Vercel автоматически обслуживает файлы из /public)
+  // URL к PNG аватару
   const phantomAvatarUrl = '/phantom-avatar.png'
   
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <!-- Градиент для фона -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -49,15 +20,29 @@ function generateAvatarSVG(publicKey: string): string {
       <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
     </filter>
     
-    <filter id="avatarShadow">
+    <!-- Фильтр тени для белого круга -->
+    <filter id="circleShadow">
       <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="black" flood-opacity="0.5"/>
     </filter>
   </defs>
   
-  <!-- СЛОЙ 1: ПОЛНЫЙ КВАДРАТНЫЙ ФОН С ГРАДИЕНТОМ -->
+  <!-- СЛОЙ 1: БЕЛЫЙ АВАТАР PNG (самый верхний слой) -->
+  <image 
+    href="${phantomAvatarUrl}" 
+    x="220" 
+    y="220" 
+    width="360" 
+    height="360"
+    preserveAspectRatio="xMidYMid meet"
+  />
+  
+  <!-- СЛОЙ 2: БЕЛЫЙ КРУГ ПОД АВАТАРОМ -->
+  <circle cx="400" cy="400" r="180" fill="white" filter="url(#circleShadow)" opacity="0.95"/>
+  
+  <!-- СЛОЙ 3: ГРАДИЕНТНЫЙ ФОН -->
   <rect width="800" height="800" fill="url(#bgGrad)"/>
   
-  <!-- СЛОЙ 2: ВОДЯНЫЕ ЗНАКИ В РАЗБРОС (КОЛЛАЖ) -->
+  <!-- СЛОЙ 4: ВОДЯНЫЕ ЗНАКИ -->
   <!-- PHANTOM водяные знаки -->
   <text x="100" y="150" font-family="Arial Black" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
   <text x="600" y="200" font-family="Arial Black" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
@@ -76,20 +61,7 @@ function generateAvatarSVG(publicKey: string): string {
   <text x="680" y="380" font-family="Arial Black" font-size="28" fill="white" opacity="0.04" transform="rotate(25 680 380)">PHABLOBS</text>
   <text x="40" y="680" font-family="Arial Black" font-size="35" fill="white" opacity="0.06" transform="rotate(-5 40 680)">PHANTOM</text>
   
-  <!-- СЛОЙ 3: БЕЛЫЙ КРУГ ДЛЯ АВАТАРА (С ТЕНЬЮ) -->
-  <circle cx="400" cy="400" r="180" fill="white" filter="url(#avatarShadow)" opacity="0.95"/>
-  
-  <!-- СЛОЙ 4: PHANTOM АВАТАР ИЗ /public/phantom-avatar.png -->
-  <image 
-    href="${phantomAvatarUrl}" 
-    x="220" 
-    y="220" 
-    width="360" 
-    height="360"
-    preserveAspectRatio="xMidYMid meet"
-  />
-  
-  <!-- СЛОЙ 5: ГЛАВНАЯ НАДПИСЬ PHABLOBS ВВЕРХУ -->
+  <!-- СЛОЙ 5: ТЕКСТ PHABLOBS ВВЕРХУ -->
   <text 
     x="400" 
     y="90" 
@@ -132,65 +104,4 @@ function generateAvatarSVG(publicKey: string): string {
     phablobs.cult
   </text>
 </svg>`
-}
-
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { address: string } }
-) {
-  try {
-    const address = params.address
-    const { searchParams } = new URL(request.url)
-    const format = searchParams.get('format') || 'svg'
-
-    if (!isValidSolanaAddress(address)) {
-      return NextResponse.json(
-        { error: 'Invalid Solana address' },
-        { status: 400 }
-      )
-    }
-
-    const svgContent = generateAvatarSVG(address)
-
-    // Если нужен PNG
-    if (format === 'png') {
-      try {
-        const sharp = require('sharp')
-        const pngBuffer = await sharp(Buffer.from(svgContent))
-          .png()
-          .toBuffer()
-        
-        return new NextResponse(pngBuffer, {
-          headers: {
-            'Content-Type': 'image/png',
-            'Cache-Control': 'public, max-age=31536000, immutable',
-          },
-        })
-      } catch (error) {
-        console.error('Sharp not available:', error)
-        // Возвращаем SVG если sharp не работает
-      }
-    }
-
-    return new NextResponse(svgContent, {
-      headers: {
-        'Content-Type': 'image/svg+xml',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    })
-  } catch (error) {
-    console.error('Error:', error)
-    
-    const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
-  <rect width="800" height="800" fill="#8B5CF6"/>
-  <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error</text>
-</svg>`
-    
-    return new NextResponse(fallbackSVG, {
-      headers: {
-        'Content-Type': 'image/svg+xml',
-        'Cache-Control': 'no-cache',
-      },
-    })
-  }
 }
