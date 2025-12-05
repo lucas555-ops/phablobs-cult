@@ -94,20 +94,50 @@ export default function Home() {
       {/* Header with Logo */}
       <header className="relative z-10 container mx-auto px-4 py-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-            <span className="text-white text-xl">👻</span>
-          </div>
+          {/* PNG Logo вместо эмодзи */}
+          <img 
+            src="/phantom-logo.png" 
+            alt="Phablobs Logo" 
+            className="w-10 h-10"
+            onError={(e) => {
+              // Fallback на эмодзи если картинка не загрузилась
+              e.currentTarget.style.display = 'none'
+              const fallback = document.createElement('div')
+              fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
+              fallback.textContent = '👻'
+              e.currentTarget.parentElement?.appendChild(fallback)
+            }}
+          />
           <span className="text-2xl font-black bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">PHABLOBS</span>
         </div>
       </header>
 
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-12">
-        {/* Hero Section */}
+        {/* Hero Section с обводкой как у Phantom */}
         <div className="text-center mb-12 md:mb-16">
-          <h1 className="text-6xl md:text-8xl font-black mb-4 bg-gradient-to-r from-cyan-400 via-purple-600 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,255,240,0.3)]">
+          <h1 
+            className="text-6xl md:text-8xl font-black mb-4 leading-tight"
+            style={{
+              color: 'transparent',
+              background: 'linear-gradient(to right, #22d3ee, #a855f7, #ec4899)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              WebkitTextStroke: '2px white',
+              textShadow: '0 0 30px rgba(0,255,240,0.3)'
+            }}
+          >
             PHABLOBS
           </h1>
-          <p className="text-2xl md:text-4xl font-bold text-gray-300 mb-6">
+          <p 
+            className="text-2xl md:text-4xl font-bold mb-6"
+            style={{
+              color: 'transparent',
+              background: 'linear-gradient(to right, #d1d5db, #9ca3af)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              WebkitTextStroke: '1px white'
+            }}
+          >
             masterpiece
           </p>
           <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
@@ -283,7 +313,6 @@ export default function Home() {
                       alt={`Phablob ${i + 1}`} 
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        // Placeholder если картинка не загрузилась
                         e.currentTarget.style.display = 'none'
                         e.currentTarget.parentElement!.innerHTML = `<div class="w-full h-full flex items-center justify-center text-gray-600 text-sm">Example #${i + 1}</div>`
                       }}
