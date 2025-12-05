@@ -86,9 +86,9 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white">
       {/* Background Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-48 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 -left-48 w-96 h-96 bg-[#ab0ff2] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-[#4da7f2] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#2ec08b] rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       {/* Header with Logo */}
@@ -108,7 +108,7 @@ export default function Home() {
               e.currentTarget.parentElement?.appendChild(fallback)
             }}
           />
-          <span className="text-2xl font-black bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">PHABLOBS</span>
+          <span className="text-2xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">PHABLOBS</span>
         </div>
       </header>
 
@@ -119,10 +119,10 @@ export default function Home() {
             className="text-6xl md:text-8xl font-black mb-2 leading-tight"
             style={{
               fontFamily: "'Baloo 2', 'Fredoka', 'Poppins', sans-serif",
-              color: '#000000',
-              WebkitTextStroke: '8px white',
+              color: '#1c1c1c',
+              WebkitTextStroke: '8px #ab0ff2',
               paintOrder: 'stroke fill',
-              textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              textShadow: '0 4px 20px rgba(171,15,242,0.4)',
               letterSpacing: '-0.02em'
             }}
           >
@@ -132,10 +132,10 @@ export default function Home() {
             className="text-3xl md:text-5xl font-black"
             style={{
               fontFamily: "'Baloo 2', 'Fredoka', 'Poppins', sans-serif",
-              color: '#000000',
-              WebkitTextStroke: '6px white',
+              color: '#1c1c1c',
+              WebkitTextStroke: '6px #ab0ff2',
               paintOrder: 'stroke fill',
-              textShadow: '0 2px 15px rgba(0,0,0,0.3)',
+              textShadow: '0 2px 15px rgba(171,15,242,0.3)',
               letterSpacing: '-0.01em'
             }}
           >
@@ -148,10 +148,10 @@ export default function Home() {
 
         {/* Token Contract Card */}
         <div className="max-w-4xl mx-auto mb-8 md:mb-12">
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(168,85,247,0.15)]">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
             
             <div className="text-center mb-6">
-              <h2 className="text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(168,85,247,0.5)]">
+              <h2 className="text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(171,15,242,0.5)]">
                 PHABLOB TOKEN
               </h2>
               <p className="text-gray-400 text-sm md:text-base">
@@ -159,14 +159,14 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-black/40 rounded-2xl p-6 border border-purple-600/20 backdrop-blur-sm">
+            <div className="bg-black/40 rounded-2xl p-6 border border-[#ab0ff2]/20 backdrop-blur-sm">
               <label className="block text-gray-300 text-xs md:text-sm font-bold mb-3 text-center">
                 Contract Address
               </label>
               
               <div className="flex flex-col gap-3">
-                <div className="bg-gray-900/60 rounded-xl px-4 py-4 border border-cyan-400/20">
-                  <code className="text-cyan-400 font-mono text-xs md:text-sm break-all block text-center">
+                <div className="bg-gray-900/60 rounded-xl px-4 py-4 border border-[#ab0ff2]/20">
+                  <code className="text-[#ab0ff2] font-mono text-xs md:text-sm break-all block text-center">
                     {TOKEN_CONTRACT}
                   </code>
                 </div>
@@ -174,7 +174,7 @@ export default function Home() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleCopyToken}
-                    className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]"
+                    className="flex-1 px-6 py-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(171,15,242,0.4)]"
                   >
                     {copySuccess ? (
                       <>
@@ -195,7 +195,7 @@ export default function Home() {
 
                   <button
                     onClick={handleShareToken}
-                    className="flex-1 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(0,255,240,0.4)]"
+                    className="flex-1 px-6 py-4 bg-gradient-to-r from-[#4da7f2] to-[#2ec08b] hover:from-[#3d96e0] hover:to-[#26a879] rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(77,167,242,0.4)]"
                   >
                     <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
@@ -206,7 +206,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-cyan-400/80 text-xs md:text-sm">
+                <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
                   💡 Available on pump.fun and Jupiter
                 </p>
               </div>
@@ -216,7 +216,7 @@ export default function Home() {
 
         {/* Generator Card */}
         <div className="max-w-2xl mx-auto mb-8 md:mb-12">
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(168,85,247,0.15)]">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
             <h2 className="text-3xl font-black text-white mb-6 text-center">
               Generate Your Phablob
             </h2>
@@ -232,7 +232,7 @@ export default function Home() {
                   onChange={(e) => setAddress(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
                   placeholder="Enter your Solana address..."
-                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-cyan-400/30 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-sm md:text-base"
+                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#ab0ff2]/30 text-white placeholder-gray-600 focus:outline-none focus:border-[#ab0ff2] focus:ring-2 focus:ring-[#ab0ff2]/20 text-sm md:text-base"
                 />
                 {error && (
                   <p className="mt-2 text-red-400 text-sm">{error}</p>
@@ -242,7 +242,7 @@ export default function Home() {
               <button
                 onClick={handleGenerate}
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-cyan-400 to-purple-600 hover:from-cyan-500 hover:to-purple-700 text-black font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-base md:text-lg hover:shadow-[0_0_30px_rgba(0,255,240,0.4)]"
+                className="w-full bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-base md:text-lg hover:shadow-[0_0_30px_rgba(171,15,242,0.4)]"
               >
                 {isLoading ? 'Generating...' : '✨ Generate Phablob'}
               </button>
@@ -253,8 +253,8 @@ export default function Home() {
         {/* Generated Phablob Card */}
         {svgUrl && (
           <div className="max-w-2xl mx-auto mb-8 md:mb-12">
-            <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(168,85,247,0.15)]">
-              <div className="bg-gradient-to-br from-cyan-400/10 to-purple-600/10 rounded-2xl p-4 mb-6 border border-purple-600/30">
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
+              <div className="bg-gradient-to-br from-[#ab0ff2]/10 to-[#4da7f2]/10 rounded-2xl p-4 mb-6 border border-[#ab0ff2]/30">
                 <img 
                   src={svgUrl} 
                   alt="Generated Phablob" 
@@ -265,7 +265,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={handleDownloadMetadata}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(99,102,241,0.4)]"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(171,15,242,0.4)]"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -275,7 +275,7 @@ export default function Home() {
 
                 <button
                   onClick={handleShareTwitter}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(0,255,240,0.4)]"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#4da7f2] to-[#2ec08b] hover:from-[#3d96e0] hover:to-[#26a879] text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(77,167,242,0.4)]"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
@@ -285,7 +285,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-cyan-400/80 text-xs md:text-sm">
+                <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
                   💡 Right-click image to save, or download metadata to mint as NFT
                 </p>
               </div>
@@ -295,7 +295,7 @@ export default function Home() {
 
         {/* Gallery Section */}
         <div className="max-w-5xl mx-auto mb-12">
-          <h2 className="text-4xl font-black text-center mb-8 bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
             Phablob Gallery
           </h2>
           
@@ -307,8 +307,8 @@ export default function Home() {
               '/gallery/phablob-4.png'
             ].map((src, i) => (
               <div key={i} className="group">
-                <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-2xl p-3 hover:border-cyan-400/50 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(0,255,240,0.2)]">
-                  <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-cyan-400/10 to-purple-600/10">
+                <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-3 hover:border-[#ab0ff2]/50 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(171,15,242,0.2)]">
+                  <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-[#ab0ff2]/10 to-[#4da7f2]/10">
                     <img 
                       src={src} 
                       alt={`Phablob ${i + 1}`} 
@@ -327,15 +327,15 @@ export default function Home() {
 
         {/* Why Phablobs Section */}
         <div className="max-w-5xl mx-auto mb-12">
-          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
             Why Phablobs?
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Card 1 */}
             <div className="group">
-              <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-2xl p-8 hover:border-purple-600/50 transition-all hover:scale-105 h-full hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8 hover:border-[#ab0ff2]/50 transition-all hover:scale-105 h-full hover:shadow-[0_0_30px_rgba(171,15,242,0.2)]">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
@@ -349,8 +349,8 @@ export default function Home() {
 
             {/* Card 2 */}
             <div className="group">
-              <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-2xl p-8 hover:border-cyan-400/50 transition-all hover:scale-105 h-full hover:shadow-[0_0_30px_rgba(0,255,240,0.2)]">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8 hover:border-[#4da7f2]/50 transition-all hover:scale-105 h-full hover:shadow-[0_0_30px_rgba(77,167,242,0.2)]">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#4da7f2] to-[#2ec08b] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
@@ -364,8 +364,8 @@ export default function Home() {
 
             {/* Card 3 */}
             <div className="group">
-              <div className="bg-gradient-to-br from-gray-900 to-black border border-purple-600/30 rounded-2xl p-8 hover:border-pink-400/50 transition-all hover:scale-105 h-full hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]">
-                <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8 hover:border-[#ff7243]/50 transition-all hover:scale-105 h-full hover:shadow-[0_0_30px_rgba(255,114,67,0.2)]">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#ff7243] to-[#fffd13] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
