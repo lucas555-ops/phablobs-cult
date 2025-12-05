@@ -113,33 +113,30 @@ export default function Home() {
       </header>
 
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-12">
-        {/* Hero Section с обводкой как у Phantom */}
+        {/* Hero Section с обводкой как на картинке */}
         <div className="text-center mb-12 md:mb-16">
           <h1 
-            className="text-6xl md:text-8xl font-black mb-4 leading-tight relative inline-block"
+            className="text-6xl md:text-8xl font-black mb-2 leading-tight"
             style={{
-              color: '#2D2A4A',
-              textShadow: `
-                0 0 40px rgba(255,255,255,0.9),
-                0 0 80px rgba(255,255,255,0.7),
-                0 0 120px rgba(255,255,255,0.5),
-                0 4px 40px rgba(0,0,0,0.3)
-              `,
-              filter: 'drop-shadow(0 0 60px rgba(255,255,255,0.8))'
+              fontFamily: "'Baloo 2', 'Fredoka', 'Poppins', sans-serif",
+              color: '#000000',
+              WebkitTextStroke: '8px white',
+              paintOrder: 'stroke fill',
+              textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              letterSpacing: '-0.02em'
             }}
           >
             PHABLOBS
           </h1>
           <p 
-            className="text-2xl md:text-4xl font-bold mb-6 relative inline-block"
+            className="text-3xl md:text-5xl font-black"
             style={{
-              color: '#2D2A4A',
-              textShadow: `
-                0 0 30px rgba(255,255,255,0.9),
-                0 0 60px rgba(255,255,255,0.7),
-                0 0 90px rgba(255,255,255,0.5)
-              `,
-              filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.7))'
+              fontFamily: "'Baloo 2', 'Fredoka', 'Poppins', sans-serif",
+              color: '#000000',
+              WebkitTextStroke: '6px white',
+              paintOrder: 'stroke fill',
+              textShadow: '0 2px 15px rgba(0,0,0,0.3)',
+              letterSpacing: '-0.01em'
             }}
           >
             masterpiece
