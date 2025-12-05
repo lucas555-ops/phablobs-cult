@@ -83,63 +83,71 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
-      {/* Hero Section */}
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-4 md:mb-6 tracking-wider">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      {/* Header with Logo */}
+      <header className="container mx-auto px-4 py-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <span className="text-white text-xl font-black">👻</span>
+          </div>
+          <span className="text-2xl font-black text-gray-900">PHABLOBS</span>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8 md:py-16">
+        {/* Hero Section - Стиль Phantom */}
+        <div className="text-center mb-16 md:mb-24">
+          <h1 className="text-6xl md:text-8xl font-black text-gray-900 mb-6 leading-tight">
             PHABLOBS
           </h1>
-          <p className="text-xl md:text-2xl text-purple-200 mb-3 md:mb-4">
-            Where Phantom Meets Creativity 👻
+          <p className="text-3xl md:text-5xl font-bold text-gray-700 mb-8">
+            masterpiece
           </p>
-          <p className="text-base md:text-lg text-purple-300 max-w-2xl mx-auto px-4">
-            Generate your unique Phantom-inspired avatar from any Solana wallet address. 
-            Each Phablob is a one-of-a-kind NFT-ready masterpiece.
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            Generate your unique Phantom-inspired avatar from any Solana wallet address
           </p>
         </div>
 
-        {/* Token Contract Section */}
-        <div className="max-w-4xl mx-auto mb-8 md:mb-12">
-          <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-indigo-500/10 backdrop-blur-lg rounded-3xl p-6 md:p-8 border border-purple-400/30 shadow-2xl">
+        {/* Token Contract Card */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-gray-200/50">
             
-            {/* Стильный заголовок токена */}
             <div className="text-center mb-6">
-              <h2 className="text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(168,85,247,0.5)]">
+              <h2 className="text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
                 PHABLOB TOKEN
               </h2>
-              <p className="text-purple-200 text-sm md:text-base">
+              <p className="text-gray-600 text-sm md:text-base">
                 Official Phablobs Cult token on Solana
               </p>
             </div>
 
-            <div className="bg-black/20 rounded-2xl p-4 md:p-6 backdrop-blur-sm border border-purple-400/20">
-              <label className="block text-white text-xs md:text-sm font-bold mb-3 text-center">
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200/50">
+              <label className="block text-gray-700 text-xs md:text-sm font-bold mb-3 text-center">
                 Contract Address
               </label>
               
               <div className="flex flex-col gap-3">
-                <div className="bg-white/10 rounded-xl px-3 md:px-4 py-3 md:py-4 border border-white/20">
-                  <code className="text-white font-mono text-xs md:text-sm break-all block text-center">
+                <div className="bg-white rounded-xl px-4 py-4 border border-gray-200">
+                  <code className="text-gray-900 font-mono text-xs md:text-sm break-all block text-center">
                     {TOKEN_CONTRACT}
                   </code>
                 </div>
                 
-                <div className="flex gap-2 md:gap-3">
+                <div className="flex gap-3">
                   <button
                     onClick={handleCopyToken}
-                    className="flex-1 px-4 md:px-6 py-3 md:py-4 bg-purple-600 hover:bg-purple-700 rounded-xl transition-all transform hover:scale-105 shadow-lg border border-purple-400/50 flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
                   >
                     {copySuccess ? (
                       <>
-                        <svg className="w-4 h-4 md:w-5 md:h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <span className="text-white font-bold text-sm md:text-base">Copied!</span>
                       </>
                     ) : (
                       <>
-                        <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                         <span className="text-white font-bold text-sm md:text-base">Copy</span>
@@ -149,9 +157,9 @@ export default function Home() {
 
                   <button
                     onClick={handleShareToken}
-                    className="flex-1 px-4 md:px-6 py-3 md:py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all transform hover:scale-105 shadow-lg border border-cyan-400/50 flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
                   >
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                     </svg>
                     <span className="text-white font-bold text-sm md:text-base">Share</span>
@@ -160,7 +168,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-purple-300 text-xs md:text-sm">
+                <p className="text-gray-600 text-xs md:text-sm">
                   💡 Available on pump.fun and Jupiter
                 </p>
               </div>
@@ -168,16 +176,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Generator Section */}
-        <div className="max-w-2xl mx-auto mb-8 md:mb-12">
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-4 md:mb-6 text-center">
+        {/* Generator Card */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-gray-200/50">
+            <h2 className="text-3xl font-black text-gray-900 mb-6 text-center">
               Generate Your Phablob
             </h2>
             
-            <div className="space-y-4 md:space-y-6">
+            <div className="space-y-6">
               <div>
-                <label className="block text-white text-sm font-bold mb-2">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
                   Solana Wallet Address
                 </label>
                 <input
@@ -186,17 +194,17 @@ export default function Home() {
                   onChange={(e) => setAddress(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
                   placeholder="Enter your Solana address..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-sm md:text-base"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm md:text-base"
                 />
                 {error && (
-                  <p className="mt-2 text-red-300 text-sm">{error}</p>
+                  <p className="mt-2 text-red-500 text-sm">{error}</p>
                 )}
               </div>
 
               <button
                 onClick={handleGenerate}
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 md:py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-base md:text-lg"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-base md:text-lg"
               >
                 {isLoading ? 'Generating...' : '✨ Generate Phablob'}
               </button>
@@ -204,11 +212,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Generated Phablob */}
+        {/* Generated Phablob Card */}
         {svgUrl && (
-          <div className="max-w-2xl mx-auto mb-8 md:mb-12">
-            <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
-              <div className="bg-white rounded-2xl p-4 mb-4 md:mb-6">
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-gray-200/50">
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 mb-6 border border-purple-200/50">
                 <img 
                   src={svgUrl} 
                   alt="Generated Phablob" 
@@ -216,12 +224,12 @@ export default function Home() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={handleDownloadMetadata}
-                  className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 md:px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base"
                 >
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                   NFT Metadata
@@ -229,9 +237,9 @@ export default function Home() {
 
                 <button
                   onClick={handleShareTwitter}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-4 md:px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base"
                 >
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                   </svg>
                   Share on X
@@ -239,7 +247,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-purple-200 text-xs md:text-sm">
+                <p className="text-gray-600 text-xs md:text-sm">
                   💡 Right-click image to save, or download metadata to mint as NFT
                 </p>
               </div>
@@ -247,23 +255,23 @@ export default function Home() {
           </div>
         )}
 
-        {/* Why Phablobs Section - Стиль Phantom */}
-        <div className="max-w-5xl mx-auto mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-8 md:mb-12 text-center">
+        {/* Why Phablobs Section */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <h2 className="text-4xl font-black text-gray-900 mb-12 text-center">
             Why Phablobs?
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Card 1 */}
             <div className="group">
-              <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-purple-400/30 hover:border-purple-400/60 transition-all hover:scale-105 h-full">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-purple-300 hover:shadow-xl transition-all hover:scale-105 h-full">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Truly Unique</h3>
-                <p className="text-purple-200 text-sm md:text-base leading-relaxed">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Truly Unique</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Every Phablob is generated from your wallet address - completely unique to you with dynamic gradients and watermarks
                 </p>
               </div>
@@ -271,14 +279,14 @@ export default function Home() {
 
             {/* Card 2 */}
             <div className="group">
-              <div className="bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-indigo-400/30 hover:border-indigo-400/60 transition-all hover:scale-105 h-full">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-indigo-400 to-cyan-500 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-indigo-300 hover:shadow-xl transition-all hover:scale-105 h-full">
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">NFT-Ready</h3>
-                <p className="text-purple-200 text-sm md:text-base leading-relaxed">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">NFT-Ready</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Download metadata in Metaplex format - ready to mint on Solana marketplaces like Magic Eden and Tensor
                 </p>
               </div>
@@ -286,14 +294,14 @@ export default function Home() {
 
             {/* Card 3 */}
             <div className="group">
-              <div className="bg-gradient-to-br from-pink-500/20 to-orange-500/20 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-pink-400/30 hover:border-pink-400/60 transition-all hover:scale-105 h-full">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-pink-400 to-orange-500 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-pink-300 hover:shadow-xl transition-all hover:scale-105 h-full">
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Instantly Free</h3>
-                <p className="text-purple-200 text-sm md:text-base leading-relaxed">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Instantly Free</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Generate unlimited Phablobs at no cost - just enter any Solana wallet address and create your masterpiece
                 </p>
               </div>
@@ -303,10 +311,10 @@ export default function Home() {
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-purple-300 text-sm mb-2">
+          <p className="text-gray-600 text-sm mb-2">
             Built with 💜 for the Solana community
           </p>
-          <p className="text-purple-400 text-xs">
+          <p className="text-gray-500 text-xs">
             phablobs.xyz © 2024 | Powered by Phantom & pump.fun
           </p>
         </div>
