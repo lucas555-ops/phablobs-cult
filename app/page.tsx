@@ -122,7 +122,7 @@ export default function Home() {
               background: 'linear-gradient(to right, #22d3ee, #a855f7, #ec4899)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              WebkitTextStroke: '2px white',
+              WebkitTextStroke: '3px #2D2A4A',
               textShadow: '0 0 30px rgba(0,255,240,0.3)'
             }}
           >
@@ -135,7 +135,7 @@ export default function Home() {
               background: 'linear-gradient(to right, #d1d5db, #9ca3af)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              WebkitTextStroke: '1px white'
+              WebkitTextStroke: '2px #2D2A4A'
             }}
           >
             masterpiece
