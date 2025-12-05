@@ -116,26 +116,30 @@ export default function Home() {
         {/* Hero Section с обводкой как у Phantom */}
         <div className="text-center mb-12 md:mb-16">
           <h1 
-            className="text-6xl md:text-8xl font-black mb-4 leading-tight"
+            className="text-6xl md:text-8xl font-black mb-4 leading-tight relative inline-block"
             style={{
-              color: 'transparent',
-              background: 'linear-gradient(to right, #22d3ee, #a855f7, #ec4899)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              WebkitTextStroke: '3px #2D2A4A',
-              textShadow: '0 0 30px rgba(0,255,240,0.3)'
+              color: '#2D2A4A',
+              textShadow: `
+                0 0 40px rgba(255,255,255,0.9),
+                0 0 80px rgba(255,255,255,0.7),
+                0 0 120px rgba(255,255,255,0.5),
+                0 4px 40px rgba(0,0,0,0.3)
+              `,
+              filter: 'drop-shadow(0 0 60px rgba(255,255,255,0.8))'
             }}
           >
             PHABLOBS
           </h1>
           <p 
-            className="text-2xl md:text-4xl font-bold mb-6"
+            className="text-2xl md:text-4xl font-bold mb-6 relative inline-block"
             style={{
-              color: 'transparent',
-              background: 'linear-gradient(to right, #d1d5db, #9ca3af)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              WebkitTextStroke: '2px #2D2A4A'
+              color: '#2D2A4A',
+              textShadow: `
+                0 0 30px rgba(255,255,255,0.9),
+                0 0 60px rgba(255,255,255,0.7),
+                0 0 90px rgba(255,255,255,0.5)
+              `,
+              filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.7))'
             }}
           >
             masterpiece
