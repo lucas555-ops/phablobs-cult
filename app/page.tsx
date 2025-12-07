@@ -438,169 +438,206 @@ export default function Home() {
         </div>
 
         {/* Roadmap Section */}
-        <div className="max-w-6xl mx-auto mb-12">
-          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-            Roadmap
-          </h2>
-          
-          <div className="relative">
-            {/* Vertical line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
-            
-            {/* Phase 1 */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">🚀</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-bold text-white">Phase 1: LAUNCH</h3>
-                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">LIVE</span>
-                  </div>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>✅ Token on pump.fun</li>
-                    <li>✅ Website live</li>
-                    <li>✅ Free generator</li>
-                    <li>✅ 69 unique avatars</li>
-                  </ul>
-                </div>
-              </div>
+<div className="max-w-6xl mx-auto mb-8 md:mb-12">
+  <h2 className="text-3xl md:text-4xl font-black text-center mb-8 md:mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+    Roadmap
+  </h2>
+  
+  <div className="relative">
+    {/* Vertical line - только на desktop */}
+    <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
+    
+    {/* MOBILE: Stack layout */}
+    <div className="md:hidden space-y-6">
+      {[
+        {
+          phase: 'Phase 1: LAUNCH',
+          status: 'LIVE',
+          statusColor: 'bg-green-500/20 text-green-400',
+          emoji: '🚀',
+          gradient: 'from-[#ab0ff2] to-[#4da7f2]',
+          items: ['✅ Token on pump.fun', '✅ Website live', '✅ Free generator', '✅ 69 unique avatars']
+        },
+        {
+          phase: 'Phase 2: GROW',
+          status: 'IN PROGRESS',
+          statusColor: 'bg-blue-500/20 text-blue-400',
+          emoji: '👻',
+          gradient: 'from-[#4da7f2] to-[#2ec08b]',
+          items: ['🔄 Tier system active', '🎯 1,000+ holders', '📱 Viral campaigns', '🤝 Partnerships']
+        },
+        {
+          phase: 'Phase 3: EXPAND',
+          status: null,
+          emoji: '🌊',
+          gradient: 'from-[#2ec08b] to-[#fffd13]',
+          items: ['💱 DEX listings', '🎯 10,000+ holders', '💰 $1M+ market cap', '🏆 Competitions']
+        },
+        {
+          phase: 'Phase 4: NFT DROP',
+          status: null,
+          emoji: '💎',
+          gradient: 'from-[#FFD700] to-[#ff7f00]',
+          items: ['🎨 10K NFT collection', '🎁 1M+ $BLOB = 3 free NFTs', '🎁 100K+ $BLOB = 2 free NFTs', '🎁 10K+ $BLOB = 1 free NFT', '💰 Public: 0.5 SOL']
+        }
+      ].map((phase, i) => (
+        <div key={i} className="flex gap-4">
+          <div className={`w-12 h-12 flex-shrink-0 bg-gradient-to-br ${phase.gradient} rounded-full flex items-center justify-center border-4 border-black`}>
+            <span className="text-xl">{phase.emoji}</span>
+          </div>
+          <div className="flex-1 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-xl p-4">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <h3 className="text-base font-bold text-white">{phase.phase}</h3>
+              {phase.status && (
+                <span className={`px-2 py-1 ${phase.statusColor} rounded-full text-[10px] font-bold`}>
+                  {phase.status}
+                </span>
+              )}
             </div>
-
-            {/* Phase 2 */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between flex-row-reverse">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#4da7f2] to-[#2ec08b] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">👻</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#4da7f2]/30 rounded-2xl p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-bold text-white">Phase 2: GROW</h3>
-                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-bold">IN PROGRESS</span>
-                  </div>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>🔄 Tier system active</li>
-                    <li>🎯 1,000+ holders</li>
-                    <li>📱 Viral campaigns</li>
-                    <li>🤝 Partnerships</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Phase 3 */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#2ec08b] to-[#fffd13] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">🌊</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">Phase 3: EXPAND</h3>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>💱 DEX listings</li>
-                    <li>🎯 10,000+ holders</li>
-                    <li>💰 $1M+ market cap</li>
-                    <li>🏆 Competitions</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Phase 4 */}
-            <div className="relative">
-              <div className="flex items-center justify-between flex-row-reverse">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#ff7f00] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">💎</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">Phase 4: NFT DROP</h3>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>🎨 10K NFT collection</li>
-                    <li>🎁 1M+ $BLOB = 3 free NFTs</li>
-                    <li>🎁 100K+ $BLOB = 2 free NFTs</li>
-                    <li>🎁 10K+ $BLOB = 1 free NFT</li>
-                    <li>💰 Public: 0.5 SOL</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            <ul className="text-xs text-gray-400 space-y-1">
+              {phase.items.map((item, j) => (
+                <li key={j}>{item}</li>
+              ))}
+            </ul>
           </div>
         </div>
+      ))}
+    </div>
+
+    {/* DESKTOP: Original zigzag layout */}
+    <div className="hidden md:block space-y-12">
+      {/* Оставь оригинальный desktop код как есть */}
+    </div>
+  </div>
+</div>
 
         
 
-        {/* Holder Rewards */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
-            Phase 4: Holder Rewards 🎁
-          </h2>
-          
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left py-3 px-4 text-white">$BLOB Balance</th>
-                  <th className="text-left py-3 px-4 text-white">Tier</th>
-                  <th className="text-left py-3 px-4 text-white">Free NFTs</th>
-                  <th className="text-left py-3 px-4 text-white">Total Value*</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-400">
-                <tr className="border-b border-gray-800/50">
-                  <td className="py-3 px-4">1,000,000+</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold">
-                      👑 Legendary
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-white">3 NFTs</td>
-                  <td className="py-3 px-4 text-green-400">~1.5 SOL</td>
-                </tr>
-                <tr className="border-b border-gray-800/50">
-                  <td className="py-3 px-4">100,000 - 999,999</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-bold">
-                      💎 Rare
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-white">2 NFTs</td>
-                  <td className="py-3 px-4 text-green-400">~1.0 SOL</td>
-                </tr>
-                <tr className="border-b border-gray-800/50">
-                  <td className="py-3 px-4">10,000 - 99,999</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-bold">
-                      🔵 Uncommon
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-white">1 NFT</td>
-                  <td className="py-3 px-4 text-green-400">~0.5 SOL</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4">0 - 9,999</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-xs font-bold">
-                      ⚪ Common
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">—</td>
-                  <td className="py-3 px-4 text-gray-500">Buy at mint</td>
-                </tr>
-              </tbody>
-            </table>
-            
-            <p className="text-xs text-gray-500 text-center mt-6">
-              * Based on 0.5 SOL public mint price. Snapshot taken 24h before mint.
-            </p>
+{/* Holder Rewards */}
+<div className="max-w-4xl mx-auto mb-12">
+  <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
+    Phase 4: Holder Rewards 🎁
+  </h2>
+  
+  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
+    
+    {/* MOBILE: Cards */}
+    <div className="md:hidden space-y-4">
+      {[
+        {
+          balance: '1,000,000+',
+          tier: '👑 Legendary',
+          tierColor: 'bg-yellow-500/20 text-yellow-400',
+          nfts: '3 NFTs',
+          value: '~1.5 SOL'
+        },
+        {
+          balance: '100,000 - 999,999',
+          tier: '💎 Rare',
+          tierColor: 'bg-pink-500/20 text-pink-400',
+          nfts: '2 NFTs',
+          value: '~1.0 SOL'
+        },
+        {
+          balance: '10,000 - 99,999',
+          tier: '🔵 Uncommon',
+          tierColor: 'bg-blue-500/20 text-blue-400',
+          nfts: '1 NFT',
+          value: '~0.5 SOL'
+        },
+        {
+          balance: '0 - 9,999',
+          tier: '⚪ Common',
+          tierColor: 'bg-gray-500/20 text-gray-400',
+          nfts: '—',
+          value: 'Buy at mint'
+        }
+      ].map((row, i) => (
+        <div key={i} className="bg-black/40 rounded-lg p-4 border border-[#FFD700]/20">
+          <div className="flex justify-between items-start mb-3">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">$BLOB Balance</p>
+              <p className="text-sm font-bold text-white">{row.balance}</p>
+            </div>
+            <span className={`px-2 py-1 ${row.tierColor} rounded text-[10px] font-bold`}>
+              {row.tier}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Free NFTs</p>
+              <p className="text-sm font-bold text-white">{row.nfts}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500 mb-1">Total Value*</p>
+              <p className="text-sm font-bold text-green-400">{row.value}</p>
+            </div>
           </div>
         </div>
+      ))}
+    </div>
 
-      </div> 
+    {/* DESKTOP: Table */}
+    <div className="hidden md:block overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-gray-800">
+            <th className="text-left py-3 px-4 text-white">$BLOB Balance</th>
+            <th className="text-left py-3 px-4 text-white">Tier</th>
+            <th className="text-left py-3 px-4 text-white">Free NFTs</th>
+            <th className="text-left py-3 px-4 text-white">Total Value*</th>
+          </tr>
+        </thead>
+        <tbody className="text-gray-400">
+          <tr className="border-b border-gray-800/50">
+            <td className="py-3 px-4">1,000,000+</td>
+            <td className="py-3 px-4">
+              <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold">
+                👑 Legendary
+              </span>
+            </td>
+            <td className="py-3 px-4 font-bold text-white">3 NFTs</td>
+            <td className="py-3 px-4 text-green-400">~1.5 SOL</td>
+          </tr>
+          <tr className="border-b border-gray-800/50">
+            <td className="py-3 px-4">100,000 - 999,999</td>
+            <td className="py-3 px-4">
+              <span className="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-bold">
+                💎 Rare
+              </span>
+            </td>
+            <td className="py-3 px-4 font-bold text-white">2 NFTs</td>
+            <td className="py-3 px-4 text-green-400">~1.0 SOL</td>
+          </tr>
+          <tr className="border-b border-gray-800/50">
+            <td className="py-3 px-4">10,000 - 99,999</td>
+            <td className="py-3 px-4">
+              <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-bold">
+                🔵 Uncommon
+              </span>
+            </td>
+            <td className="py-3 px-4 font-bold text-white">1 NFT</td>
+            <td className="py-3 px-4 text-green-400">~0.5 SOL</td>
+          </tr>
+          <tr>
+            <td className="py-3 px-4">0 - 9,999</td>
+            <td className="py-3 px-4">
+              <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-xs font-bold">
+                ⚪ Common
+              </span>
+            </td>
+            <td className="py-3 px-4">—</td>
+            <td className="py-3 px-4 text-gray-500">Buy at mint</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <p className="text-xs text-gray-500 text-center mt-6">
+      * Based on 0.5 SOL public mint price. Snapshot taken 24h before mint.
+    </p>
+  </div>
+</div>
       
       {/* Footer и завершающие секции */}
       <div className="space-y-12 mt-20">
@@ -641,68 +678,58 @@ export default function Home() {
           </div>
         </div>
 
-{/* Community & Social Links - с тонкой рамкой */}
-<div className="max-w-4xl mx-auto">
-  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-8">
-    <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-      Join Our Community
-    </h2>
-    
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-      {[
-        {
-          name: 'X (Twitter)',
-          logo: '/logos/twitter-logo.svg',
-          url: 'https://twitter.com/phablobs',
-          action: 'Follow @phablobs'
-        },
-        {
-          name: 'Telegram',
-          logo: '/logos/telegram-logo.svg',
-          url: 'https://t.me/phablobs',
-          action: 'Join Group'
-        },
-        {
-          name: 'Dexscreener',
-          logo: '/logos/dexscreener-logo.svg',
-          url: 'https://dhttps://dexscreener.com/.com/',
-          action: 'Track Chart'
-        }
-      ].map((social, index) => (
-        <a
-          key={index}
-          href={social.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex flex-col items-center gap-4"
-        >
-          {/* Логотип с рамкой */}
-          <div className="w-20 h-20 md:w-24 md:h-24 
-                          border border-[#ab0ff2]/20 
-                          rounded-xl flex items-center justify-center p-3
-                          bg-black/20 backdrop-blur-sm
-                          transition-all duration-300
-                          hover:border-[#ab0ff2]/40 hover:scale-105
-                          hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
-            <img 
-              src={social.logo}
-              alt={`${social.name} Logo`}
-              className="w-full h-auto object-contain"
-            />
-          </div>
-          
-          {/* Контент */}
-          <div className="text-center">
-            <h3 className="text-lg md:text-xl font-bold text-white mb-1">{social.name}</h3>
-            <p className="text-gray-400 text-sm md:text-base font-medium">
-              {social.action}
-            </p>
-          </div>
-        </a>
-      ))}
-    </div>
-  </div>
-</div>
+{/* Было: grid-cols-2 md:grid-cols-3 */}
+{/* Стало: grid-cols-3 md:grid-cols-3 */}
+
+<div className="grid grid-cols-3 md:grid-cols-3 gap-4 md:gap-8">
+  {[
+    {
+      name: 'X',
+      fullName: 'X (Twitter)',
+      action: 'Follow',
+      url: 'https://twitter.com/phablobs'
+    },
+    {
+      name: 'TG',
+      fullName: 'Telegram',
+      action: 'Join',
+      url: 'https://t.me/phablobs'
+    },
+    {
+      name: 'DEX',
+      fullName: 'Dexscreener',
+      action: 'Track',
+      url: 'https://dexscreener.com/'
+    }
+  ].map((social, i) => (
+    <a
+      key={i}
+      href={social.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex flex-col items-center gap-2 md:gap-4 group"
+    >
+      <div className="w-16 h-16 md:w-24 md:h-24 
+                      border border-[#ab0ff2]/20 
+                      rounded-xl flex items-center justify-center
+                      bg-black/20 backdrop-blur-sm
+                      transition-all duration-300
+                      hover:border-[#ab0ff2]/40 hover:scale-105
+                      hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
+        <span className="text-xl md:text-3xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+          {social.name}
+        </span>
+      </div>
+      
+      <div className="text-center">
+        <h3 className="text-xs md:text-xl font-bold text-white hidden md:block">{social.fullName}</h3>
+        <p className="text-gray-400 text-[10px] md:text-base font-medium">
+          {social.action}
+        </p>
+      </div>
+    </a>
+  ))}
+</div>v>
 
         {/* FAQ Section */}
         <div className="max-w-4xl mx-auto">
