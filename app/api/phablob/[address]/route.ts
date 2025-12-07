@@ -8,6 +8,7 @@ import {
   getAvailableColors, 
   getTierInfo, 
   generateGradientFromBalance,
+  generateSolidBgFromBalance,
   COLOR_TIERS 
 } from '@/lib/color-tiers'
 
@@ -116,11 +117,33 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   const hash = generateHash(publicKey)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // Получаем 3 цвета: аватар + 2 для фона
-  const { avatarColor, bgColor1, bgColor2, tier, tierName } = generateGradientFromBalance(publicKey, tokenBalance)
-  const tierInfo = getTierInfo(tokenBalance)
+  // РАНДОМИЗАЦИЯ: 50% градиент, 50% сплошной цвет
+  const useGradient = hash % 2 === 0
   
-  // Выбираем аватар по цвету аватара
+  let avatarColor: string
+  let bgColor: string
+  let bgColor2: string | null = null
+  let tier: number
+  let tierName: string
+  
+  if (useGradient) {
+    // ГРАДИЕНТ (как было)
+    const result = generateGradientFromBalance(publicKey, tokenBalance)
+    avatarColor = result.avatarColor
+    bgColor = result.bgColor1
+    bgColor2 = result.bgColor2
+    tier = result.tier
+    tierName = result.tierName
+  } else {
+    // СПЛОШНОЙ ЦВЕТ (новое)
+    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
+    avatarColor = result.avatarColor
+    bgColor = result.bgColor
+    tier = result.tier
+    tierName = result.tierName
+  }
+  
+  const tierInfo = getTierInfo(tokenBalance)
   const blobAvatarDataUrl = getBlobAvatarDataUrl(avatarColor)
   
   console.log(`🎨 Phablob #${phablobNumber}`)
@@ -128,15 +151,21 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   console.log(`⭐ Tier ${tier}: ${tierName}`)
   console.log(`🎨 Colors unlocked: ${tierInfo.unlockedColors}/69`)
   console.log(`👻 Avatar: ${avatarColor}`)
-  console.log(`🌈 Background: ${bgColor1} → ${bgColor2}`)
+  if (useGradient) {
+    console.log(`🌈 Background: GRADIENT ${bgColor} → ${bgColor2}`)
+  } else {
+    console.log(`🎨 Background: SOLID ${bgColor}`)
+  }
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    ${bgColor2 ? `
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${bgColor1}" stop-opacity="1"/>
+      <stop offset="0%" stop-color="${bgColor}" stop-opacity="1"/>
       <stop offset="100%" stop-color="${bgColor2}" stop-opacity="1"/>
     </linearGradient>
+    ` : ''}
     
     <filter id="textShadow">
       <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
@@ -147,8 +176,8 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
     </filter>
   </defs>
   
-  <!-- СЛОЙ 1: ГРАДИЕНТНЫЙ ФОН -->
-  <rect width="800" height="800" fill="url(#bgGrad)"/>
+  <!-- СЛОЙ 1: ФОН (градиент ИЛИ сплошной) -->
+  <rect width="800" height="800" fill="${bgColor2 ? 'url(#bgGrad)' : bgColor}"/>
   
   <!-- СЛОЙ 2: ВОДЯНЫЕ ЗНАКИ -->
   <text x="100" y="150" font-family="Arial, sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
