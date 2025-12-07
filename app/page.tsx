@@ -641,57 +641,68 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Community & Social Links */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-8">
-            <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-              Join Our Community
-            </h2>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                {
-                  name: 'X (Twitter)',
-                  icon: '🐦',
-                  color: 'from-[#1DA1F2] to-[#1DA1F2]/70',
-                  url: 'https://twitter.com/phablobs',
-                  followers: 'Follow @phablobs'
-                },
-                {
-                  name: 'Telegram',
-                  icon: '📢',
-                  color: 'from-[#0088cc] to-[#0088cc]/70',
-                  url: 'https://t.me/phablobs',
-                  followers: 'Join Group'
-                },
-               
-                {
-                  name: 'Dextools',
-                  icon: '📊',
-                  color: 'from-[#ff7f00] to-[#ff7f00]/70',
-                  url: 'https://www.dextools.io',
-                  followers: 'Track Chart'
-                }
-              ].map((social, index) => (
-                <a
-                  key={index}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group"
-                >
-                  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/20 rounded-2xl p-6 hover:border-[#ab0ff2]/50 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(171,15,242,0.2)] h-full">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${social.color} rounded-2xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform text-3xl`}>
-                      {social.icon}
-                    </div>
-                    <h3 className="text-xl font-bold text-white text-center mb-2">{social.name}</h3>
-                    <p className="text-gray-400 text-sm text-center">{social.followers}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
+{/* Community & Social Links - с тонкой рамкой */}
+<div className="max-w-4xl mx-auto">
+  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-8">
+    <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+      Join Our Community
+    </h2>
+    
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+      {[
+        {
+          name: 'X (Twitter)',
+          logo: '/logos/twitter-logo.svg',
+          url: 'https://twitter.com/phablobs',
+          action: 'Follow @phablobs'
+        },
+        {
+          name: 'Telegram',
+          logo: '/logos/telegram-logo.svg',
+          url: 'https://t.me/phablobs',
+          action: 'Join Group'
+        },
+        {
+          name: 'Dexscreener',
+          logo: '/logos/dexscreener-logo.svg',
+          url: 'https://dhttps://dexscreener.com/.com/',
+          action: 'Track Chart'
+        }
+      ].map((social, index) => (
+        <a
+          key={index}
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col items-center gap-4"
+        >
+          {/* Логотип с рамкой */}
+          <div className="w-20 h-20 md:w-24 md:h-24 
+                          border border-[#ab0ff2]/20 
+                          rounded-xl flex items-center justify-center p-3
+                          bg-black/20 backdrop-blur-sm
+                          transition-all duration-300
+                          hover:border-[#ab0ff2]/40 hover:scale-105
+                          hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
+            <img 
+              src={social.logo}
+              alt={`${social.name} Logo`}
+              className="w-full h-auto object-contain"
+            />
           </div>
-        </div>
+          
+          {/* Контент */}
+          <div className="text-center">
+            <h3 className="text-lg md:text-xl font-bold text-white mb-1">{social.name}</h3>
+            <p className="text-gray-400 text-sm md:text-base font-medium">
+              {social.action}
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
 
         {/* FAQ Section */}
         <div className="max-w-4xl mx-auto">
