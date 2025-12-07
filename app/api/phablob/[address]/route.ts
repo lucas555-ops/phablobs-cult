@@ -14,6 +14,9 @@ import {
 const TOKEN_MINT = process.env.BLOB_TOKEN_MINT || 'TBA_AFTER_PUMPFUN_LAUNCH'
 const SOLANA_RPC = process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com'
 
+// Кэш для base64 аватаров (чтобы не скачивать повторно)
+const avatarCache: Record<string, string> = {}
+
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
 }
@@ -59,14 +62,62 @@ async function getTokenBalance(walletAddress: string): Promise<number> {
   }
 }
 
-// ВАЖНОЕ ИЗМЕНЕНИЕ: Заменим работу с файловой системой на прямые URL
-function getBlobAvatarUrl(color: string): string {
+// Функция для получения аватара как base64
+async function getBlobAvatarBase64(color: string): Promise<string> {
   const cleanColor = color.replace('#', '')
-  // Используем публичный URL к аватарам на вашем Vercel домене
-  return `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
+  const cacheKey = `avatar-${cleanColor}`
+  
+  // Проверяем кэш
+  if (avatarCache[cacheKey]) {
+    return avatarCache[cacheKey]
+  }
+  
+  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
+  
+  try {
+    console.log(`⬇️ Downloading avatar: ${cleanColor}`)
+    const response = await fetch(avatarUrl)
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch avatar ${cleanColor}: ${response.status}`)
+      throw new Error(`Avatar not found: ${cleanColor}`)
+    }
+    
+    const buffer = await response.arrayBuffer()
+    const base64 = Buffer.from(buffer).toString('base64')
+    const dataUrl = `data:image/png;base64,${base64}`
+    
+    // Сохраняем в кэш
+    avatarCache[cacheKey] = dataUrl
+    console.log(`✅ Avatar cached: ${cleanColor} (${base64.length} bytes)`)
+    
+    return dataUrl
+  } catch (error) {
+    console.error(`Error fetching avatar for color ${color}:`, error)
+    
+    // Fallback: создаём простой цветной круг
+    const fallbackSvg = `<svg width="360" height="360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${color}" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="${color}" stop-opacity="0.4"/>
+        </linearGradient>
+        <filter id="shadow">
+          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+      <circle cx="180" cy="180" r="150" fill="url(#grad)" filter="url(#shadow)"/>
+      <circle cx="180" cy="180" r="80" fill="white" opacity="0.15"/>
+    </svg>`
+    
+    const fallbackDataUrl = `data:image/svg+xml;base64,${Buffer.from(fallbackSvg).toString('base64')}`
+    avatarCache[cacheKey] = fallbackDataUrl
+    
+    return fallbackDataUrl
+  }
 }
 
-// НОВАЯ ФУНКЦИЯ: Создание композитного изображения (фон + аватар)
+// Создание PNG из SVG
 async function generateCompositePNG(svgContent: string): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   
@@ -85,7 +136,8 @@ async function generateCompositePNG(svgContent: string): Promise<Buffer> {
   return pngBuffer;
 }
 
-function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
+// Генерация SVG с встроенным base64 аватаром
+async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promise<string> {
   const hash = generateHash(publicKey)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
@@ -113,12 +165,14 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   }
   
   const tierInfo = getTierInfo(tokenBalance)
-  const blobAvatarUrl = getBlobAvatarUrl(avatarColor)
   
-  console.log(`🎨 Phablob #${phablobNumber}`)
+  // Получаем аватар как base64
+  const blobAvatarDataUrl = await getBlobAvatarBase64(avatarColor)
+  
+  console.log(`🎨 Generated Phablob #${phablobNumber}`)
   console.log(`💰 Balance: ${tokenBalance.toLocaleString()} $BLOB`)
   console.log(`⭐ Tier ${tier}: ${tierName}`)
-  console.log(`🎨 Avatar URL: ${blobAvatarUrl}`)
+  console.log(`🎨 Using color: ${avatarColor}`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -152,9 +206,9 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
   <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
   
-  <!-- СЛОЙ 3: АВАТАР (теперь через абсолютный URL) -->
+  <!-- СЛОЙ 3: АВАТАР (встроенный как base64) -->
   <image 
-    href="${blobAvatarUrl}" 
+    href="${blobAvatarDataUrl}" 
     x="220" 
     y="220" 
     width="360" 
@@ -226,7 +280,7 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
 </svg>`
 }
 
-// ПРОСТЕЙШИЙ СПОСОБ: Конвертируем Buffer в base64 строку
+// Конвертация Buffer в base64 строку
 function bufferToBase64(buffer: Buffer): string {
   return buffer.toString('base64')
 }
@@ -257,22 +311,23 @@ export async function GET(
       )
     }
 
+    console.log(`🚀 Generating Phablob for address: ${address}`)
+    
     const tokenBalance = await getTokenBalance(address)
-    const svgContent = generateAvatarSVG(address, tokenBalance)
+    const svgContent = await generateAvatarSVG(address, tokenBalance)
 
     if (format === 'png') {
       try {
-        console.log('🔄 Generating PNG from composite SVG...')
+        console.log('🔄 Converting SVG to PNG...')
         
-        // Используем новую функцию для генерации композитного PNG
         const pngBuffer = await generateCompositePNG(svgContent)
         
         const fileSizeMB = pngBuffer.length / (1024 * 1024)
-        console.log(`📊 Generated PNG size: ${fileSizeMB.toFixed(2)} MB`)
+        console.log(`📊 PNG size: ${fileSizeMB.toFixed(2)} MB`)
         
         // Если файл слишком большой для Telegram, сжимаем
         if (fileSizeMB > 5) {
-          console.log('⚡ Compressing PNG for Telegram (5MB limit)...')
+          console.log('⚡ Compressing PNG for Telegram...')
           const sharp = (await import('sharp')).default
           const compressedBuffer = await sharp(pngBuffer)
             .resize(600, 600, {
@@ -282,36 +337,36 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-          // Конвертируем в base64 и возвращаем
           const base64Image = bufferToBase64(compressedBuffer)
           return new NextResponse(base64Image, {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'public, max-age=31536000, immutable',
-              'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
+              'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
+              'Content-Length': compressedBuffer.length.toString()
             },
           })
         }
         
-        // Конвертируем в base64 и возвращаем
         const base64Image = bufferToBase64(pngBuffer)
         return new NextResponse(base64Image, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
-            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
+            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
+            'Content-Length': pngBuffer.length.toString()
           },
         })
         
       } catch (error) {
-        console.error('❌ PNG generation failed:', error)
+        console.error('❌ PNG conversion failed:', error)
         
-        // Fallback: создаем простую PNG даже при ошибке
+        // Fallback: создаем простую PNG
         try {
           const sharp = (await import('sharp')).default
           const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
             <rect width="800" height="800" fill="#8B5CF6"/>
-            <text x="400" y="400" text-anchor="middle" fill="white" font-size="24" font-family="Arial">PNG Generation Failed</text>
+            <text x="400" y="400" text-anchor="middle" fill="white" font-size="24" font-family="Arial">PNG Error</text>
           </svg>`
           
           const fallbackPng = await sharp(Buffer.from(fallbackSVG))
@@ -326,7 +381,7 @@ export async function GET(
             },
           })
         } catch (fallbackError) {
-          console.error('❌ Fallback PNG also failed:', fallbackError)
+          console.error('❌ Fallback also failed:', fallbackError)
           return new NextResponse('PNG generation error', { status: 500 })
         }
       }
@@ -341,18 +396,18 @@ export async function GET(
     })
     
   } catch (error) {
-    console.error('Error:', error)
+    console.error('❌ Route handler error:', error)
     
     const format = new URL(request.url).searchParams.get('format') || 'svg'
     
     if (format === 'png') {
-      const errorSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
-        <rect width="800" height="800" fill="#FF6B6B"/>
-        <text x="400" y="400" text-anchor="middle" fill="white" font-size="20" font-family="Arial">Error: ${error instanceof Error ? error.message.substring(0, 50) : 'Unknown error'}</text>
-      </svg>`
-      
       try {
         const sharp = (await import('sharp')).default
+        const errorSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+          <rect width="800" height="800" fill="#FF6B6B"/>
+          <text x="400" y="400" text-anchor="middle" fill="white" font-size="20" font-family="Arial">Error</text>
+        </svg>`
+        
         const errorPng = await sharp(Buffer.from(errorSVG))
           .png()
           .toBuffer()
@@ -369,10 +424,9 @@ export async function GET(
       }
     }
     
-    // Для SVG ошибок возвращаем SVG
     const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
       <rect width="800" height="800" fill="#ab0ff2"/>
-      <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error: ${error instanceof Error ? error.message : 'Unknown error'}</text>
+      <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error</text>
     </svg>`
     
     return new NextResponse(fallbackSVG, {
