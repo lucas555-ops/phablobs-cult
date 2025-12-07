@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Connection, PublicKey } from '@solana/web3.js'
-import { readFileSync, existsSync } from 'fs'
-import { join } from 'path'
 
 // Импортируем цветовую систему
 import { 
@@ -72,7 +70,6 @@ function getBlobAvatarUrl(color: string): string {
 async function generateCompositePNG(svgContent: string): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
   
-  // ВАЖНО: Увеличиваем лимиты памяти для больших SVG
   const pngBuffer = await sharp(Buffer.from(svgContent), {
     density: 300,
     unlimited: true
@@ -116,7 +113,6 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   }
   
   const tierInfo = getTierInfo(tokenBalance)
-  // ИЗМЕНЕНИЕ: Используем URL вместо base64
   const blobAvatarUrl = getBlobAvatarUrl(avatarColor)
   
   console.log(`🎨 Phablob #${phablobNumber}`)
@@ -124,7 +120,6 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   console.log(`⭐ Tier ${tier}: ${tierName}`)
   console.log(`🎨 Avatar URL: ${blobAvatarUrl}`)
   
-  // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: Встраиваем PNG через абсолютный URL
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
@@ -231,6 +226,11 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
 </svg>`
 }
 
+// Вспомогательная функция для конвертации Buffer в Uint8Array
+function bufferToUint8Array(buffer: Buffer): Uint8Array {
+  return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -282,7 +282,8 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-          return new NextResponse(compressedBuffer, {
+          // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Конвертируем Buffer в Uint8Array
+          return new NextResponse(bufferToUint8Array(compressedBuffer), {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'public, max-age=31536000, immutable',
@@ -291,7 +292,8 @@ export async function GET(
           })
         }
         
-        return new NextResponse(pngBuffer, {
+        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Конвертируем Buffer в Uint8Array
+        return new NextResponse(bufferToUint8Array(pngBuffer), {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
@@ -314,7 +316,7 @@ export async function GET(
             .png()
             .toBuffer()
           
-          return new NextResponse(fallbackPng, {
+          return new NextResponse(bufferToUint8Array(fallbackPng), {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'no-cache',
@@ -338,9 +340,7 @@ export async function GET(
   } catch (error) {
     console.error('Error:', error)
     
-    // Для PNG ошибок возвращаем PNG
-    const { searchParams } = new URL(request.url)
-    const format = searchParams.get('format') || 'svg'
+    const format = new URL(request.url).searchParams.get('format') || 'svg'
     
     if (format === 'png') {
       const errorSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
@@ -354,7 +354,7 @@ export async function GET(
           .png()
           .toBuffer()
         
-        return new NextResponse(errorPng, {
+        return new NextResponse(bufferToUint8Array(errorPng), {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'no-cache',
