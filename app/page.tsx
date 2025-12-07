@@ -438,78 +438,99 @@ export default function Home() {
         </div>
 
         {/* Roadmap Section */}
-<div className="max-w-6xl mx-auto mb-8 md:mb-12">
-  <h2 className="text-3xl md:text-4xl font-black text-center mb-8 md:mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-    Roadmap
-  </h2>
-  
-  <div className="relative">
-    {/* Vertical line - только на desktop */}
-    <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
-    
-    {/* MOBILE: Stack layout */}
-    <div className="md:hidden space-y-6">
-      {[
-        {
-          phase: 'Phase 1: LAUNCH',
-          status: 'LIVE',
-          statusColor: 'bg-green-500/20 text-green-400',
-          emoji: '🚀',
-          gradient: 'from-[#ab0ff2] to-[#4da7f2]',
-          items: ['✅ Token on pump.fun', '✅ Website live', '✅ Free generator', '✅ 69 unique avatars']
-        },
-        {
-          phase: 'Phase 2: GROW',
-          status: 'IN PROGRESS',
-          statusColor: 'bg-blue-500/20 text-blue-400',
-          emoji: '👻',
-          gradient: 'from-[#4da7f2] to-[#2ec08b]',
-          items: ['🔄 Tier system active', '🎯 1,000+ holders', '📱 Viral campaigns', '🤝 Partnerships']
-        },
-        {
-          phase: 'Phase 3: EXPAND',
-          status: null,
-          emoji: '🌊',
-          gradient: 'from-[#2ec08b] to-[#fffd13]',
-          items: ['💱 DEX listings', '🎯 10,000+ holders', '💰 $1M+ market cap', '🏆 Competitions']
-        },
-        {
-          phase: 'Phase 4: NFT DROP',
-          status: null,
-          emoji: '💎',
-          gradient: 'from-[#FFD700] to-[#ff7f00]',
-          items: ['🎨 10K NFT collection', '🎁 1M+ $BLOB = 3 free NFTs', '🎁 100K+ $BLOB = 2 free NFTs', '🎁 10K+ $BLOB = 1 free NFT', '💰 Public: 0.5 SOL']
-        }
-      ].map((phase, i) => (
-        <div key={i} className="flex gap-4">
-          <div className={`w-12 h-12 flex-shrink-0 bg-gradient-to-br ${phase.gradient} rounded-full flex items-center justify-center border-4 border-black`}>
-            <span className="text-xl">{phase.emoji}</span>
-          </div>
-          <div className="flex-1 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-xl p-4">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <h3 className="text-base font-bold text-white">{phase.phase}</h3>
-              {phase.status && (
-                <span className={`px-2 py-1 ${phase.statusColor} rounded-full text-[10px] font-bold`}>
-                  {phase.status}
-                </span>
-              )}
+        <div className="max-w-6xl mx-auto mb-12">
+          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+            Roadmap
+          </h2>
+          
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
+            
+            {/* Phase 1 */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-xl font-bold text-white">Phase 1: LAUNCH</h3>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">LIVE</span>
+                  </div>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>✅ Token on pump.fun</li>
+                    <li>✅ Website live</li>
+                    <li>✅ Free generator</li>
+                    <li>✅ 69 unique avatars</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <ul className="text-xs text-gray-400 space-y-1">
-              {phase.items.map((item, j) => (
-                <li key={j}>{item}</li>
-              ))}
-            </ul>
+
+            {/* Phase 2 */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between flex-row-reverse">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#4da7f2] to-[#2ec08b] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">👻</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#4da7f2]/30 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-xl font-bold text-white">Phase 2: GROW</h3>
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-bold">IN PROGRESS</span>
+                  </div>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>🔄 Tier system active</li>
+                    <li>🎯 1,000+ holders</li>
+                    <li>📱 Viral campaigns</li>
+                    <li>🤝 Partnerships</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 3 */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#2ec08b] to-[#fffd13] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">🌊</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Phase 3: EXPAND</h3>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>💱 DEX listings</li>
+                    <li>🎯 10,000+ holders</li>
+                    <li>💰 $1M+ market cap</li>
+                    <li>🏆 Competitions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 4 */}
+            <div className="relative">
+              <div className="flex items-center justify-between flex-row-reverse">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#ff7f00] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">💎</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Phase 4: NFT DROP</h3>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>🎨 10K NFT collection</li>
+                    <li>🎁 1M+ $BLOB = 3 free NFTs</li>
+                    <li>🎁 100K+ $BLOB = 2 free NFTs</li>
+                    <li>🎁 10K+ $BLOB = 1 free NFT</li>
+                    <li>💰 Public: 0.5 SOL</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      ))}
-    </div>
-
-    {/* DESKTOP: Original zigzag layout */}
-    <div className="hidden md:block space-y-12">
-      {/* Оставь оригинальный desktop код как есть */}
-    </div>
-  </div>
-</div>
 
         
 
@@ -729,7 +750,7 @@ export default function Home() {
       </div>
     </a>
   ))}
-</div>v>
+</div>
 
         {/* FAQ Section */}
         <div className="max-w-4xl mx-auto">
