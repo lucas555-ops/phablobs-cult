@@ -532,7 +532,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ... предыдущий код остается без изменений до Holder Rewards ... */}
+        
 
         {/* Holder Rewards */}
         <div className="max-w-4xl mx-auto mb-12">
@@ -600,7 +600,7 @@ export default function Home() {
           </div>
         </div>
 
-      </div> {/* ← ЭТОТ ЗАКРЫВАЮЩИЙ DIV ВАЖЕН! Он закрывает container mx-auto */}
+      </div> 
       
       {/* Footer и завершающие секции */}
       <div className="space-y-12 mt-20">
