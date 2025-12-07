@@ -19,129 +19,6 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-// Генерация ФОНОВОГО SVG (без аватара)
-async function generateBackgroundSVG(publicKey: string): Promise<string> {
-  const hash = generateHash(publicKey)
-  const phablobNumber = (hash % 9999).toString().padStart(4, '0')
-  
-  const useGradient = hash % 2 === 0
-  const tokenBalance = 0
-  
-  let bgColor: string
-  let bgColor2: string | null = null
-  
-  if (useGradient) {
-    const result = generateGradientFromBalance(publicKey, tokenBalance)
-    bgColor = result.bgColor1
-    bgColor2 = result.bgColor2
-  } else {
-    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
-    bgColor = result.bgColor
-  }
-  
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    ${bgColor2 ? `
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${bgColor}" stop-opacity="1"/>
-      <stop offset="100%" stop-color="${bgColor2}" stop-opacity="1"/>
-    </linearGradient>
-    ` : ''}
-    
-    <filter id="textShadow">
-      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
-    </filter>
-  </defs>
-  
-  <!-- ФОН -->
-  <rect width="800" height="800" fill="${bgColor2 ? 'url(#bgGrad)' : bgColor}"/>
-  
-  <!-- ВОДЯНЫЕ ЗНАКИ -->
-  <text x="100" y="150" font-family="Arial, sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
-  <text x="600" y="200" font-family="Arial, sans-serif" font-weight="900" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
-  <text x="50" y="500" font-family="Arial, sans-serif" font-weight="900" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
-  <text x="550" y="650" font-family="Arial, sans-serif" font-weight="900" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
-  
-  <text x="200" y="80" font-family="Arial, sans-serif" font-weight="900" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
-  <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
-  <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
-  
-  <!-- ТЕКСТ PHABLOBS -->
-  <text 
-    x="400" 
-    y="90" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-weight="900" 
-    font-size="68" 
-    fill="white" 
-    filter="url(#textShadow)" 
-    letter-spacing="6"
-  >
-    PHABLOBS
-  </text>
-  
-  <!-- НОМЕР -->
-  <text 
-    x="400" 
-    y="720" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-weight="900" 
-    font-size="52" 
-    fill="white" 
-    filter="url(#textShadow)" 
-    letter-spacing="4"
-  >
-    #${phablobNumber}
-  </text>
-  
-  <!-- ТЕКСТ PHABLOBS -->
-  <text 
-    x="400" 
-    y="90" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-weight="900" 
-    font-size="68" 
-    fill="white" 
-    filter="url(#textShadow)" 
-    letter-spacing="6"
-  >
-    PHABLOBS
-  </text>
-  
-  <!-- НОМЕР -->
-  <text 
-    x="400" 
-    y="720" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-weight="900" 
-    font-size="52" 
-    fill="white" 
-    filter="url(#textShadow)" 
-    letter-spacing="4"
-  >
-    #${phablobNumber}
-  </text>
-  
-  <!-- URL -->
-  <text 
-    x="400" 
-    y="760" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-size="18" 
-    fill="white" 
-    opacity="0.9"
-  >
-    phablobs.xyz
-  </text>
-</svg>`
-}
-
 // Получить цвет аватара
 function getAvatarColor(publicKey: string): string {
   const hash = generateHash(publicKey)
@@ -158,70 +35,140 @@ function getAvatarColor(publicKey: string): string {
   }
 }
 
-// Композитинг: Фон + Аватар + Текст поверх
-async function generateCompositePNG(publicKey: string): Promise<Buffer> {
-  const sharp = (await import('sharp')).default
+// Скачать аватар и конвертировать в base64
+async function getAvatarBase64(color: string): Promise<string> {
+  const cleanColor = color.replace('#', '')
+  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
   
+  console.log(`⬇️ Downloading avatar: ${avatarUrl}`)
+  
+  const response = await fetch(avatarUrl)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch avatar: ${response.status}`)
+  }
+  
+  const buffer = await response.arrayBuffer()
+  const base64 = Buffer.from(buffer).toString('base64')
+  
+  console.log(`✅ Avatar downloaded: ${base64.length} bytes`)
+  
+  return `data:image/png;base64,${base64}`
+}
+
+// Генерация полного SVG с встроенным base64 аватаром
+async function generateCompleteSVG(publicKey: string): Promise<string> {
   const hash = generateHash(publicKey)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // 1. Генерируем фон (С текстом и водяными знаками)
-  const backgroundSVG = await generateBackgroundSVG(publicKey)
+  const useGradient = hash % 2 === 0
+  const tokenBalance = 0
   
-  // 2. Скачиваем аватар
-  const avatarColor = getAvatarColor(publicKey)
-  const cleanColor = avatarColor.replace('#', '')
-  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
+  let avatarColor: string
+  let bgColor: string
+  let bgColor2: string | null = null
   
-  console.log(`🖼️ Downloading avatar: ${avatarUrl}`)
-  
-  const avatarResponse = await fetch(avatarUrl)
-  if (!avatarResponse.ok) {
-    throw new Error(`Failed to fetch avatar: ${avatarResponse.status}`)
+  if (useGradient) {
+    const result = generateGradientFromBalance(publicKey, tokenBalance)
+    avatarColor = result.avatarColor
+    bgColor = result.bgColor1
+    bgColor2 = result.bgColor2
+  } else {
+    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
+    avatarColor = result.avatarColor
+    bgColor = result.bgColor
   }
   
-  const avatarBuffer = Buffer.from(await avatarResponse.arrayBuffer())
+  // Скачиваем аватар как base64
+  const avatarBase64 = await getAvatarBase64(avatarColor)
   
-  // 3. Добавляем тень к аватару через SVG
-  const avatarWithShadowSVG = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="360" height="360" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+  console.log(`🎨 Generating Phablob #${phablobNumber}`)
+  
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+    ${bgColor2 ? `
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${bgColor}" stop-opacity="1"/>
+      <stop offset="100%" stop-color="${bgColor2}" stop-opacity="1"/>
+    </linearGradient>
+    ` : ''}
+    
+    <filter id="textShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
+    </filter>
+    
+    <filter id="avatarShadow">
       <feDropShadow dx="0" dy="15" stdDeviation="25" flood-color="black" flood-opacity="0.6"/>
     </filter>
   </defs>
-  <image href="${avatarUrl}" x="0" y="0" width="360" height="360" filter="url(#shadow)"/>
+  
+  <!-- ФОН -->
+  <rect width="800" height="800" fill="${bgColor2 ? 'url(#bgGrad)' : bgColor}"/>
+  
+  <!-- ВОДЯНЫЕ ЗНАКИ -->
+  <text x="100" y="150" font-family="sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
+  <text x="600" y="200" font-family="sans-serif" font-weight="900" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
+  <text x="50" y="500" font-family="sans-serif" font-weight="900" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
+  <text x="550" y="650" font-family="sans-serif" font-weight="900" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
+  
+  <text x="200" y="80" font-family="sans-serif" font-weight="900" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
+  <text x="120" y="380" font-family="sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
+  <text x="580" y="480" font-family="sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
+  
+  <!-- АВАТАР (BASE64!) -->
+  <image 
+    href="${avatarBase64}" 
+    x="220" 
+    y="220" 
+    width="360" 
+    height="360"
+    preserveAspectRatio="xMidYMid meet"
+    filter="url(#avatarShadow)"
+  />
+  
+  <!-- ТЕКСТ PHABLOBS -->
+  <text 
+    x="400" 
+    y="90" 
+    text-anchor="middle" 
+    font-family="sans-serif" 
+    font-weight="900" 
+    font-size="68" 
+    fill="white" 
+    filter="url(#textShadow)" 
+    letter-spacing="6"
+  >
+    PHABLOBS
+  </text>
+  
+  <!-- НОМЕР -->
+  <text 
+    x="400" 
+    y="720" 
+    text-anchor="middle" 
+    font-family="sans-serif" 
+    font-weight="900" 
+    font-size="52" 
+    fill="white" 
+    filter="url(#textShadow)" 
+    letter-spacing="4"
+  >
+    #${phablobNumber}
+  </text>
+  
+  <!-- URL -->
+  <text 
+    x="400" 
+    y="760" 
+    text-anchor="middle" 
+    font-family="sans-serif" 
+    font-size="18" 
+    fill="white" 
+    opacity="0.9"
+  >
+    phablobs.xyz
+  </text>
 </svg>`
-  
-  const avatarWithShadowPNG = await sharp(Buffer.from(avatarWithShadowSVG))
-    .resize(360, 360)
-    .png()
-    .toBuffer()
-  
-  // 4. Конвертируем фон в PNG
-  const backgroundPNG = await sharp(Buffer.from(backgroundSVG))
-    .png()
-    .toBuffer()
-  
-  // 5. Композитим: фон + аватар с тенью
-  const compositePNG = await sharp(backgroundPNG)
-    .composite([
-      {
-        input: avatarWithShadowPNG,
-        top: 220,
-        left: 220,
-        blend: 'over'
-      }
-    ])
-    .png({
-      quality: 100,
-      compressionLevel: 6
-    })
-    .toBuffer()
-  
-  console.log(`✅ Composite PNG created!`)
-  
-  return compositePNG
 }
 
 export async function GET(
@@ -250,10 +197,24 @@ export async function GET(
     }
 
     console.log(`🚀 Generating Phablob for: ${address}`)
+    
+    // Генерируем полный SVG с base64 аватаром
+    const svgContent = await generateCompleteSVG(address)
 
     if (format === 'png') {
       try {
-        const pngBuffer = await generateCompositePNG(address)
+        const sharp = (await import('sharp')).default
+        
+        console.log('🔄 Converting SVG to PNG...')
+        
+        const pngBuffer = await sharp(Buffer.from(svgContent), {
+          density: 300
+        })
+        .png({
+          quality: 100,
+          compressionLevel: 6
+        })
+        .toBuffer()
         
         const fileSizeMB = pngBuffer.length / (1024 * 1024)
         console.log(`📊 PNG size: ${fileSizeMB.toFixed(2)} MB`)
@@ -262,7 +223,6 @@ export async function GET(
         let finalBuffer = pngBuffer
         if (fileSizeMB > 5) {
           console.log('⚡ Compressing...')
-          const sharp = (await import('sharp')).default
           finalBuffer = await sharp(pngBuffer)
             .resize(600, 600, { fit: 'inside' })
             .png({ quality: 90 })
@@ -274,34 +234,16 @@ export async function GET(
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
             'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
-            'Content-Length': finalBuffer.length.toString()
           },
         })
         
       } catch (error) {
-        console.error('❌ PNG generation failed:', error)
-        
-        // Fallback
-        const sharp = (await import('sharp')).default
-        const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
-          <rect width="800" height="800" fill="#8B5CF6"/>
-          <text x="400" y="400" text-anchor="middle" fill="white" font-size="24">Error</text>
-        </svg>`
-        
-        const fallbackPng = await sharp(Buffer.from(fallbackSVG)).png().toBuffer()
-        
-        return new NextResponse(new Uint8Array(fallbackPng), {
-          headers: {
-            'Content-Type': 'image/png',
-            'Cache-Control': 'no-cache',
-          },
-        })
+        console.error('❌ PNG conversion failed:', error)
+        return new NextResponse('PNG generation error', { status: 500 })
       }
     }
 
-    // Возвращаем SVG (без аватара, просто фон)
-    const svgContent = await generateBackgroundSVG(address)
-    
+    // Возвращаем SVG
     return new NextResponse(svgContent, {
       headers: {
         'Content-Type': 'image/svg+xml',
