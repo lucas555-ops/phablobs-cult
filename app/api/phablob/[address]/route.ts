@@ -116,30 +116,34 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   const hash = generateHash(publicKey)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
-  // Получаем градиент на основе баланса токена
-  const { color1, color2, tier, tierName } = generateGradientFromBalance(publicKey, tokenBalance)
+  // Получаем 3 цвета: аватар + 2 для фона
+  const { avatarColor, bgColor1, bgColor2, tier, tierName } = generateGradientFromBalance(publicKey, tokenBalance)
   const tierInfo = getTierInfo(tokenBalance)
   
-  // Выбираем аватар по первому цвету градиента
-  const blobAvatarDataUrl = getBlobAvatarDataUrl(color1)
+  // Выбираем аватар по цвету аватара
+  const blobAvatarDataUrl = getBlobAvatarDataUrl(avatarColor)
   
   console.log(`🎨 Phablob #${phablobNumber}`)
   console.log(`💰 Balance: ${tokenBalance.toLocaleString()} $BLOB`)
   console.log(`⭐ Tier ${tier}: ${tierName}`)
   console.log(`🎨 Colors unlocked: ${tierInfo.unlockedColors}/69`)
-  console.log(`🌈 Gradient: ${color1} → ${color2}`)
-  console.log(`👻 Avatar: blob-avatar-${color1.replace('#', '')}.png`)
+  console.log(`👻 Avatar: ${avatarColor}`)
+  console.log(`🌈 Background: ${bgColor1} → ${bgColor2}`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${color1}" stop-opacity="1"/>
-      <stop offset="100%" stop-color="${color2}" stop-opacity="1"/>
+      <stop offset="0%" stop-color="${bgColor1}" stop-opacity="1"/>
+      <stop offset="100%" stop-color="${bgColor2}" stop-opacity="1"/>
     </linearGradient>
     
     <filter id="textShadow">
       <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
+    </filter>
+    
+    <filter id="avatarShadow">
+      <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="black" flood-opacity="0.5"/>
     </filter>
   </defs>
   
@@ -156,6 +160,16 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
   <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
   
+  <!-- СЛОЙ 2.5: ТЕМНАЯ ПОДЛОЖКА ПОД АВАТАРОМ -->
+  <rect 
+    x="210" 
+    y="210" 
+    width="380" 
+    height="380" 
+    fill="rgba(0,0,0,0.3)"
+    rx="30"
+  />
+  
   <!-- СЛОЙ 3: АВАТАР -->
   <image 
     href="${blobAvatarDataUrl}" 
@@ -164,6 +178,19 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
     width="360" 
     height="360"
     preserveAspectRatio="xMidYMid meet"
+    filter="url(#avatarShadow)"
+  />
+  
+  <!-- СЛОЙ 3.5: СВЕТЛАЯ РАМКА ВОКРУГ АВАТАРА -->
+  <rect 
+    x="220" 
+    y="220" 
+    width="360" 
+    height="360" 
+    fill="none" 
+    stroke="rgba(255,255,255,0.2)" 
+    stroke-width="2"
+    rx="20"
   />
   
   <!-- СЛОЙ 4: ТЕКСТ PHABLOBS -->
