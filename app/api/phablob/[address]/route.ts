@@ -226,6 +226,23 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
 </svg>`
 }
 
+// КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Функция для конвертации Buffer в правильный формат
+function createResponseFromBuffer(buffer: Buffer): NextResponse {
+  // Способ 1: Создаем Blob из Buffer
+  const blob = new Blob([buffer], { type: 'image/png' });
+  
+  // Создаем ReadableStream из Blob
+  const stream = blob.stream();
+  
+  return new NextResponse(stream as any, {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Content-Length': buffer.length.toString()
+    },
+  });
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -277,24 +294,16 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-          // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Используем ArrayBuffer
-          return new NextResponse(compressedBuffer.buffer, {
-            headers: {
-              'Content-Type': 'image/png',
-              'Cache-Control': 'public, max-age=31536000, immutable',
-              'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
-            },
-          })
+          // Используем новую функцию для создания ответа
+          const response = createResponseFromBuffer(compressedBuffer)
+          response.headers.set('Content-Disposition', `inline; filename="phablob-${address.substring(0, 8)}.png"`)
+          return response
         }
         
-        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Используем ArrayBuffer
-        return new NextResponse(pngBuffer.buffer, {
-          headers: {
-            'Content-Type': 'image/png',
-            'Cache-Control': 'public, max-age=31536000, immutable',
-            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
-          },
-        })
+        // Используем новую функцию для создания ответа
+        const response = createResponseFromBuffer(pngBuffer)
+        response.headers.set('Content-Disposition', `inline; filename="phablob-${address.substring(0, 8)}.png"`)
+        return response
         
       } catch (error) {
         console.error('❌ PNG generation failed:', error)
@@ -311,12 +320,7 @@ export async function GET(
             .png()
             .toBuffer()
           
-          return new NextResponse(fallbackPng.buffer, {
-            headers: {
-              'Content-Type': 'image/png',
-              'Cache-Control': 'no-cache',
-            },
-          })
+          return createResponseFromBuffer(fallbackPng)
         } catch (fallbackError) {
           console.error('❌ Fallback PNG also failed:', fallbackError)
           return new NextResponse('PNG generation error', { status: 500 })
@@ -349,12 +353,7 @@ export async function GET(
           .png()
           .toBuffer()
         
-        return new NextResponse(errorPng.buffer, {
-          headers: {
-            'Content-Type': 'image/png',
-            'Cache-Control': 'no-cache',
-          },
-        })
+        return createResponseFromBuffer(errorPng)
       } catch (pngError) {
         return new NextResponse('Server Error', { status: 500 })
       }
