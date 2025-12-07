@@ -106,14 +106,14 @@ async function generateCompleteSVG(publicKey: string): Promise<string> {
   <rect width="800" height="800" fill="${bgColor2 ? 'url(#bgGrad)' : bgColor}"/>
   
   <!-- ВОДЯНЫЕ ЗНАКИ -->
-  <text x="100" y="150" font-family="sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
-  <text x="600" y="200" font-family="sans-serif" font-weight="900" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
-  <text x="50" y="500" font-family="sans-serif" font-weight="900" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
-  <text x="550" y="650" font-family="sans-serif" font-weight="900" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
+  <text x="100" y="150" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="48" fill="white" opacity="0.08" transform="rotate(-15 100 150)">PHANTOM</text>
+  <text x="600" y="200" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="42" fill="white" opacity="0.06" transform="rotate(12 600 200)">PHANTOM</text>
+  <text x="50" y="500" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="52" fill="white" opacity="0.07" transform="rotate(-8 50 500)">PHANTOM</text>
+  <text x="550" y="650" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="45" fill="white" opacity="0.08" transform="rotate(18 550 650)">PHANTOM</text>
   
-  <text x="200" y="80" font-family="sans-serif" font-weight="900" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
-  <text x="120" y="380" font-family="sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
-  <text x="580" y="480" font-family="sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
+  <text x="200" y="80" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="56" fill="white" opacity="0.09" transform="rotate(8 200 80)">PHABLOBS</text>
+  <text x="120" y="380" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
+  <text x="580" y="480" font-family="DejaVu Sans, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
   
   <!-- АВАТАР (BASE64!) -->
   <image 
@@ -131,7 +131,7 @@ async function generateCompleteSVG(publicKey: string): Promise<string> {
     x="400" 
     y="90" 
     text-anchor="middle" 
-    font-family="sans-serif" 
+    font-family="DejaVu Sans, sans-serif" 
     font-weight="900" 
     font-size="68" 
     fill="white" 
@@ -146,7 +146,7 @@ async function generateCompleteSVG(publicKey: string): Promise<string> {
     x="400" 
     y="720" 
     text-anchor="middle" 
-    font-family="sans-serif" 
+    font-family="DejaVu Sans, sans-serif" 
     font-weight="900" 
     font-size="52" 
     fill="white" 
@@ -161,7 +161,7 @@ async function generateCompleteSVG(publicKey: string): Promise<string> {
     x="400" 
     y="760" 
     text-anchor="middle" 
-    font-family="sans-serif" 
+    font-family="DejaVu Sans, sans-serif" 
     font-size="18" 
     fill="white" 
     opacity="0.9"
@@ -207,12 +207,14 @@ export async function GET(
         
         console.log('🔄 Converting SVG to PNG...')
         
+        // Используем высокий DPI для лучшего рендеринга текста
         const pngBuffer = await sharp(Buffer.from(svgContent), {
-          density: 300
+          density: 144 // Увеличен DPI для четкого текста
         })
         .png({
           quality: 100,
-          compressionLevel: 6
+          compressionLevel: 6,
+          adaptiveFiltering: true
         })
         .toBuffer()
         
