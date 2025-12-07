@@ -821,6 +821,6 @@ export default function Home() {
           </div>
         </footer>
       </div>
-    </div> {/* ← Закрывающий div для min-h-screen bg-black text-white */}
+    </div> 
   )
 }
