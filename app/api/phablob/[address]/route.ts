@@ -138,29 +138,13 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
       <stop offset="100%" stop-color="${bgColor2}" stop-opacity="1"/>
     </linearGradient>
     
-    <!-- Градиент для рамки (зависит от tier) -->
-    <linearGradient id="frameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${tier === 4 ? '#FFD700' : tier === 3 ? '#FF69B4' : tier === 2 ? '#00FFFF' : '#a1a1a1'}" />
-      <stop offset="100%" stop-color="${tier === 4 ? '#ff7f00' : tier === 3 ? '#e31eff' : tier === 2 ? '#0087f5' : '#5e5e5e'}" />
-    </linearGradient>
-    
     <filter id="textShadow">
       <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
     </filter>
     
     <filter id="avatarShadow">
-      <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="black" flood-opacity="0.5"/>
+      <feDropShadow dx="0" dy="15" stdDeviation="25" flood-color="black" flood-opacity="0.6"/>
     </filter>
-    
-    <filter id="frameGlow">
-      <feGaussianBlur stdDeviation="8"/>
-      <feColorMatrix type="saturate" values="1.5"/>
-    </filter>
-    
-    <!-- Круглая маска для аватара -->
-    <clipPath id="avatarClip">
-      <circle cx="400" cy="400" r="180"/>
-    </clipPath>
   </defs>
   
   <!-- СЛОЙ 1: ГРАДИЕНТНЫЙ ФОН -->
@@ -176,48 +160,7 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
   <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
   
-  <!-- СЛОЙ 2.5: ПРЕМИАЛЬНАЯ РАМКА -->
-  
-  <!-- Внешнее свечение -->
-  <circle 
-    cx="400" 
-    cy="400" 
-    r="215" 
-    fill="url(#frameGrad)"
-    opacity="${tier > 1 ? '0.3' : '0.2'}"
-    filter="url(#frameGlow)"
-  />
-  
-  <!-- Градиентное кольцо (основная рамка) -->
-  <circle 
-    cx="400" 
-    cy="400" 
-    r="210" 
-    fill="none"
-    stroke="url(#frameGrad)"
-    stroke-width="${tier === 4 ? '14' : tier === 3 ? '12' : tier === 2 ? '10' : '8'}"
-    opacity="${tier > 1 ? '0.9' : '0.7'}"
-  />
-  
-  <!-- Белое разделительное кольцо -->
-  <circle 
-    cx="400" 
-    cy="400" 
-    r="198" 
-    fill="none"
-    stroke="rgba(255,255,255,0.6)"
-    stroke-width="2"
-  />
-  
-  <!-- Темная круглая подложка -->
-  <circle 
-    cx="400" 
-    cy="400" 
-    r="195" 
-    fill="rgba(0,0,0,0.4)"
-  />
-  
-  <!-- СЛОЙ 3: АВАТАР (обрезан в круг) -->
+  <!-- СЛОЙ 3: АВАТАР (только с тенью) -->
   <image 
     href="${blobAvatarDataUrl}" 
     x="220" 
@@ -225,18 +168,7 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
     width="360" 
     height="360"
     preserveAspectRatio="xMidYMid meet"
-    clip-path="url(#avatarClip)"
     filter="url(#avatarShadow)"
-  />
-  
-  <!-- Внутренняя светлая обводка аватара -->
-  <circle 
-    cx="400" 
-    cy="400" 
-    r="180" 
-    fill="none" 
-    stroke="rgba(255,255,255,0.3)" 
-    stroke-width="3"
   />
   
   <!-- СЛОЙ 4: ТЕКСТ PHABLOBS -->
