@@ -6,15 +6,14 @@ import {
   getAvailableColors, 
   getTierInfo, 
   generateGradientFromBalance,
-  generateSolidBgFromBalance,
-  COLOR_TIERS 
+  generateSolidBgFromBalance
 } from '@/lib/color-tiers'
 
 // НАСТРОЙКИ ТОКЕНА $BLOB
 const TOKEN_MINT = process.env.BLOB_TOKEN_MINT || 'TBA_AFTER_PUMPFUN_LAUNCH'
 const SOLANA_RPC = process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com'
 
-// Кэш для base64 аватаров (чтобы не скачивать повторно)
+// Кэш для base64 аватаров
 const avatarCache: Record<string, string> = {}
 
 function isValidSolanaAddress(address: string): boolean {
@@ -67,7 +66,6 @@ async function getBlobAvatarBase64(color: string): Promise<string> {
   const cleanColor = color.replace('#', '')
   const cacheKey = `avatar-${cleanColor}`
   
-  // Проверяем кэш
   if (avatarCache[cacheKey]) {
     return avatarCache[cacheKey]
   }
@@ -87,7 +85,6 @@ async function getBlobAvatarBase64(color: string): Promise<string> {
     const base64 = Buffer.from(buffer).toString('base64')
     const dataUrl = `data:image/png;base64,${base64}`
     
-    // Сохраняем в кэш
     avatarCache[cacheKey] = dataUrl
     console.log(`✅ Avatar cached: ${cleanColor} (${base64.length} bytes)`)
     
@@ -95,7 +92,7 @@ async function getBlobAvatarBase64(color: string): Promise<string> {
   } catch (error) {
     console.error(`Error fetching avatar for color ${color}:`, error)
     
-    // Fallback: создаём простой цветной круг
+    // Fallback
     const fallbackSvg = `<svg width="360" height="360" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -164,15 +161,7 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
     tierName = result.tierName
   }
   
-  const tierInfo = getTierInfo(tokenBalance)
-  
-  // Получаем аватар как base64
   const blobAvatarDataUrl = await getBlobAvatarBase64(avatarColor)
-  
-  console.log(`🎨 Generated Phablob #${phablobNumber}`)
-  console.log(`💰 Balance: ${tokenBalance.toLocaleString()} $BLOB`)
-  console.log(`⭐ Tier ${tier}: ${tierName}`)
-  console.log(`🎨 Using color: ${avatarColor}`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -206,7 +195,7 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
   <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
   <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
   
-  <!-- СЛОЙ 3: АВАТАР (встроенный как base64) -->
+  <!-- СЛОЙ 3: АВАТАР -->
   <image 
     href="${blobAvatarDataUrl}" 
     x="220" 
@@ -280,11 +269,6 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
 </svg>`
 }
 
-// Конвертация Buffer в base64 строку
-function bufferToBase64(buffer: Buffer): string {
-  return buffer.toString('base64')
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -294,7 +278,7 @@ export async function GET(
     const { searchParams } = new URL(request.url)
     const format = searchParams.get('format') || 'svg'
 
-    // Поддержка HEAD запросов для проверки доступности
+    // Поддержка HEAD запросов
     if (request.method === 'HEAD') {
       return new NextResponse(null, { 
         status: 200,
@@ -337,29 +321,29 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-// НА ЭТО (возврат бинарного Buffer):
-return new NextResponse(compressedBuffer, {
-  headers: {
-    'Content-Type': 'image/png',
-    'Cache-Control': 'public, max-age=31536000, immutable',
-    'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
-  },
-});
+          // ВАЖНО: Возвращаем Buffer напрямую, а не base64
+          return new NextResponse(compressedBuffer, {
+            headers: {
+              'Content-Type': 'image/png',
+              'Cache-Control': 'public, max-age=31536000, immutable',
+              'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
+            },
+          })
+        }
         
-        const base64Image = bufferToBase64(pngBuffer)
-        return new NextResponse(base64Image, {
+        // Возвращаем обычный PNG как Buffer
+        return new NextResponse(pngBuffer, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
-            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
-            'Content-Length': pngBuffer.length.toString()
+            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
           },
         })
         
       } catch (error) {
         console.error('❌ PNG conversion failed:', error)
         
-        // Fallback: создаем простую PNG
+        // Fallback
         try {
           const sharp = (await import('sharp')).default
           const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
@@ -371,8 +355,7 @@ return new NextResponse(compressedBuffer, {
             .png()
             .toBuffer()
           
-          const base64Image = bufferToBase64(fallbackPng)
-          return new NextResponse(base64Image, {
+          return new NextResponse(fallbackPng, {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'no-cache',
@@ -410,8 +393,7 @@ return new NextResponse(compressedBuffer, {
           .png()
           .toBuffer()
         
-        const base64Image = bufferToBase64(errorPng)
-        return new NextResponse(base64Image, {
+        return new NextResponse(errorPng, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'no-cache',
