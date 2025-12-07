@@ -280,11 +280,6 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
 </svg>`
 }
 
-// Конвертация Buffer в base64 строку
-function bufferToBase64(buffer: Buffer): string {
-  return buffer.toString('base64')
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -326,35 +321,26 @@ export async function GET(
         console.log(`📊 PNG size: ${fileSizeMB.toFixed(2)} MB`)
         
         // Если файл слишком большой для Telegram, сжимаем
+        let finalBuffer = pngBuffer
         if (fileSizeMB > 5) {
           console.log('⚡ Compressing PNG for Telegram...')
           const sharp = (await import('sharp')).default
-          const compressedBuffer = await sharp(pngBuffer)
+          finalBuffer = await sharp(pngBuffer)
             .resize(600, 600, {
               fit: 'inside',
               withoutEnlargement: true
             })
             .png({ quality: 90 })
             .toBuffer()
-          
-          const base64Image = bufferToBase64(compressedBuffer)
-          return new NextResponse(base64Image, {
-            headers: {
-              'Content-Type': 'image/png',
-              'Cache-Control': 'public, max-age=31536000, immutable',
-              'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
-              'Content-Length': compressedBuffer.length.toString()
-            },
-          })
         }
         
-        const base64Image = bufferToBase64(pngBuffer)
-        return new NextResponse(base64Image, {
+        // ✅ ВОЗВРАЩАЕМ БИНАРНЫЕ ДАННЫЕ (НЕ BASE64!)
+        return new NextResponse(finalBuffer, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
             'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
-            'Content-Length': pngBuffer.length.toString()
+            'Content-Length': finalBuffer.length.toString()
           },
         })
         
@@ -373,8 +359,7 @@ export async function GET(
             .png()
             .toBuffer()
           
-          const base64Image = bufferToBase64(fallbackPng)
-          return new NextResponse(base64Image, {
+          return new NextResponse(fallbackPng, {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'no-cache',
@@ -412,8 +397,7 @@ export async function GET(
           .png()
           .toBuffer()
         
-        const base64Image = bufferToBase64(errorPng)
-        return new NextResponse(base64Image, {
+        return new NextResponse(errorPng, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'no-cache',
