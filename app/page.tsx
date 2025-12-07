@@ -532,6 +532,8 @@ export default function Home() {
           </div>
         </div>
 
+        {/* ... предыдущий код остается без изменений до Holder Rewards ... */}
+
         {/* Holder Rewards */}
         <div className="max-w-4xl mx-auto mb-12">
           <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
@@ -598,16 +600,227 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center">
-          <p className="text-gray-500 text-sm mb-2">
-            Built with 💜 for the Solana community
-          </p>
-          <p className="text-gray-600 text-xs">
-            phablobs.xyz © 2024 | Powered by Phantom & pump.fun
-          </p>
+      </div> {/* ← ЭТОТ ЗАКРЫВАЮЩИЙ DIV ВАЖЕН! Он закрывает container mx-auto */}
+      
+      {/* Footer и завершающие секции */}
+      <div className="space-y-12 mt-20">
+        {/* CTA Section - Final Call to Action */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-[#ab0ff2]/20 to-[#4da7f2]/20 border border-[#ab0ff2]/30 rounded-3xl p-8 md:p-12 text-center">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-full flex items-center justify-center animate-pulse">
+              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+              Ready to Join the <span className="bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">Cult?</span>
+            </h2>
+            
+            <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+              Generate your unique Phablob today and be part of the fastest growing community on Solana
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="#generate"
+                className="px-8 py-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg hover:shadow-[0_0_40px_rgba(171,15,242,0.5)]"
+              >
+                🎨 Generate Your Phablob
+              </a>
+              
+              <a
+                href="https://pump.fun"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] hover:from-[#26a879] hover:to-[#3d96e0] text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg hover:shadow-[0_0_40px_rgba(46,192,139,0.5)]"
+              >
+                💰 Buy $BLOB Token
+              </a>
+            </div>
+          </div>
         </div>
+
+        {/* Community & Social Links */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-8">
+            <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+              Join Our Community
+            </h2>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                {
+                  name: 'X (Twitter)',
+                  icon: '🐦',
+                  color: 'from-[#1DA1F2] to-[#1DA1F2]/70',
+                  url: 'https://twitter.com/phablobs',
+                  followers: 'Follow @phablobs'
+                },
+                {
+                  name: 'Telegram',
+                  icon: '📢',
+                  color: 'from-[#0088cc] to-[#0088cc]/70',
+                  url: 'https://t.me/phablobs',
+                  followers: 'Join Group'
+                },
+                {
+                  name: 'Discord',
+                  icon: '🎮',
+                  color: 'from-[#7289da] to-[#7289da]/70',
+                  url: 'https://discord.gg/phablobs',
+                  followers: 'Join Server'
+                },
+                {
+                  name: 'Dextools',
+                  icon: '📊',
+                  color: 'from-[#ff7f00] to-[#ff7f00]/70',
+                  url: 'https://www.dextools.io',
+                  followers: 'Track Chart'
+                }
+              ].map((social, index) => (
+                <a
+                  key={index}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group"
+                >
+                  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/20 rounded-2xl p-6 hover:border-[#ab0ff2]/50 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(171,15,242,0.2)] h-full">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${social.color} rounded-2xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform text-3xl`}>
+                      {social.icon}
+                    </div>
+                    <h3 className="text-xl font-bold text-white text-center mb-2">{social.name}</h3>
+                    <p className="text-gray-400 text-sm text-center">{social.followers}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-8">
+            <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+              Frequently Asked Questions
+            </h2>
+            
+            <div className="space-y-4">
+              {[
+                {
+                  q: 'What is Phablobs?',
+                  a: 'Phablobs is a unique avatar generator that creates Phantom-inspired art from any Solana wallet address. Each Phablob is completely unique and can be downloaded as NFT-ready metadata.'
+                },
+                {
+                  q: 'Is it really free?',
+                  a: 'Yes! Generating Phablobs is 100% free. Just enter any Solana wallet address and generate unlimited avatars. The $BLOB token is separate and optional.'
+                },
+                {
+                  q: 'How do I get free NFTs in Phase 4?',
+                  a: 'Hold $BLOB tokens before the snapshot (24h before mint): 1M+ = 3 NFTs, 100K+ = 2 NFTs, 10K+ = 1 NFT. Snapshot details will be announced.'
+                },
+                {
+                  q: 'Where can I buy $BLOB token?',
+                  a: '$BLOB is available on pump.fun and will be listed on Jupiter. Always verify the contract address from our official channels.'
+                },
+                {
+                  q: 'Can I mint my Phablob as an NFT?',
+                  a: 'Yes! Click "NFT Metadata" after generation to download Metaplex-compatible metadata ready for minting on any Solana marketplace.'
+                }
+              ].map((faq, index) => (
+                <div key={index} className="border border-[#ab0ff2]/20 rounded-2xl p-6 hover:border-[#ab0ff2]/40 transition-all">
+                  <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
+                    <span className="text-[#ab0ff2]">Q{index + 1}.</span> {faq.q}
+                  </h3>
+                  <p className="text-gray-400 leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Partners & Integrations */}
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+            Powered By
+          </h2>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { name: 'Solana', logo: '🟣', color: 'from-[#9945FF] to-[#14F195]' },
+              { name: 'Phantom', logo: '👻', color: 'from-[#ab0ff2] to-[#4da7f2]' },
+              { name: 'pump.fun', logo: '🚀', color: 'from-[#FF6B6B] to-[#FFD93D]' },
+              { name: 'Jupiter', logo: '🪐', color: 'from-[#10B981] to-[#3B82F6]' }
+            ].map((partner, index) => (
+              <div
+                key={index}
+                className="group"
+              >
+                <div className={`bg-gradient-to-br ${partner.color} rounded-2xl p-6 transition-all transform hover:scale-105 hover:shadow-[0_0_40px_rgba(171,15,242,0.3)]`}>
+                  <div className="text-4xl text-center mb-4">{partner.logo}</div>
+                  <h3 className="text-xl font-bold text-white text-center">{partner.name}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Final Footer */}
+        <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/phantom-logo.png" 
+                alt="Phablobs Logo" 
+                className="w-10 h-10"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  const fallback = document.createElement('div')
+                  fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
+                  fallback.textContent = '👻'
+                  e.currentTarget.parentElement?.appendChild(fallback)
+                }}
+              />
+              <div>
+                <span className="text-2xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">PHABLOBS</span>
+                <p className="text-xs text-gray-500 mt-1">Phantom-inspired avatar generator</p>
+              </div>
+            </div>
+            
+            <div className="text-center md:text-right">
+              <p className="text-gray-400 text-sm mb-2">
+                Built with 💜 for the Solana community
+              </p>
+              <p className="text-gray-600 text-xs">
+                © {new Date().getFullYear()} phablobs.xyz | All rights reserved
+              </p>
+              <p className="text-gray-600 text-xs mt-1">
+                Not affiliated with Phantom Wallet. For entertainment purposes only.
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-8 text-center">
+            <div className="inline-flex gap-6">
+              <a href="#" className="text-gray-500 hover:text-[#ab0ff2] transition-colors text-sm">Terms</a>
+              <a href="#" className="text-gray-500 hover:text-[#ab0ff2] transition-colors text-sm">Privacy</a>
+              <a href="#" className="text-gray-500 hover:text-[#ab0ff2] transition-colors text-sm">Contact</a>
+              <a href="#" className="text-gray-500 hover:text-[#ab0ff2] transition-colors text-sm">Whitepaper</a>
+              <a href="https://github.com/phablobs" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#ab0ff2] transition-colors text-sm">GitHub</a>
+            </div>
+          </div>
+          
+          {/* Easter Egg / Fun Note */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-700">
+              Every wallet tells a story. What's yours? 👻
+              <br />
+              <span className="text-[#ab0ff2]/50">Tip: Try generating Phablobs for famous Solana wallets!</span>
+            </p>
+          </div>
+        </footer>
       </div>
-    </div>
+    </div> {/* ← Закрывающий div для min-h-screen bg-black text-white */}
   )
 }
