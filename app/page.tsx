@@ -94,13 +94,11 @@ export default function Home() {
       {/* Header with Logo */}
       <header className="relative z-10 container mx-auto px-4 py-6">
         <div className="flex items-center gap-3">
-          {/* PNG Logo вместо эмодзи */}
           <img 
             src="/phantom-logo.png" 
             alt="Phablobs Logo" 
             className="w-10 h-10"
             onError={(e) => {
-              // Fallback на эмодзи если картинка не загрузилась
               e.currentTarget.style.display = 'none'
               const fallback = document.createElement('div')
               fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
@@ -113,7 +111,7 @@ export default function Home() {
       </header>
 
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-12">
-        {/* Hero Section с обводкой как на картинке */}
+        {/* Hero Section */}
         <div className="text-center mb-12 md:mb-16">
           <h1 
             className="text-6xl md:text-8xl font-black mb-2 leading-tight"
@@ -149,7 +147,6 @@ export default function Home() {
         {/* Token Contract Card */}
         <div className="max-w-4xl mx-auto mb-8 md:mb-12">
           <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
-            
             <div className="text-center mb-6">
               <h2 className="text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b] bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(171,15,242,0.5)]">
                 PHABLOB TOKEN
@@ -346,228 +343,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-			
-			{/* Math Section */}
-<div className="max-w-5xl mx-auto mb-12">
-  <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-    The Math Behind Phablobs
-  </h2>
-  
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-    {/* Combinations */}
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
-      <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-        596,000+
-      </div>
-      <h3 className="text-xl font-bold text-white text-center mb-2">
-        Unique Combinations
-      </h3>
-      <p className="text-gray-400 text-sm text-center">
-        69 avatar colors × 2 background styles (gradient/solid) × wallet addresses = infinite possibilities
-      </p>
-    </div>
-
-    {/* Tiers */}
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
-      <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
-        4 Tiers
-      </div>
-      <h3 className="text-xl font-bold text-white text-center mb-2">
-        Tier-Based Rarity
-      </h3>
-      <p className="text-gray-400 text-sm text-center">
-        Hold more $BLOB to unlock legendary colors: 20 → 40 → 60 → 69 colors
-      </p>
-    </div>
-
-    {/* Holders */}
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
-      <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] bg-clip-text text-transparent">
-        FREE
-      </div>
-      <h3 className="text-xl font-bold text-white text-center mb-2">
-        Generate Unlimited
-      </h3>
-      <p className="text-gray-400 text-sm text-center">
-        No cost to create. Enter any Solana address and generate your unique Phablob instantly
-      </p>
-    </div>
-
-    {/* Future NFT */}
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
-      <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ff7243] to-[#fffd13] bg-clip-text text-transparent">
-        10,000
-      </div>
-      <h3 className="text-xl font-bold text-white text-center mb-2">
-        NFT Collection Coming
-      </h3>
-      <p className="text-gray-400 text-sm text-center">
-        Future full collection mint. Holders get free NFTs based on $BLOB balance
-      </p>
-    </div>
-  </div>
-</div>
-
-{/* Roadmap Section */}
-<div className="max-w-6xl mx-auto mb-12">
-  <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-    Roadmap
-  </h2>
-  
-  <div className="relative">
-    {/* Vertical line */}
-    <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
-    
-    {/* Phase 1 */}
-    <div className="relative mb-12">
-      <div className="flex items-center justify-between">
-        <div className="w-5/12" />
-        <div className="w-16 h-16 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-full flex items-center justify-center z-10 border-4 border-black">
-          <span className="text-2xl">🚀</span>
-        </div>
-        <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-xl font-bold text-white">Phase 1: LAUNCH</h3>
-            <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">LIVE</span>
-          </div>
-          <ul className="text-sm text-gray-400 space-y-1">
-            <li>✅ Token on pump.fun</li>
-            <li>✅ Website live</li>
-            <li>✅ Free generator</li>
-            <li>✅ 69 unique avatars</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    {/* Phase 2 */}
-    <div className="relative mb-12">
-      <div className="flex items-center justify-between flex-row-reverse">
-        <div className="w-5/12" />
-        <div className="w-16 h-16 bg-gradient-to-br from-[#4da7f2] to-[#2ec08b] rounded-full flex items-center justify-center z-10 border-4 border-black">
-          <span className="text-2xl">👻</span>
-        </div>
-        <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#4da7f2]/30 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-xl font-bold text-white">Phase 2: GROW</h3>
-            <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-bold">IN PROGRESS</span>
-          </div>
-          <ul className="text-sm text-gray-400 space-y-1">
-            <li>🔄 Tier system active</li>
-            <li>🎯 1,000+ holders</li>
-            <li>📱 Viral campaigns</li>
-            <li>🤝 Partnerships</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    {/* Phase 3 */}
-    <div className="relative mb-12">
-      <div className="flex items-center justify-between">
-        <div className="w-5/12" />
-        <div className="w-16 h-16 bg-gradient-to-br from-[#2ec08b] to-[#fffd13] rounded-full flex items-center justify-center z-10 border-4 border-black">
-          <span className="text-2xl">🌊</span>
-        </div>
-        <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-2xl p-6">
-          <h3 className="text-xl font-bold text-white mb-2">Phase 3: EXPAND</h3>
-          <ul className="text-sm text-gray-400 space-y-1">
-            <li>💱 DEX listings</li>
-            <li>🎯 10,000+ holders</li>
-            <li>💰 $1M+ market cap</li>
-            <li>🏆 Competitions</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    {/* Phase 4 */}
-    <div className="relative">
-      <div className="flex items-center justify-between flex-row-reverse">
-        <div className="w-5/12" />
-        <div className="w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#ff7f00] rounded-full flex items-center justify-center z-10 border-4 border-black">
-          <span className="text-2xl">💎</span>
-        </div>
-        <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-6">
-          <h3 className="text-xl font-bold text-white mb-2">Phase 4: NFT DROP</h3>
-          <ul className="text-sm text-gray-400 space-y-1">
-            <li>🎨 10K NFT collection</li>
-            <li>🎁 1M+ $BLOB = 3 free NFTs</li>
-            <li>🎁 100K+ $BLOB = 2 free NFTs</li>
-            <li>🎁 10K+ $BLOB = 1 free NFT</li>
-            <li>💰 Public: 0.5 SOL</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{/* Holder Rewards */}
-<div className="max-w-4xl mx-auto mb-12">
-  <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
-    Phase 4: Holder Rewards 🎁
-  </h2>
-  
-  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
-    <table className="w-full">
-      <thead>
-        <tr className="border-b border-gray-800">
-          <th className="text-left py-3 px-4 text-white">$BLOB Balance</th>
-          <th className="text-left py-3 px-4 text-white">Tier</th>
-          <th className="text-left py-3 px-4 text-white">Free NFTs</th>
-          <th className="text-left py-3 px-4 text-white">Total Value*</th>
-        </tr>
-      </thead>
-      <tbody className="text-gray-400">
-        <tr className="border-b border-gray-800/50">
-          <td className="py-3 px-4">1,000,000+</td>
-          <td className="py-3 px-4">
-            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold">
-              👑 Legendary
-            </span>
-          </td>
-          <td className="py-3 px-4 font-bold text-white">3 NFTs</td>
-          <td className="py-3 px-4 text-green-400">~1.5 SOL</td>
-        </tr>
-        <tr className="border-b border-gray-800/50">
-          <td className="py-3 px-4">100,000 - 999,999</td>
-          <td className="py-3 px-4">
-            <span className="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-bold">
-              💎 Rare
-            </span>
-          </td>
-          <td className="py-3 px-4 font-bold text-white">2 NFTs</td>
-          <td className="py-3 px-4 text-green-400">~1.0 SOL</td>
-        </tr>
-        <tr className="border-b border-gray-800/50">
-          <td className="py-3 px-4">10,000 - 99,999</td>
-          <td className="py-3 px-4">
-            <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-bold">
-              🔵 Uncommon
-            </span>
-          </td>
-          <td className="py-3 px-4 font-bold text-white">1 NFT</td>
-          <td className="py-3 px-4 text-green-400">~0.5 SOL</td>
-        </tr>
-        <tr>
-          <td className="py-3 px-4">0 - 9,999</td>
-          <td className="py-3 px-4">
-            <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-xs font-bold">
-              ⚪ Common
-            </span>
-          </td>
-          <td className="py-3 px-4">—</td>
-          <td className="py-3 px-4 text-gray-500">Buy at mint</td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <p className="text-xs text-gray-500 text-center mt-6">
-      * Based on 0.5 SOL public mint price. Snapshot taken 24h before mint.
-    </p>
-  </div>
-</div>
 
             {/* Card 2 */}
             <div className="group">
@@ -598,6 +373,228 @@ export default function Home() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* The Math Behind Phablobs Section */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+            The Math Behind Phablobs
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Combinations */}
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
+              <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+                596,000+
+              </div>
+              <h3 className="text-xl font-bold text-white text-center mb-2">
+                Unique Combinations
+              </h3>
+              <p className="text-gray-400 text-sm text-center">
+                69 avatar colors × 2 background styles (gradient/solid) × wallet addresses = infinite possibilities
+              </p>
+            </div>
+
+            {/* Tiers */}
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
+              <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
+                4 Tiers
+              </div>
+              <h3 className="text-xl font-bold text-white text-center mb-2">
+                Tier-Based Rarity
+              </h3>
+              <p className="text-gray-400 text-sm text-center">
+                Hold more $BLOB to unlock legendary colors: 20 → 40 → 60 → 69 colors
+              </p>
+            </div>
+
+            {/* Holders */}
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
+              <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] bg-clip-text text-transparent">
+                FREE
+              </div>
+              <h3 className="text-xl font-bold text-white text-center mb-2">
+                Generate Unlimited
+              </h3>
+              <p className="text-gray-400 text-sm text-center">
+                No cost to create. Enter any Solana address and generate your unique Phablob instantly
+              </p>
+            </div>
+
+            {/* Future NFT */}
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
+              <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ff7243] to-[#fffd13] bg-clip-text text-transparent">
+                10,000
+              </div>
+              <h3 className="text-xl font-bold text-white text-center mb-2">
+                NFT Collection Coming
+              </h3>
+              <p className="text-gray-400 text-sm text-center">
+                Future full collection mint. Holders get free NFTs based on $BLOB balance
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Roadmap Section */}
+        <div className="max-w-6xl mx-auto mb-12">
+          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+            Roadmap
+          </h2>
+          
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
+            
+            {/* Phase 1 */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-xl font-bold text-white">Phase 1: LAUNCH</h3>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">LIVE</span>
+                  </div>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>✅ Token on pump.fun</li>
+                    <li>✅ Website live</li>
+                    <li>✅ Free generator</li>
+                    <li>✅ 69 unique avatars</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 2 */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between flex-row-reverse">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#4da7f2] to-[#2ec08b] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">👻</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#4da7f2]/30 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-xl font-bold text-white">Phase 2: GROW</h3>
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-bold">IN PROGRESS</span>
+                  </div>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>🔄 Tier system active</li>
+                    <li>🎯 1,000+ holders</li>
+                    <li>📱 Viral campaigns</li>
+                    <li>🤝 Partnerships</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 3 */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#2ec08b] to-[#fffd13] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">🌊</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Phase 3: EXPAND</h3>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>💱 DEX listings</li>
+                    <li>🎯 10,000+ holders</li>
+                    <li>💰 $1M+ market cap</li>
+                    <li>🏆 Competitions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 4 */}
+            <div className="relative">
+              <div className="flex items-center justify-between flex-row-reverse">
+                <div className="w-5/12" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#ff7f00] rounded-full flex items-center justify-center z-10 border-4 border-black">
+                  <span className="text-2xl">💎</span>
+                </div>
+                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Phase 4: NFT DROP</h3>
+                  <ul className="text-sm text-gray-400 space-y-1">
+                    <li>🎨 10K NFT collection</li>
+                    <li>🎁 1M+ $BLOB = 3 free NFTs</li>
+                    <li>🎁 100K+ $BLOB = 2 free NFTs</li>
+                    <li>🎁 10K+ $BLOB = 1 free NFT</li>
+                    <li>💰 Public: 0.5 SOL</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Holder Rewards */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
+            Phase 4: Holder Rewards 🎁
+          </h2>
+          
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-800">
+                  <th className="text-left py-3 px-4 text-white">$BLOB Balance</th>
+                  <th className="text-left py-3 px-4 text-white">Tier</th>
+                  <th className="text-left py-3 px-4 text-white">Free NFTs</th>
+                  <th className="text-left py-3 px-4 text-white">Total Value*</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-400">
+                <tr className="border-b border-gray-800/50">
+                  <td className="py-3 px-4">1,000,000+</td>
+                  <td className="py-3 px-4">
+                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold">
+                      👑 Legendary
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 font-bold text-white">3 NFTs</td>
+                  <td className="py-3 px-4 text-green-400">~1.5 SOL</td>
+                </tr>
+                <tr className="border-b border-gray-800/50">
+                  <td className="py-3 px-4">100,000 - 999,999</td>
+                  <td className="py-3 px-4">
+                    <span className="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-bold">
+                      💎 Rare
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 font-bold text-white">2 NFTs</td>
+                  <td className="py-3 px-4 text-green-400">~1.0 SOL</td>
+                </tr>
+                <tr className="border-b border-gray-800/50">
+                  <td className="py-3 px-4">10,000 - 99,999</td>
+                  <td className="py-3 px-4">
+                    <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-bold">
+                      🔵 Uncommon
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 font-bold text-white">1 NFT</td>
+                  <td className="py-3 px-4 text-green-400">~0.5 SOL</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-4">0 - 9,999</td>
+                  <td className="py-3 px-4">
+                    <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-xs font-bold">
+                      ⚪ Common
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">—</td>
+                  <td className="py-3 px-4 text-gray-500">Buy at mint</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <p className="text-xs text-gray-500 text-center mt-6">
+              * Based on 0.5 SOL public mint price. Snapshot taken 24h before mint.
+            </p>
           </div>
         </div>
 
