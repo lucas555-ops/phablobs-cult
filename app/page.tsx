@@ -742,44 +742,29 @@ export default function Home() {
 
   <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
     {[
-      { 
-        name: 'Solana', 
-        logo: '/logos/solana-logo.svg', 
-        gradient: 'from-[#9945FF] to-[#14F195]' 
-      },
-      { 
-        name: 'Phantom', 
-        logo: '/logos/phantom-logo.svg', 
-        gradient: 'from-[#ab0ff2] to-[#4da7f2]' 
-      },
-      { 
-        name: 'pump.fun', 
-        logo: '/logos/pumpfun-logo.png', 
-        gradient: 'from-[#FF6B6B] to-[#FFD93D]' 
-      },
-      { 
-        name: 'Jupiter', 
-        logo: '/logos/jupiter-logo.svg', 
-        gradient: 'from-[#10B981] to-[#3B82F6]' 
-      },
+      { name: 'Solana', logo: '/logos/solana-logo.svg' },
+      { name: 'Phantom', logo: '/logos/phantom-logo.svg' },
+      { name: 'pump.fun', logo: '/logos/pumpfun-logo.svg' },
+      { name: 'Jupiter', logo: '/logos/jupiter-logo.svg' },
     ].map((brand, index) => (
-      <div key={index} className="flex flex-col items-center gap-3 md:gap-4">
-        <div className={`
-          w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24
-          bg-gradient-to-br ${brand.gradient}
-          rounded-2xl flex items-center justify-center
-          p-3 sm:p-4 transition-all duration-300
-          hover:scale-105 hover:shadow-[0_0_30px_rgba(171,15,242,0.3)]
-          border border-white/10
-        `}>
+      <div key={index} className="flex flex-col items-center gap-4">
+        {/* Логотип с тонкой обводкой */}
+        <div className="w-20 h-20 md:w-24 md:h-24 
+                        border border-[#ab0ff2]/20 
+                        rounded-xl flex items-center justify-center p-3
+                        bg-black/20 backdrop-blur-sm
+                        transition-all duration-300
+                        hover:border-[#ab0ff2]/40 hover:scale-105
+                        hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
           <img 
             src={brand.logo}
             alt={`${brand.name} Logo`}
             className="w-full h-auto object-contain"
-            style={{ maxWidth: '80%', maxHeight: '80%' }}
           />
         </div>
-        <span className="text-white font-semibold text-sm sm:text-base md:text-lg">
+        
+        {/* Подпись */}
+        <span className="text-white font-semibold text-lg">
           {brand.name}
         </span>
       </div>
