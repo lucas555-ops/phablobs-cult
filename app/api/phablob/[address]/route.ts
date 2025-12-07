@@ -337,13 +337,14 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-        return new NextResponse(compressedBuffer, {
+// НА ЭТО (возврат бинарного Buffer):
+return new NextResponse(compressedBuffer, {
   headers: {
     'Content-Type': 'image/png',
     'Cache-Control': 'public, max-age=31536000, immutable',
     'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
   },
-})
+});
         
         const base64Image = bufferToBase64(pngBuffer)
         return new NextResponse(base64Image, {
