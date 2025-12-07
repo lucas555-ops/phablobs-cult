@@ -71,7 +71,7 @@ export default function Home() {
     window.open(twitterUrl, '_blank', 'width=550,height=420')
   }
 
-const handleShareToken = () => {
+  const handleShareToken = () => {
     const twitterText = encodeURIComponent(
       `🚀 Join the Phablobs Cult! 👻\n\n` +
       `Generate your unique Phantom-inspired avatar on phablobs.xyz\n\n` +
@@ -532,134 +532,134 @@ const handleShareToken = () => {
           </div>
         </div>
 
-        
+        {/* Holder Rewards */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
+            Phase 4: Holder Rewards 🎁
+          </h2>
+          
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
+            
+            {/* MOBILE: Cards */}
+            <div className="md:hidden space-y-4">
+              {[
+                {
+                  balance: '1,000,000+',
+                  tier: '👑 Legendary',
+                  tierColor: 'bg-yellow-500/20 text-yellow-400',
+                  nfts: '3 NFTs',
+                  value: '~1.5 SOL'
+                },
+                {
+                  balance: '100,000 - 999,999',
+                  tier: '💎 Rare',
+                  tierColor: 'bg-pink-500/20 text-pink-400',
+                  nfts: '2 NFTs',
+                  value: '~1.0 SOL'
+                },
+                {
+                  balance: '10,000 - 99,999',
+                  tier: '🔵 Uncommon',
+                  tierColor: 'bg-blue-500/20 text-blue-400',
+                  nfts: '1 NFT',
+                  value: '~0.5 SOL'
+                },
+                {
+                  balance: '0 - 9,999',
+                  tier: '⚪ Common',
+                  tierColor: 'bg-gray-500/20 text-gray-400',
+                  nfts: '—',
+                  value: 'Buy at mint'
+                }
+              ].map((row, i) => (
+                <div key={i} className="bg-black/40 rounded-lg p-4 border border-[#FFD700]/20">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">$BLOB Balance</p>
+                      <p className="text-sm font-bold text-white">{row.balance}</p>
+                    </div>
+                    <span className={`px-2 py-1 ${row.tierColor} rounded text-[10px] font-bold`}>
+                      {row.tier}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Free NFTs</p>
+                      <p className="text-sm font-bold text-white">{row.nfts}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500 mb-1">Total Value*</p>
+                      <p className="text-sm font-bold text-green-400">{row.value}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-{/* Holder Rewards */}
-<div className="max-w-4xl mx-auto mb-12">
-  <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
-    Phase 4: Holder Rewards 🎁
-  </h2>
-  
-  <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
-    
-    {/* MOBILE: Cards */}
-    <div className="md:hidden space-y-4">
-      {[
-        {
-          balance: '1,000,000+',
-          tier: '👑 Legendary',
-          tierColor: 'bg-yellow-500/20 text-yellow-400',
-          nfts: '3 NFTs',
-          value: '~1.5 SOL'
-        },
-        {
-          balance: '100,000 - 999,999',
-          tier: '💎 Rare',
-          tierColor: 'bg-pink-500/20 text-pink-400',
-          nfts: '2 NFTs',
-          value: '~1.0 SOL'
-        },
-        {
-          balance: '10,000 - 99,999',
-          tier: '🔵 Uncommon',
-          tierColor: 'bg-blue-500/20 text-blue-400',
-          nfts: '1 NFT',
-          value: '~0.5 SOL'
-        },
-        {
-          balance: '0 - 9,999',
-          tier: '⚪ Common',
-          tierColor: 'bg-gray-500/20 text-gray-400',
-          nfts: '—',
-          value: 'Buy at mint'
-        }
-      ].map((row, i) => (
-        <div key={i} className="bg-black/40 rounded-lg p-4 border border-[#FFD700]/20">
-          <div className="flex justify-between items-start mb-3">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">$BLOB Balance</p>
-              <p className="text-sm font-bold text-white">{row.balance}</p>
+            {/* DESKTOP: Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-800">
+                    <th className="text-left py-3 px-4 text-white">$BLOB Balance</th>
+                    <th className="text-left py-3 px-4 text-white">Tier</th>
+                    <th className="text-left py-3 px-4 text-white">Free NFTs</th>
+                    <th className="text-left py-3 px-4 text-white">Total Value*</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-400">
+                  <tr className="border-b border-gray-800/50">
+                    <td className="py-3 px-4">1,000,000+</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold">
+                        👑 Legendary
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-bold text-white">3 NFTs</td>
+                    <td className="py-3 px-4 text-green-400">~1.5 SOL</td>
+                  </tr>
+                  <tr className="border-b border-gray-800/50">
+                    <td className="py-3 px-4">100,000 - 999,999</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-bold">
+                        💎 Rare
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-bold text-white">2 NFTs</td>
+                    <td className="py-3 px-4 text-green-400">~1.0 SOL</td>
+                  </tr>
+                  <tr className="border-b border-gray-800/50">
+                    <td className="py-3 px-4">10,000 - 99,999</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-bold">
+                        🔵 Uncommon
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-bold text-white">1 NFT</td>
+                    <td className="py-3 px-4 text-green-400">~0.5 SOL</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4">0 - 9,999</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-xs font-bold">
+                        ⚪ Common
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">—</td>
+                    <td className="py-3 px-4 text-gray-500">Buy at mint</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <span className={`px-2 py-1 ${row.tierColor} rounded text-[10px] font-bold`}>
-              {row.tier}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Free NFTs</p>
-              <p className="text-sm font-bold text-white">{row.nfts}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-500 mb-1">Total Value*</p>
-              <p className="text-sm font-bold text-green-400">{row.value}</p>
-            </div>
+            
+            <p className="text-xs text-gray-500 text-center mt-6">
+              * Based on 0.5 SOL public mint price. Snapshot taken 24h before mint.
+            </p>
           </div>
         </div>
-      ))}
-    </div>
 
-    {/* DESKTOP: Table */}
-    <div className="hidden md:block overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-gray-800">
-            <th className="text-left py-3 px-4 text-white">$BLOB Balance</th>
-            <th className="text-left py-3 px-4 text-white">Tier</th>
-            <th className="text-left py-3 px-4 text-white">Free NFTs</th>
-            <th className="text-left py-3 px-4 text-white">Total Value*</th>
-          </tr>
-        </thead>
-        <tbody className="text-gray-400">
-          <tr className="border-b border-gray-800/50">
-            <td className="py-3 px-4">1,000,000+</td>
-            <td className="py-3 px-4">
-              <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold">
-                👑 Legendary
-              </span>
-            </td>
-            <td className="py-3 px-4 font-bold text-white">3 NFTs</td>
-            <td className="py-3 px-4 text-green-400">~1.5 SOL</td>
-          </tr>
-          <tr className="border-b border-gray-800/50">
-            <td className="py-3 px-4">100,000 - 999,999</td>
-            <td className="py-3 px-4">
-              <span className="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-bold">
-                💎 Rare
-              </span>
-            </td>
-            <td className="py-3 px-4 font-bold text-white">2 NFTs</td>
-            <td className="py-3 px-4 text-green-400">~1.0 SOL</td>
-          </tr>
-          <tr className="border-b border-gray-800/50">
-            <td className="py-3 px-4">10,000 - 99,999</td>
-            <td className="py-3 px-4">
-              <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-bold">
-                🔵 Uncommon
-              </span>
-            </td>
-            <td className="py-3 px-4 font-bold text-white">1 NFT</td>
-            <td className="py-3 px-4 text-green-400">~0.5 SOL</td>
-          </tr>
-          <tr>
-            <td className="py-3 px-4">0 - 9,999</td>
-            <td className="py-3 px-4">
-              <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-xs font-bold">
-                ⚪ Common
-              </span>
-            </td>
-            <td className="py-3 px-4">—</td>
-            <td className="py-3 px-4 text-gray-500">Buy at mint</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <p className="text-xs text-gray-500 text-center mt-6">
-      * Based on 0.5 SOL public mint price. Snapshot taken 24h before mint.
-    </p>
-  </div>
-</div>
-      
+      </div> {/* Закрывающий div для container mx-auto */}
+
       {/* Footer и завершающие секции */}
       <div className="space-y-12 mt-20">
         {/* CTA Section - Final Call to Action */}
@@ -699,58 +699,64 @@ const handleShareToken = () => {
           </div>
         </div>
 
-{/* Было: grid-cols-2 md:grid-cols-3 */}
-{/* Стало: grid-cols-3 md:grid-cols-3 */}
-
-<div className="grid grid-cols-3 md:grid-cols-3 gap-4 md:gap-8">
-  {[
-    {
-      name: 'X',
-      fullName: 'X (Twitter)',
-      action: 'Follow',
-      url: 'https://twitter.com/phablobs'
-    },
-    {
-      name: 'TG',
-      fullName: 'Telegram',
-      action: 'Join',
-      url: 'https://t.me/phablobs'
-    },
-    {
-      name: 'DEX',
-      fullName: 'Dexscreener',
-      action: 'Track',
-      url: 'https://dexscreener.com/'
-    }
-  ].map((social, i) => (
-    <a
-      key={i}
-      href={social.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex flex-col items-center gap-2 md:gap-4 group"
-    >
-      <div className="w-16 h-16 md:w-24 md:h-24 
-                      border border-[#ab0ff2]/20 
-                      rounded-xl flex items-center justify-center
-                      bg-black/20 backdrop-blur-sm
-                      transition-all duration-300
-                      hover:border-[#ab0ff2]/40 hover:scale-105
-                      hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
-        <span className="text-xl md:text-3xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-          {social.name}
-        </span>
-      </div>
-      
-      <div className="text-center">
-        <h3 className="text-xs md:text-xl font-bold text-white hidden md:block">{social.fullName}</h3>
-        <p className="text-gray-400 text-[10px] md:text-base font-medium">
-          {social.action}
-        </p>
-      </div>
-    </a>
-  ))}
-</div>
+        {/* Community & Social Links */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-8">
+            <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+              Join Our Community
+            </h2>
+            
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-4 md:gap-8">
+              {[
+                {
+                  name: 'X',
+                  fullName: 'X (Twitter)',
+                  action: 'Follow',
+                  url: 'https://twitter.com/phablobs'
+                },
+                {
+                  name: 'TG',
+                  fullName: 'Telegram',
+                  action: 'Join',
+                  url: 'https://t.me/phablobs'
+                },
+                {
+                  name: 'DEX',
+                  fullName: 'Dexscreener',
+                  action: 'Track',
+                  url: 'https://dexscreener.com/'
+                }
+              ].map((social, i) => (
+                <a
+                  key={i}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2 md:gap-4 group"
+                >
+                  <div className="w-16 h-16 md:w-24 md:h-24 
+                                  border border-[#ab0ff2]/20 
+                                  rounded-xl flex items-center justify-center
+                                  bg-black/20 backdrop-blur-sm
+                                  transition-all duration-300
+                                  hover:border-[#ab0ff2]/40 hover:scale-105
+                                  hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
+                    <span className="text-xl md:text-3xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+                      {social.name}
+                    </span>
+                  </div>
+                  
+                  <div className="text-center">
+                    <h3 className="text-xs md:text-xl font-bold text-white hidden md:block">{social.fullName}</h3>
+                    <p className="text-gray-400 text-[10px] md:text-base font-medium">
+                      {social.action}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* FAQ Section */}
         <div className="max-w-4xl mx-auto">
@@ -794,42 +800,42 @@ const handleShareToken = () => {
         </div>
 
         {/* Partners & Integrations */}
-<div className="max-w-5xl mx-auto">
-  <h2 className="text-3xl font-black text-center mb-8 md:mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-    Powered By
-  </h2>
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-black text-center mb-8 md:mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+            Powered By
+          </h2>
 
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-    {[
-      { name: 'Solana', logo: '/logos/solana-logo.svg' },
-      { name: 'Phantom', logo: '/logos/phantom-logo.svg' },
-      { name: 'pump.fun', logo: '/logos/pumpfun-logo.svg' },
-      { name: 'Jupiter', logo: '/logos/jupiter-logo.svg' },
-    ].map((brand, index) => (
-      <div key={index} className="flex flex-col items-center gap-4">
-        {/* Логотип с тонкой обводкой */}
-        <div className="w-20 h-20 md:w-24 md:h-24 
-                        border border-[#ab0ff2]/20 
-                        rounded-xl flex items-center justify-center p-3
-                        bg-black/20 backdrop-blur-sm
-                        transition-all duration-300
-                        hover:border-[#ab0ff2]/40 hover:scale-105
-                        hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
-          <img 
-            src={brand.logo}
-            alt={`${brand.name} Logo`}
-            className="w-full h-auto object-contain"
-          />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {[
+              { name: 'Solana', logo: '/logos/solana-logo.svg' },
+              { name: 'Phantom', logo: '/logos/phantom-logo.svg' },
+              { name: 'pump.fun', logo: '/logos/pumpfun-logo.svg' },
+              { name: 'Jupiter', logo: '/logos/jupiter-logo.svg' },
+            ].map((brand, index) => (
+              <div key={index} className="flex flex-col items-center gap-4">
+                {/* Логотип с тонкой обводкой */}
+                <div className="w-20 h-20 md:w-24 md:h-24 
+                                border border-[#ab0ff2]/20 
+                                rounded-xl flex items-center justify-center p-3
+                                bg-black/20 backdrop-blur-sm
+                                transition-all duration-300
+                                hover:border-[#ab0ff2]/40 hover:scale-105
+                                hover:shadow-[0_0_20px_rgba(171,15,242,0.1)]">
+                  <img 
+                    src={brand.logo}
+                    alt={`${brand.name} Logo`}
+                    className="w-full h-auto object-contain"
+                  />
+                </div>
+                
+                {/* Подпись */}
+                <span className="text-white font-semibold text-lg">
+                  {brand.name}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-        
-        {/* Подпись */}
-        <span className="text-white font-semibold text-lg">
-          {brand.name}
-        </span>
-      </div>
-    ))}
-  </div>
-</div>
 
         {/* Final Footer */}
         <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
