@@ -97,82 +97,6 @@ async function generateBackgroundSVG(publicKey: string): Promise<string> {
     #${phablobNumber}
   </text>
   
-  <!-- URL -->
-  <text 
-    x="400" 
-    y="760" 
-    text-anchor="middle" 
-    font-family="Arial, sans-serif" 
-    font-size="18" 
-    fill="white" 
-    opacity="0.9"
-  >
-    phablobs.xyz
-  </text>
-</svg>`
-}
-
-// Получить цвет аватара
-function getAvatarColor(publicKey: string): string {
-  const hash = generateHash(publicKey)
-  const tokenBalance = 0
-  
-  const useGradient = hash % 2 === 0
-  
-  if (useGradient) {
-    const result = generateGradientFromBalance(publicKey, tokenBalance)
-    return result.avatarColor
-  } else {
-    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
-    return result.avatarColor
-  }
-}
-
-// Композитинг: Фон + Аватар + Текст поверх
-async function generateCompositePNG(publicKey: string): Promise<Buffer> {
-  const sharp = (await import('sharp')).default
-  
-  const hash = generateHash(publicKey)
-  const phablobNumber = (hash % 9999).toString().padStart(4, '0')
-  
-  // 1. Генерируем фон
-  const backgroundSVG = await generateBackgroundSVG(publicKey)
-  const backgroundPNG = await sharp(Buffer.from(backgroundSVG))
-    .png()
-    .toBuffer()
-  
-  // 2. Скачиваем аватар
-  const avatarColor = getAvatarColor(publicKey)
-  const cleanColor = avatarColor.replace('#', '')
-  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
-  
-  console.log(`🖼️ Downloading avatar: ${avatarUrl}`)
-  
-  const avatarResponse = await fetch(avatarUrl)
-  if (!avatarResponse.ok) {
-    throw new Error(`Failed to fetch avatar: ${avatarResponse.status}`)
-  }
-  
-  const avatarBuffer = Buffer.from(await avatarResponse.arrayBuffer())
-  
-  // 3. Ресайзим аватар до 360x360
-  const resizedAvatar = await sharp(avatarBuffer)
-    .resize(360, 360, {
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 }
-    })
-    .png()
-    .toBuffer()
-  
-  // 4. Создаем SVG с ТЕКСТОМ ПОВЕРХ (прозрачный фон)
-  const textOverlaySVG = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <filter id="textShadow">
-      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
-    </filter>
-  </defs>
-  
   <!-- ТЕКСТ PHABLOBS -->
   <text 
     x="400" 
@@ -216,24 +140,76 @@ async function generateCompositePNG(publicKey: string): Promise<Buffer> {
     phablobs.xyz
   </text>
 </svg>`
+}
+
+// Получить цвет аватара
+function getAvatarColor(publicKey: string): string {
+  const hash = generateHash(publicKey)
+  const tokenBalance = 0
   
-  const textOverlayPNG = await sharp(Buffer.from(textOverlaySVG))
+  const useGradient = hash % 2 === 0
+  
+  if (useGradient) {
+    const result = generateGradientFromBalance(publicKey, tokenBalance)
+    return result.avatarColor
+  } else {
+    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
+    return result.avatarColor
+  }
+}
+
+// Композитинг: Фон + Аватар + Текст поверх
+async function generateCompositePNG(publicKey: string): Promise<Buffer> {
+  const sharp = (await import('sharp')).default
+  
+  const hash = generateHash(publicKey)
+  const phablobNumber = (hash % 9999).toString().padStart(4, '0')
+  
+  // 1. Генерируем фон (С текстом и водяными знаками)
+  const backgroundSVG = await generateBackgroundSVG(publicKey)
+  
+  // 2. Скачиваем аватар
+  const avatarColor = getAvatarColor(publicKey)
+  const cleanColor = avatarColor.replace('#', '')
+  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
+  
+  console.log(`🖼️ Downloading avatar: ${avatarUrl}`)
+  
+  const avatarResponse = await fetch(avatarUrl)
+  if (!avatarResponse.ok) {
+    throw new Error(`Failed to fetch avatar: ${avatarResponse.status}`)
+  }
+  
+  const avatarBuffer = Buffer.from(await avatarResponse.arrayBuffer())
+  
+  // 3. Добавляем тень к аватару через SVG
+  const avatarWithShadowSVG = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="360" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="15" stdDeviation="25" flood-color="black" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+  <image href="${avatarUrl}" x="0" y="0" width="360" height="360" filter="url(#shadow)"/>
+</svg>`
+  
+  const avatarWithShadowPNG = await sharp(Buffer.from(avatarWithShadowSVG))
+    .resize(360, 360)
     .png()
     .toBuffer()
   
-  // 5. Композитим: фон + аватар + текст
+  // 4. Конвертируем фон в PNG
+  const backgroundPNG = await sharp(Buffer.from(backgroundSVG))
+    .png()
+    .toBuffer()
+  
+  // 5. Композитим: фон + аватар с тенью
   const compositePNG = await sharp(backgroundPNG)
     .composite([
       {
-        input: resizedAvatar,
+        input: avatarWithShadowPNG,
         top: 220,
         left: 220,
-        blend: 'over'
-      },
-      {
-        input: textOverlayPNG,
-        top: 0,
-        left: 0,
         blend: 'over'
       }
     ])
@@ -243,7 +219,7 @@ async function generateCompositePNG(publicKey: string): Promise<Buffer> {
     })
     .toBuffer()
   
-  console.log(`✅ Composite PNG created with text overlay!`)
+  console.log(`✅ Composite PNG created!`)
   
   return compositePNG
 }
