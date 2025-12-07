@@ -9,7 +9,7 @@ import {
   getTierInfo, 
   generateGradientFromBalance,
   COLOR_TIERS 
-} from './color-tiers'
+} from '@/lib/color-tiers'
 
 // НАСТРОЙКИ ТОКЕНА $BLOB
 const TOKEN_MINT = process.env.BLOB_TOKEN_MINT || 'TBA_AFTER_PUMPFUN_LAUNCH'
