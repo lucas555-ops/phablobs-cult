@@ -71,7 +71,7 @@ export default function Home() {
     window.open(twitterUrl, '_blank', 'width=550,height=420')
   }
 
-  const handleShareToken = () => {
+const handleShareToken = () => {
     const twitterText = encodeURIComponent(
       `🚀 Join the Phablobs Cult! 👻\n\n` +
       `Generate your unique Phantom-inspired avatar on phablobs.xyz\n\n` +
