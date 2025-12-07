@@ -107,7 +107,7 @@ export function getTierInfo(tokenBalance: number) {
 export function generateGradientFromBalance(
   publicKey: string, 
   tokenBalance: number
-): { color1: string; color2: string; tier: number; tierName: string } {
+): { avatarColor: string; bgColor1: string; bgColor2: string; tier: number; tierName: string } {
   const availableColors = getAvailableColors(tokenBalance)
   const tierInfo = getTierInfo(tokenBalance)
   
@@ -119,13 +119,32 @@ export function generateGradientFromBalance(
   }
   hash = Math.abs(hash)
   
-  // Выбираем два цвета из доступной палитры
-  const color1 = availableColors[hash % availableColors.length]
-  const color2 = availableColors[(hash * 2) % availableColors.length]
+  // Цвет аватара (первый цвет)
+  const avatarColor = availableColors[hash % availableColors.length]
+  
+  // Цвета фона (РАЗНЫЕ от аватара для контраста!)
+  let bgColor1 = availableColors[(hash * 3) % availableColors.length]
+  let bgColor2 = availableColors[(hash * 5) % availableColors.length]
+  
+  // Убеждаемся что цвета фона не совпадают с аватаром
+  let attempts = 0
+  while (bgColor1 === avatarColor && attempts < 10) {
+    hash++
+    bgColor1 = availableColors[hash % availableColors.length]
+    attempts++
+  }
+  
+  attempts = 0
+  while ((bgColor2 === avatarColor || bgColor2 === bgColor1) && attempts < 10) {
+    hash++
+    bgColor2 = availableColors[hash % availableColors.length]
+    attempts++
+  }
   
   return {
-    color1,
-    color2,
+    avatarColor,
+    bgColor1,
+    bgColor2,
     tier: tierInfo.tier,
     tierName: tierInfo.tierName
   }
