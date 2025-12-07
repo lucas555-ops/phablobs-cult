@@ -226,11 +226,6 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
 </svg>`
 }
 
-// Вспомогательная функция для конвертации Buffer в Uint8Array
-function bufferToUint8Array(buffer: Buffer): Uint8Array {
-  return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -282,8 +277,8 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-          // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Конвертируем Buffer в Uint8Array
-          return new NextResponse(bufferToUint8Array(compressedBuffer), {
+          // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Используем ArrayBuffer
+          return new NextResponse(compressedBuffer.buffer, {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'public, max-age=31536000, immutable',
@@ -292,8 +287,8 @@ export async function GET(
           })
         }
         
-        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Конвертируем Buffer в Uint8Array
-        return new NextResponse(bufferToUint8Array(pngBuffer), {
+        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Используем ArrayBuffer
+        return new NextResponse(pngBuffer.buffer, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
@@ -316,7 +311,7 @@ export async function GET(
             .png()
             .toBuffer()
           
-          return new NextResponse(bufferToUint8Array(fallbackPng), {
+          return new NextResponse(fallbackPng.buffer, {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'no-cache',
@@ -354,7 +349,7 @@ export async function GET(
           .png()
           .toBuffer()
         
-        return new NextResponse(bufferToUint8Array(errorPng), {
+        return new NextResponse(errorPng.buffer, {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'no-cache',
