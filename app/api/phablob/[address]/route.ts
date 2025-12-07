@@ -14,9 +14,6 @@ import {
 const TOKEN_MINT = process.env.BLOB_TOKEN_MINT || 'TBA_AFTER_PUMPFUN_LAUNCH'
 const SOLANA_RPC = process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com'
 
-// Кэш для base64 аватаров (чтобы не скачивать повторно)
-const avatarCache: Record<string, string> = {}
-
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
 }
@@ -59,61 +56,6 @@ async function getTokenBalance(walletAddress: string): Promise<number> {
   } catch (error) {
     console.error('Error fetching token balance:', error)
     return 0
-  }
-}
-
-// Функция для получения аватара как base64
-async function getBlobAvatarBase64(color: string): Promise<string> {
-  const cleanColor = color.replace('#', '')
-  const cacheKey = `avatar-${cleanColor}`
-  
-  // Проверяем кэш
-  if (avatarCache[cacheKey]) {
-    return avatarCache[cacheKey]
-  }
-  
-  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
-  
-  try {
-    console.log(`⬇️ Downloading avatar: ${cleanColor}`)
-    const response = await fetch(avatarUrl)
-    
-    if (!response.ok) {
-      console.error(`Failed to fetch avatar ${cleanColor}: ${response.status}`)
-      throw new Error(`Avatar not found: ${cleanColor}`)
-    }
-    
-    const buffer = await response.arrayBuffer()
-    const base64 = Buffer.from(buffer).toString('base64')
-    const dataUrl = `data:image/png;base64,${base64}`
-    
-    // Сохраняем в кэш
-    avatarCache[cacheKey] = dataUrl
-    console.log(`✅ Avatar cached: ${cleanColor} (${base64.length} bytes)`)
-    
-    return dataUrl
-  } catch (error) {
-    console.error(`Error fetching avatar for color ${color}:`, error)
-    
-    // Fallback: создаём простой цветной круг
-    const fallbackSvg = `<svg width="360" height="360" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="${color}" stop-opacity="0.8"/>
-          <stop offset="100%" stop-color="${color}" stop-opacity="0.4"/>
-        </linearGradient>
-        <filter id="shadow">
-          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
-        </filter>
-      </defs>
-      <circle cx="180" cy="180" r="150" fill="url(#grad)" filter="url(#shadow)"/>
-      <circle cx="180" cy="180" r="80" fill="white" opacity="0.15"/>
-    </svg>`
-    
-    const fallbackDataUrl = `data:image/svg+xml;base64,${Buffer.from(fallbackSvg).toString('base64')}`
-    avatarCache[cacheKey] = fallbackDataUrl
-    
-    return fallbackDataUrl
   }
 }
 
@@ -166,13 +108,15 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
   
   const tierInfo = getTierInfo(tokenBalance)
   
-  // Получаем аватар как base64
-  const blobAvatarDataUrl = await getBlobAvatarBase64(avatarColor)
+  // ИСПОЛЬЗУЕМ ПРЯМОЙ URL ВМЕСТО BASE64!
+  const cleanColor = avatarColor.replace('#', '')
+  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
   
   console.log(`🎨 Generated Phablob #${phablobNumber}`)
   console.log(`💰 Balance: ${tokenBalance.toLocaleString()} $BLOB`)
   console.log(`⭐ Tier ${tier}: ${tierName}`)
   console.log(`🎨 Using color: ${avatarColor}`)
+  console.log(`🖼️ Avatar URL: ${avatarUrl}`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -206,9 +150,9 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
   <text x="120" y="380" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="white" opacity="0.07" transform="rotate(15 120 380)">PHABLOBS</text>
   <text x="580" y="480" font-family="Arial, sans-serif" font-weight="900" font-size="44" fill="white" opacity="0.08" transform="rotate(-10 580 480)">PHABLOBS</text>
   
-  <!-- СЛОЙ 3: АВАТАР (встроенный как base64) -->
+  <!-- СЛОЙ 3: АВАТАР (ПРЯМОЙ URL!) -->
   <image 
-    href="${blobAvatarDataUrl}" 
+    href="${avatarUrl}" 
     x="220" 
     y="220" 
     width="360" 
@@ -334,8 +278,8 @@ export async function GET(
             .toBuffer()
         }
         
-        // ✅ ВОЗВРАЩАЕМ БИНАРНЫЕ ДАННЫЕ (НЕ BASE64!)
-        return new NextResponse(finalBuffer, {
+        // ✅ ВОЗВРАЩАЕМ БИНАРНЫЕ ДАННЫЕ (Uint8Array вместо Buffer!)
+        return new NextResponse(new Uint8Array(finalBuffer), {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
@@ -359,7 +303,7 @@ export async function GET(
             .png()
             .toBuffer()
           
-          return new NextResponse(fallbackPng, {
+          return new NextResponse(new Uint8Array(fallbackPng), {
             headers: {
               'Content-Type': 'image/png',
               'Cache-Control': 'no-cache',
@@ -397,7 +341,7 @@ export async function GET(
           .png()
           .toBuffer()
         
-        return new NextResponse(errorPng, {
+        return new NextResponse(new Uint8Array(errorPng), {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'no-cache',
