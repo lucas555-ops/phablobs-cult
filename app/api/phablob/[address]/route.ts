@@ -1,18 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Connection, PublicKey } from '@solana/web3.js'
 
 // Импортируем цветовую систему
 import { 
   getAvailableColors, 
-  getTierInfo, 
   generateGradientFromBalance,
-  generateSolidBgFromBalance,
-  COLOR_TIERS 
+  generateSolidBgFromBalance
 } from '@/lib/color-tiers'
-
-// НАСТРОЙКИ ТОКЕНА $BLOB
-const TOKEN_MINT = process.env.BLOB_TOKEN_MINT || 'TBA_AFTER_PUMPFUN_LAUNCH'
-const SOLANA_RPC = process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com'
 
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
@@ -25,38 +18,6 @@ function generateHash(publicKey: string): number {
     hash = hash & hash
   }
   return Math.abs(hash)
-}
-
-// Получить баланс токена $BLOB
-async function getTokenBalance(walletAddress: string): Promise<number> {
-  if (TOKEN_MINT === 'TBA_AFTER_PUMPFUN_LAUNCH') {
-    return 0
-  }
-  
-  try {
-    const connection = new Connection(SOLANA_RPC, 'confirmed')
-    const walletPubkey = new PublicKey(walletAddress)
-    const mintPubkey = new PublicKey(TOKEN_MINT)
-    
-    const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-      walletPubkey,
-      { mint: mintPubkey }
-    )
-    
-    if (tokenAccounts.value.length === 0) {
-      return 0
-    }
-    
-    const balance = tokenAccounts.value.reduce((total, account) => {
-      const amount = account.account.data.parsed.info.tokenAmount.uiAmount || 0
-      return total + amount
-    }, 0)
-    
-    return balance
-  } catch (error) {
-    console.error('Error fetching token balance:', error)
-    return 0
-  }
 }
 
 // Создание PNG из SVG
@@ -78,8 +39,8 @@ async function generateCompositePNG(svgContent: string): Promise<Buffer> {
   return pngBuffer;
 }
 
-// Генерация SVG с встроенным base64 аватаром
-async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promise<string> {
+// Генерация SVG
+async function generateAvatarSVG(publicKey: string): Promise<string> {
   const hash = generateHash(publicKey)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
@@ -88,34 +49,27 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
   let avatarColor: string
   let bgColor: string
   let bgColor2: string | null = null
-  let tier: number
-  let tierName: string
+  
+  // Всегда используем баланс 0 (нет проверки токенов)
+  const tokenBalance = 0
   
   if (useGradient) {
     const result = generateGradientFromBalance(publicKey, tokenBalance)
     avatarColor = result.avatarColor
     bgColor = result.bgColor1
     bgColor2 = result.bgColor2
-    tier = result.tier
-    tierName = result.tierName
   } else {
     const result = generateSolidBgFromBalance(publicKey, tokenBalance)
     avatarColor = result.avatarColor
     bgColor = result.bgColor
-    tier = result.tier
-    tierName = result.tierName
   }
   
-  const tierInfo = getTierInfo(tokenBalance)
-  
-  // ИСПОЛЬЗУЕМ ПРЯМОЙ URL ВМЕСТО BASE64!
+  // ИСПОЛЬЗУЕМ ПРЯМОЙ URL
   const cleanColor = avatarColor.replace('#', '')
   const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
   
   console.log(`🎨 Generated Phablob #${phablobNumber}`)
-  console.log(`💰 Balance: ${tokenBalance.toLocaleString()} $BLOB`)
-  console.log(`⭐ Tier ${tier}: ${tierName}`)
-  console.log(`🎨 Using color: ${avatarColor}`)
+  console.log(`🎨 Avatar color: ${avatarColor}`)
   console.log(`🖼️ Avatar URL: ${avatarUrl}`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -191,25 +145,7 @@ async function generateAvatarSVG(publicKey: string, tokenBalance: number): Promi
     #${phablobNumber}
   </text>
   
-  <!-- СЛОЙ 6: TIER BADGE -->
-  ${tier > 1 ? `
-  <g transform="translate(650, 50)">
-    <circle cx="0" cy="0" r="40" fill="rgba(0,0,0,0.5)"/>
-    <text 
-      x="0" 
-      y="8" 
-      text-anchor="middle" 
-      font-family="Arial, sans-serif" 
-      font-weight="900" 
-      font-size="24" 
-      fill="${tier === 4 ? '#FFD700' : tier === 3 ? '#FF69B4' : '#00FFFF'}"
-    >
-      T${tier}
-    </text>
-  </g>
-  ` : ''}
-  
-  <!-- СЛОЙ 7: URL -->
+  <!-- СЛОЙ 6: URL -->
   <text 
     x="400" 
     y="760" 
@@ -233,7 +169,7 @@ export async function GET(
     const { searchParams } = new URL(request.url)
     const format = searchParams.get('format') || 'svg'
 
-    // Поддержка HEAD запросов для проверки доступности
+    // Поддержка HEAD запросов
     if (request.method === 'HEAD') {
       return new NextResponse(null, { 
         status: 200,
@@ -252,8 +188,7 @@ export async function GET(
 
     console.log(`🚀 Generating Phablob for address: ${address}`)
     
-    const tokenBalance = await getTokenBalance(address)
-    const svgContent = await generateAvatarSVG(address, tokenBalance)
+    const svgContent = await generateAvatarSVG(address)
 
     if (format === 'png') {
       try {
@@ -264,10 +199,10 @@ export async function GET(
         const fileSizeMB = pngBuffer.length / (1024 * 1024)
         console.log(`📊 PNG size: ${fileSizeMB.toFixed(2)} MB`)
         
-        // Если файл слишком большой для Telegram, сжимаем
+        // Сжимаем если больше 5MB
         let finalBuffer = pngBuffer
         if (fileSizeMB > 5) {
-          console.log('⚡ Compressing PNG for Telegram...')
+          console.log('⚡ Compressing PNG...')
           const sharp = (await import('sharp')).default
           finalBuffer = await sharp(pngBuffer)
             .resize(600, 600, {
@@ -278,7 +213,6 @@ export async function GET(
             .toBuffer()
         }
         
-        // ✅ ВОЗВРАЩАЕМ БИНАРНЫЕ ДАННЫЕ (Uint8Array вместо Buffer!)
         return new NextResponse(new Uint8Array(finalBuffer), {
           headers: {
             'Content-Type': 'image/png',
@@ -291,7 +225,7 @@ export async function GET(
       } catch (error) {
         console.error('❌ PNG conversion failed:', error)
         
-        // Fallback: создаем простую PNG
+        // Fallback
         try {
           const sharp = (await import('sharp')).default
           const fallbackSVG = `<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
@@ -310,13 +244,13 @@ export async function GET(
             },
           })
         } catch (fallbackError) {
-          console.error('❌ Fallback also failed:', fallbackError)
+          console.error('❌ Fallback failed:', fallbackError)
           return new NextResponse('PNG generation error', { status: 500 })
         }
       }
     }
 
-    // Возвращаем SVG по умолчанию
+    // Возвращаем SVG
     return new NextResponse(svgContent, {
       headers: {
         'Content-Type': 'image/svg+xml',
