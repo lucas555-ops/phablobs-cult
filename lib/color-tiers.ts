@@ -1,0 +1,148 @@
+// ЦВЕТОВАЯ СИСТЕМА - 69 УНИКАЛЬНЫХ ЦВЕТОВ
+// Распределены по 4 тиерам на основе баланса $BLOB
+
+export const COLOR_TIERS = {
+  // TIER 1 - COMMONS (доступны всем, 0+ $BLOB) - 20 цветов
+  TIER_1: [
+    '#1c1c1c', '#5e5e5e', '#a1a1a1', '#e3e3e3',
+    '#1e7d32', '#007d00', '#1c583a', '#00c38d',
+    '#ab9ff2', '#7378e1', '#8764cd', '#7d5acd',
+    '#1e87f0', '#009be1', '#3ca5f5', '#78c3f5',
+    '#873c0a', '#5f1e00', '#9b3c00', '#c38c87'
+  ],
+  
+  // TIER 2 - UNCOMMONS (10,000+ $BLOB) - 20 цветов
+  TIER_2: [
+    '#1effff', '#e1780f', '#ff960f', '#ffd22d',
+    '#e33c87', '#ff7887', '#ff9687', '#e182cd',
+    '#b478ff', '#6982ff', '#7d96eb', '#e1aaff',
+    '#3caf96', '#5aa57d', '#3c9b00', '#82b91e',
+    '#d75a00', '#d61e04', '#ff3236', '#e12840'
+  ],
+  
+  // TIER 3 - RARES (100,000+ $BLOB) - 20 цветов
+  TIER_3: [
+    '#ffff2d', '#ffff5f', '#ffff91', '#ffffc3',
+    '#1ec3ff', '#0087f5', '#faffff', '#cdffe6',
+    '#3a943a', '#00e115', '#3ad058', '#3aff76',
+    '#720e2c', '#860018', '#e31eff', '#c50087',
+    '#001900', '#003700', '#00003c', '#000514'
+  ],
+  
+  // TIER 4 - LEGENDARIES (1,000,000+ $BLOB) - 9 цветов
+  TIER_4: [
+    '#1ce100', '#230000', '#2e0840', 
+    '#3e1462', '#2f1944', '#5f2869', 
+    '#7d46e1', '#7d0ac3', '#3c7378'
+  ]
+}
+
+// ПОРОГИ БАЛАНСА
+export const BALANCE_TIERS = {
+  TIER_1: 0,           // Commons - доступны всем
+  TIER_2: 10000,       // Uncommons - 10k+ $BLOB
+  TIER_3: 100000,      // Rares - 100k+ $BLOB
+  TIER_4: 1000000      // Legendaries - 1M+ $BLOB
+}
+
+// Получить доступные цвета на основе баланса
+export function getAvailableColors(tokenBalance: number): string[] {
+  let availableColors = [...COLOR_TIERS.TIER_1]
+  
+  if (tokenBalance >= BALANCE_TIERS.TIER_2) {
+    availableColors = [...availableColors, ...COLOR_TIERS.TIER_2]
+  }
+  
+  if (tokenBalance >= BALANCE_TIERS.TIER_3) {
+    availableColors = [...availableColors, ...COLOR_TIERS.TIER_3]
+  }
+  
+  if (tokenBalance >= BALANCE_TIERS.TIER_4) {
+    availableColors = [...availableColors, ...COLOR_TIERS.TIER_4]
+  }
+  
+  return availableColors
+}
+
+// Получить информацию о тиере
+export function getTierInfo(tokenBalance: number) {
+  let tier = 1
+  let tierName = 'Commons'
+  let unlockedColors = 20
+  let nextTier = 10000
+  
+  if (tokenBalance >= BALANCE_TIERS.TIER_4) {
+    tier = 4
+    tierName = 'Legendaries'
+    unlockedColors = 69
+    nextTier = null
+  } else if (tokenBalance >= BALANCE_TIERS.TIER_3) {
+    tier = 3
+    tierName = 'Rares'
+    unlockedColors = 60
+    nextTier = 1000000
+  } else if (tokenBalance >= BALANCE_TIERS.TIER_2) {
+    tier = 2
+    tierName = 'Uncommons'
+    unlockedColors = 40
+    nextTier = 100000
+  } else {
+    tier = 1
+    tierName = 'Commons'
+    unlockedColors = 20
+    nextTier = 10000
+  }
+  
+  return {
+    tier,
+    tierName,
+    unlockedColors,
+    totalColors: 69,
+    nextTier,
+    needsMore: nextTier ? nextTier - tokenBalance : 0
+  }
+}
+
+// Генерация градиента из доступных цветов
+export function generateGradientFromBalance(
+  publicKey: string, 
+  tokenBalance: number
+): { color1: string; color2: string; tier: number; tierName: string } {
+  const availableColors = getAvailableColors(tokenBalance)
+  const tierInfo = getTierInfo(tokenBalance)
+  
+  // Генерируем хэш из публичного ключа
+  let hash = 0
+  for (let i = 0; i < publicKey.length; i++) {
+    hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
+    hash = hash & hash
+  }
+  hash = Math.abs(hash)
+  
+  // Выбираем два цвета из доступной палитры
+  const color1 = availableColors[hash % availableColors.length]
+  const color2 = availableColors[(hash * 2) % availableColors.length]
+  
+  return {
+    color1,
+    color2,
+    tier: tierInfo.tier,
+    tierName: tierInfo.tierName
+  }
+}
+
+// Все 69 цветов для справки
+export const ALL_COLORS = [
+  ...COLOR_TIERS.TIER_1,
+  ...COLOR_TIERS.TIER_2,
+  ...COLOR_TIERS.TIER_3,
+  ...COLOR_TIERS.TIER_4
+]
+
+// Проверка: убеждаемся что всего 69 цветов и нет дубликатов
+const uniqueColors = [...new Set(ALL_COLORS)]
+console.log(`Total colors: ${ALL_COLORS.length}`) // Должно быть 69
+console.log(`Unique colors: ${uniqueColors.length}`) // Должно быть 69
+if (ALL_COLORS.length !== uniqueColors.length) {
+  console.error('⚠️ WARNING: Duplicate colors found!')
+}
