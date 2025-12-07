@@ -664,13 +664,7 @@ export default function Home() {
                   url: 'https://t.me/phablobs',
                   followers: 'Join Group'
                 },
-                {
-                  name: 'Discord',
-                  icon: '🎮',
-                  color: 'from-[#7289da] to-[#7289da]/70',
-                  url: 'https://discord.gg/phablobs',
-                  followers: 'Join Server'
-                },
+               
                 {
                   name: 'Dextools',
                   icon: '📊',
