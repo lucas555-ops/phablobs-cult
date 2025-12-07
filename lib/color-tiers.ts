@@ -1,4 +1,4 @@
-// ЦВЕТОВАЯ СИСТЕМА - 69 УНИКАЛЬНЫХ ЦВЕТ
+// ЦВЕТОВАЯ СИСТЕМА - 69 УНИКАЛЬНЫХ ЦВЕТОВ
 // Распределены по 4 тиерам на основе баланса $BLOB
 
 export const COLOR_TIERS = {
@@ -101,6 +101,68 @@ export function getTierInfo(tokenBalance: number) {
     nextTier,
     needsMore: nextTier ? nextTier - tokenBalance : 0
   }
+}
+
+// Генерация одноцветного фона (вместо градиента)
+export function generateSolidBgFromBalance(
+  publicKey: string, 
+  tokenBalance: number
+): { avatarColor: string; bgColor: string; tier: number; tierName: string } {
+  const availableColors = getAvailableColors(tokenBalance)
+  const tierInfo = getTierInfo(tokenBalance)
+  
+  let hash = 0
+  for (let i = 0; i < publicKey.length; i++) {
+    hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
+    hash = hash & hash
+  }
+  hash = Math.abs(hash)
+  
+  // Цвет аватара
+  const avatarColor = availableColors[hash % availableColors.length]
+  
+  // Получаем комплементарный цвет фона с корректировкой яркости
+  const bgColor = getComplementaryBgColor(avatarColor)
+  
+  return {
+    avatarColor,
+    bgColor,
+    tier: tierInfo.tier,
+    tierName: tierInfo.tierName
+  }
+}
+
+// Комплементарный цвет с автоматической корректировкой яркости
+function getComplementaryBgColor(avatarColor: string): string {
+  const r = parseInt(avatarColor.slice(1, 3), 16)
+  const g = parseInt(avatarColor.slice(3, 5), 16)
+  const b = parseInt(avatarColor.slice(5, 7), 16)
+  
+  // Инвертируем (комплементарный цвет)
+  let bgR = 255 - r
+  let bgG = 255 - g
+  let bgB = 255 - b
+  
+  // Проверяем контраст яркости
+  const avatarBrightness = (r + g + b) / 3
+  const bgBrightness = (bgR + bgG + bgB) / 3
+  
+  // Корректируем если контраст недостаточный
+  if (Math.abs(avatarBrightness - bgBrightness) < 80) {
+    if (avatarBrightness > 127) {
+      // Аватар светлый → делаем фон темнее
+      bgR = Math.floor(bgR * 0.4)
+      bgG = Math.floor(bgG * 0.4)
+      bgB = Math.floor(bgB * 0.4)
+    } else {
+      // Аватар темный → делаем фон светлее
+      bgR = Math.min(255, Math.floor(bgR * 1.6))
+      bgG = Math.min(255, Math.floor(bgG * 1.6))
+      bgB = Math.min(255, Math.floor(bgB * 1.6))
+    }
+  }
+  
+  return `#${bgR.toString(16).padStart(2, '0')}${bgG.toString(16).padStart(2, '0')}${bgB.toString(16).padStart(2, '0')}`
 }
 
 // Генерация градиента из доступных цветов
