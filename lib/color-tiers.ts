@@ -69,7 +69,7 @@ export function getTierInfo(tokenBalance: number) {
   let tier = 1
   let tierName = 'Commons'
   let unlockedColors = 20
-  let nextTier = 10000
+  let nextTier: number | null = 10000
   
   if (tokenBalance >= BALANCE_TIERS.TIER_4) {
     tier = 4
