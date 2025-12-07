@@ -741,30 +741,57 @@ export default function Home() {
         </div>
 
         {/* Partners & Integrations */}
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-black text-center mb-8 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-            Powered By
-          </h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { name: 'Solana', logo: '🟣', color: 'from-[#9945FF] to-[#14F195]' },
-              { name: 'Phantom', logo: '👻', color: 'from-[#ab0ff2] to-[#4da7f2]' },
-              { name: 'pump.fun', logo: '🚀', color: 'from-[#FF6B6B] to-[#FFD93D]' },
-              { name: 'Jupiter', logo: '🪐', color: 'from-[#10B981] to-[#3B82F6]' }
-            ].map((partner, index) => (
-              <div
-                key={index}
-                className="group"
-              >
-                <div className={`bg-gradient-to-br ${partner.color} rounded-2xl p-6 transition-all transform hover:scale-105 hover:shadow-[0_0_40px_rgba(171,15,242,0.3)]`}>
-                  <div className="text-4xl text-center mb-4">{partner.logo}</div>
-                  <h3 className="text-xl font-bold text-white text-center">{partner.name}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
+<div className="max-w-5xl mx-auto">
+  <h2 className="text-3xl font-black text-center mb-8 md:mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+    Powered By
+  </h2>
+
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+    {[
+      { 
+        name: 'Solana', 
+        logo: '/logos/solana-logo.svg', 
+        gradient: 'from-[#9945FF] to-[#14F195]' 
+      },
+      { 
+        name: 'Phantom', 
+        logo: '/logos/phantom-logo.svg', 
+        gradient: 'from-[#ab0ff2] to-[#4da7f2]' 
+      },
+      { 
+        name: 'pump.fun', 
+        logo: '/logos/pumpfun-logo.png', 
+        gradient: 'from-[#FF6B6B] to-[#FFD93D]' 
+      },
+      { 
+        name: 'Jupiter', 
+        logo: '/logos/jupiter-logo.svg', 
+        gradient: 'from-[#10B981] to-[#3B82F6]' 
+      },
+    ].map((brand, index) => (
+      <div key={index} className="flex flex-col items-center gap-3 md:gap-4">
+        <div className={`
+          w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24
+          bg-gradient-to-br ${brand.gradient}
+          rounded-2xl flex items-center justify-center
+          p-3 sm:p-4 transition-all duration-300
+          hover:scale-105 hover:shadow-[0_0_30px_rgba(171,15,242,0.3)]
+          border border-white/10
+        `}>
+          <img 
+            src={brand.logo}
+            alt={`${brand.name} Logo`}
+            className="w-full h-auto object-contain"
+            style={{ maxWidth: '80%', maxHeight: '80%' }}
+          />
         </div>
+        <span className="text-white font-semibold text-sm sm:text-base md:text-lg">
+          {brand.name}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
 
         {/* Final Footer */}
         <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
