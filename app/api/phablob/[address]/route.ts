@@ -226,21 +226,9 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
 </svg>`
 }
 
-// КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Функция для конвертации Buffer в правильный формат
-function createResponseFromBuffer(buffer: Buffer): NextResponse {
-  // Способ 1: Создаем Blob из Buffer
-  const blob = new Blob([buffer], { type: 'image/png' });
-  
-  // Создаем ReadableStream из Blob
-  const stream = blob.stream();
-  
-  return new NextResponse(stream as any, {
-    headers: {
-      'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
-      'Content-Length': buffer.length.toString()
-    },
-  });
+// ПРОСТЕЙШИЙ СПОСОБ: Конвертируем Buffer в base64 строку
+function bufferToBase64(buffer: Buffer): string {
+  return buffer.toString('base64')
 }
 
 export async function GET(
@@ -294,16 +282,26 @@ export async function GET(
             .png({ quality: 90 })
             .toBuffer()
           
-          // Используем новую функцию для создания ответа
-          const response = createResponseFromBuffer(compressedBuffer)
-          response.headers.set('Content-Disposition', `inline; filename="phablob-${address.substring(0, 8)}.png"`)
-          return response
+          // Конвертируем в base64 и возвращаем
+          const base64Image = bufferToBase64(compressedBuffer)
+          return new NextResponse(base64Image, {
+            headers: {
+              'Content-Type': 'image/png',
+              'Cache-Control': 'public, max-age=31536000, immutable',
+              'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
+            },
+          })
         }
         
-        // Используем новую функцию для создания ответа
-        const response = createResponseFromBuffer(pngBuffer)
-        response.headers.set('Content-Disposition', `inline; filename="phablob-${address.substring(0, 8)}.png"`)
-        return response
+        // Конвертируем в base64 и возвращаем
+        const base64Image = bufferToBase64(pngBuffer)
+        return new NextResponse(base64Image, {
+          headers: {
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`
+          },
+        })
         
       } catch (error) {
         console.error('❌ PNG generation failed:', error)
@@ -320,7 +318,13 @@ export async function GET(
             .png()
             .toBuffer()
           
-          return createResponseFromBuffer(fallbackPng)
+          const base64Image = bufferToBase64(fallbackPng)
+          return new NextResponse(base64Image, {
+            headers: {
+              'Content-Type': 'image/png',
+              'Cache-Control': 'no-cache',
+            },
+          })
         } catch (fallbackError) {
           console.error('❌ Fallback PNG also failed:', fallbackError)
           return new NextResponse('PNG generation error', { status: 500 })
@@ -353,7 +357,13 @@ export async function GET(
           .png()
           .toBuffer()
         
-        return createResponseFromBuffer(errorPng)
+        const base64Image = bufferToBase64(errorPng)
+        return new NextResponse(base64Image, {
+          headers: {
+            'Content-Type': 'image/png',
+            'Cache-Control': 'no-cache',
+          },
+        })
       } catch (pngError) {
         return new NextResponse('Server Error', { status: 500 })
       }
