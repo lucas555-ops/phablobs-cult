@@ -66,42 +66,50 @@ async function getTokenBalance(walletAddress: string): Promise<number> {
 // Кэш аватаров
 const cachedAvatars: Record<string, string> = {}
 
-function getPhantomAvatarDataUrl(gradientIndex: number): string {
-  const avatarIndex = gradientIndex % 6
-  const specificAvatarName = `phantom-avatar-${avatarIndex}.png`
-  const specificAvatarPath = join(process.cwd(), 'public', specificAvatarName)
+function getBlobAvatarDataUrl(color: string): string {
+  // Убираем # из цвета
+  const cleanColor = color.replace('#', '')
+  const avatarName = `blob-avatar-${cleanColor}.png`
+  const avatarPath = join(process.cwd(), 'public', 'avatars', avatarName)
   
-  if (existsSync(specificAvatarPath)) {
-    if (cachedAvatars[specificAvatarName]) {
-      return cachedAvatars[specificAvatarName]
-    }
-    
+  // Проверяем кэш
+  if (cachedAvatars[avatarName]) {
+    return cachedAvatars[avatarName]
+  }
+  
+  // Пытаемся загрузить конкретный аватар
+  if (existsSync(avatarPath)) {
     try {
-      const avatarBuffer = readFileSync(specificAvatarPath)
+      const avatarBuffer = readFileSync(avatarPath)
       const base64 = avatarBuffer.toString('base64')
-      cachedAvatars[specificAvatarName] = `data:image/png;base64,${base64}`
-      return cachedAvatars[specificAvatarName]
+      cachedAvatars[avatarName] = `data:image/png;base64,${base64}`
+      return cachedAvatars[avatarName]
     } catch (error) {
-      console.error(`Error loading ${specificAvatarName}:`, error)
+      console.error(`Error loading ${avatarName}:`, error)
     }
   }
   
-  const defaultAvatarName = 'phantom-avatar.png'
-  const defaultAvatarPath = join(process.cwd(), 'public', defaultAvatarName)
-  
-  if (cachedAvatars[defaultAvatarName]) {
-    return cachedAvatars[defaultAvatarName]
+  // Fallback: пытаемся найти любой аватар в папке
+  const avatarsDir = join(process.cwd(), 'public', 'avatars')
+  if (existsSync(avatarsDir)) {
+    try {
+      const files = require('fs').readdirSync(avatarsDir)
+      const pngFiles = files.filter((f: string) => f.endsWith('.png'))
+      
+      if (pngFiles.length > 0) {
+        // Берем первый найденный файл как fallback
+        const fallbackName = pngFiles[0]
+        const fallbackPath = join(avatarsDir, fallbackName)
+        const avatarBuffer = readFileSync(fallbackPath)
+        const base64 = avatarBuffer.toString('base64')
+        return `data:image/png;base64,${base64}`
+      }
+    } catch (error) {
+      console.error('Error loading fallback avatar:', error)
+    }
   }
   
-  try {
-    const avatarBuffer = readFileSync(defaultAvatarPath)
-    const base64 = avatarBuffer.toString('base64')
-    cachedAvatars[defaultAvatarName] = `data:image/png;base64,${base64}`
-    return cachedAvatars[defaultAvatarName]
-  } catch (error) {
-    console.error('Failed to load phantom-avatar.png:', error)
-    throw new Error('No phantom avatar found in /public/')
-  }
+  throw new Error(`No avatar found for color ${color}. Make sure files are in /public/avatars/`)
 }
 
 function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
@@ -112,14 +120,15 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   const { color1, color2, tier, tierName } = generateGradientFromBalance(publicKey, tokenBalance)
   const tierInfo = getTierInfo(tokenBalance)
   
-  // Выбираем аватар
-  const phantomAvatarDataUrl = getPhantomAvatarDataUrl(hash)
+  // Выбираем аватар по первому цвету градиента
+  const blobAvatarDataUrl = getBlobAvatarDataUrl(color1)
   
   console.log(`🎨 Phablob #${phablobNumber}`)
   console.log(`💰 Balance: ${tokenBalance.toLocaleString()} $BLOB`)
   console.log(`⭐ Tier ${tier}: ${tierName}`)
-  console.log(`🎨 Colors unlocked: ${tierInfo.unlockedColors}/60`)
+  console.log(`🎨 Colors unlocked: ${tierInfo.unlockedColors}/69`)
   console.log(`🌈 Gradient: ${color1} → ${color2}`)
+  console.log(`👻 Avatar: blob-avatar-${color1.replace('#', '')}.png`)
   
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
@@ -149,7 +158,7 @@ function generateAvatarSVG(publicKey: string, tokenBalance: number): string {
   
   <!-- СЛОЙ 3: АВАТАР -->
   <image 
-    href="${phantomAvatarDataUrl}" 
+    href="${blobAvatarDataUrl}" 
     x="220" 
     y="220" 
     width="360" 
