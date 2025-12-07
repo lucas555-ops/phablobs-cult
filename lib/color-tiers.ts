@@ -227,3 +227,4 @@ console.log(`Unique colors: ${uniqueColors.length}`) // Должно быть 69
 if (ALL_COLORS.length !== uniqueColors.length) {
   console.error('⚠️ WARNING: Duplicate colors found!')
 }
+
