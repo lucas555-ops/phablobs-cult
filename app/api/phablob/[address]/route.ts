@@ -128,9 +128,12 @@ function getAvatarColor(publicKey: string): string {
   }
 }
 
-// Композитинг: Фон + Аватар
+// Композитинг: Фон + Аватар + Текст поверх
 async function generateCompositePNG(publicKey: string): Promise<Buffer> {
   const sharp = (await import('sharp')).default
+  
+  const hash = generateHash(publicKey)
+  const phablobNumber = (hash % 9999).toString().padStart(4, '0')
   
   // 1. Генерируем фон
   const backgroundSVG = await generateBackgroundSVG(publicKey)
@@ -161,13 +164,76 @@ async function generateCompositePNG(publicKey: string): Promise<Buffer> {
     .png()
     .toBuffer()
   
-  // 4. Композитим: фон + аватар поверх
+  // 4. Создаем SVG с ТЕКСТОМ ПОВЕРХ (прозрачный фон)
+  const textOverlaySVG = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="textShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="black" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- ТЕКСТ PHABLOBS -->
+  <text 
+    x="400" 
+    y="90" 
+    text-anchor="middle" 
+    font-family="Arial, sans-serif" 
+    font-weight="900" 
+    font-size="68" 
+    fill="white" 
+    filter="url(#textShadow)" 
+    letter-spacing="6"
+  >
+    PHABLOBS
+  </text>
+  
+  <!-- НОМЕР -->
+  <text 
+    x="400" 
+    y="720" 
+    text-anchor="middle" 
+    font-family="Arial, sans-serif" 
+    font-weight="900" 
+    font-size="52" 
+    fill="white" 
+    filter="url(#textShadow)" 
+    letter-spacing="4"
+  >
+    #${phablobNumber}
+  </text>
+  
+  <!-- URL -->
+  <text 
+    x="400" 
+    y="760" 
+    text-anchor="middle" 
+    font-family="Arial, sans-serif" 
+    font-size="18" 
+    fill="white" 
+    opacity="0.9"
+  >
+    phablobs.xyz
+  </text>
+</svg>`
+  
+  const textOverlayPNG = await sharp(Buffer.from(textOverlaySVG))
+    .png()
+    .toBuffer()
+  
+  // 5. Композитим: фон + аватар + текст
   const compositePNG = await sharp(backgroundPNG)
     .composite([
       {
         input: resizedAvatar,
         top: 220,
         left: 220,
+        blend: 'over'
+      },
+      {
+        input: textOverlayPNG,
+        top: 0,
+        left: 0,
         blend: 'over'
       }
     ])
@@ -177,7 +243,7 @@ async function generateCompositePNG(publicKey: string): Promise<Buffer> {
     })
     .toBuffer()
   
-  console.log(`✅ Composite PNG created!`)
+  console.log(`✅ Composite PNG created with text overlay!`)
   
   return compositePNG
 }
