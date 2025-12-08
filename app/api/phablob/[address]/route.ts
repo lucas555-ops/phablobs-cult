@@ -19,7 +19,8 @@ let wasmInitialized = false
 
 async function initializeResvg() {
   if (!wasmInitialized) {
-    const wasmBuffer = await fetch(resvgWasmUrl).then(res => res.arrayBuffer())
+    // Теперь resvgWasm - это строка с URL, например "/_next/static/media/xxx.wasm"
+    const wasmBuffer = await fetch(resvgWasm).then(res => res.arrayBuffer())
     await initWasm(wasmBuffer)
     wasmInitialized = true
   }
