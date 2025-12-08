@@ -7,6 +7,9 @@ import {
   generateSolidBgFromBalance
 } from '@/lib/color-tiers'
 
+// ВАЖНО: Добавь эту строку
+export const runtime = 'edge'
+
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
 }
