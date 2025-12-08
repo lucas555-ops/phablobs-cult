@@ -1,10 +1,18 @@
-// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config) => {
-    config.experiments = {
-      asyncWebAssembly: true,
-      layers: true,
+  reactStrictMode: true,
+  images: {
+    unoptimized: true,
+  },
+  webpack: (config, { isServer }) => {
+    // Важно: настройки asyncWebAssembly должны быть только для серверной сборки
+    if (isServer) {
+      config.experiments = {
+        asyncWebAssembly: true,
+        layers: true,
+      }
+      
+      config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm'
     }
     return config
   },
