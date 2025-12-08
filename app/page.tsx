@@ -9,6 +9,7 @@ export default function Home() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [metadataCopySuccess, setMetadataCopySuccess] = useState(false)
 
   const TOKEN_CONTRACT = "TBA_AFTER_PUMPFUN_LAUNCH"
   
@@ -51,9 +52,62 @@ export default function Home() {
     }
   }
 
-  const handleDownloadMetadata = () => {
-    if (!address) return
-    window.open(`/api/phablob/${address}/metadata`, '_blank')
+  // НОВАЯ ФУНКЦИЯ: Копирование метаданных в буфер обмена
+  const handleCopyMetadata = async () => {
+    if (!address || !isValidSolanaAddress(address)) return
+    
+    try {
+      setIsLoading(true)
+      const response = await fetch(`/api/phablob/${address}/metadata`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      const metadata = await response.json()
+      const metadataText = JSON.stringify(metadata, null, 2)
+      
+      await navigator.clipboard.writeText(metadataText)
+      setMetadataCopySuccess(true)
+      setTimeout(() => setMetadataCopySuccess(false), 2000)
+      
+    } catch (err) {
+      console.error('Failed to copy metadata:', err)
+      setError('Failed to copy metadata. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Функция для скачивания метаданных как файла JSON
+  const handleDownloadMetadata = async () => {
+    if (!address || !isValidSolanaAddress(address)) return
+    
+    try {
+      setIsLoading(true)
+      const response = await fetch(`/api/phablob/${address}/metadata`)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      const metadata = await response.json()
+      const blob = new Blob([JSON.stringify(metadata, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `phablob-${address.substring(0, 8)}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      
+    } catch (err) {
+      console.error('Failed to download metadata:', err)
+      setError('Failed to download metadata. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleShareTwitter = async () => {
@@ -259,31 +313,60 @@ export default function Home() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Кнопка копирования метаданных */}
                 <button
-                  onClick={handleDownloadMetadata}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(171,15,242,0.4)]"
+                  onClick={handleCopyMetadata}
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(171,15,242,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  NFT Metadata
+                  {metadataCopySuccess ? (
+                    <>
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-white font-bold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-white font-bold">Copy Metadata</span>
+                    </>
+                  )}
                 </button>
 
+                {/* Кнопка скачивания метаданных как файла */}
+                <button
+                  onClick={handleDownloadMetadata}
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] hover:from-[#26a879] hover:to-[#3d96e0] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(46,192,139,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="text-white font-bold">Download JSON</span>
+                </button>
+
+                {/* Кнопка шаринга в Twitter */}
                 <button
                   onClick={handleShareTwitter}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#4da7f2] to-[#2ec08b] hover:from-[#3d96e0] hover:to-[#26a879] text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(77,167,242,0.4)]"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#1DA1F2] to-[#1d8ef2] hover:from-[#0c8bdc] hover:to-[#0c7bdc] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(29,161,242,0.4)]"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                   </svg>
-                  Share on X
+                  <span className="text-white font-bold">Share on X</span>
                 </button>
               </div>
 
               <div className="mt-4 text-center">
                 <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
-                  💡 Right-click image to save, or download metadata to mint as NFT
+                  💡 Right-click image to save. Copy metadata or download JSON for NFT minting.
+                </p>
+                <p className="text-gray-600 text-xs mt-1">
+                  Metadata format: Metaplex NFT Standard
                 </p>
               </div>
             </div>
@@ -354,7 +437,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">NFT-Ready</h3>
                 <p className="text-gray-400 leading-relaxed">
-                  Download metadata in Metaplex format - ready to mint on Solana marketplaces like Magic Eden and Tensor
+                  Copy or download metadata in Metaplex format - ready to mint on Solana marketplaces like Magic Eden and Tensor
                 </p>
               </div>
             </div>
@@ -464,6 +547,7 @@ export default function Home() {
                     <li>✅ Website live</li>
                     <li>✅ Free generator</li>
                     <li>✅ 69 unique avatars</li>
+                    <li>✅ NFT metadata export</li>
                   </ul>
                 </div>
               </div>
@@ -785,7 +869,7 @@ export default function Home() {
                 },
                 {
                   q: 'Can I mint my Phablob as an NFT?',
-                  a: 'Yes! Click "NFT Metadata" after generation to download Metaplex-compatible metadata ready for minting on any Solana marketplace.'
+                  a: 'Yes! Click "Copy Metadata" or "Download JSON" after generation to get Metaplex-compatible metadata ready for minting on any Solana marketplace.'
                 }
               ].map((faq, index) => (
                 <div key={index} className="border border-[#ab0ff2]/20 rounded-2xl p-6 hover:border-[#ab0ff2]/40 transition-all">
