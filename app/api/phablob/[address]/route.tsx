@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server'
 import { ImageResponse } from '@vercel/og'
-
-// Импортируем цветовую систему
 import { 
   generateGradientFromBalance,
   generateSolidBgFromBalance
 } from '@/lib/color-tiers'
+
+export const runtime = 'edge'
 
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
@@ -20,7 +20,6 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-// Получить цвет аватара
 function getAvatarColor(publicKey: string): string {
   const hash = generateHash(publicKey)
   const tokenBalance = 0
@@ -85,11 +84,12 @@ export async function GET(
             position: 'relative',
             background: bgColor2 
               ? `linear-gradient(135deg, ${bgColor} 0%, ${bgColor2} 100%)`
-              : bgColor,
+              : bgColor
           }}
         >
           {/* ВОДЯНЫЕ ЗНАКИ */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex' }}>
+          {/* Упростим водяные знаки - Edge Runtime может не любить много вложенных div */}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
             <div style={{ position: 'absolute', top: '150px', left: '100px', transform: 'rotate(-15deg)', fontSize: '48px', fontWeight: 900, color: 'white', opacity: 0.08 }}>
               PHANTOM
             </div>
@@ -122,7 +122,8 @@ export async function GET(
             display: 'flex',
             filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.6))'
           }}>
-            <img 
+            {/* Используем img как JSX элемент */}
+            <img
               src={avatarUrl}
               width="360"
               height="360"
@@ -140,7 +141,7 @@ export async function GET(
             fontWeight: 900,
             color: 'white',
             letterSpacing: '6px',
-            textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+            textShadow: '0 4px 8px rgba(0,0,0,0.3)'
           }}>
             PHABLOBS
           </div>
@@ -155,7 +156,7 @@ export async function GET(
             fontWeight: 900,
             color: 'white',
             letterSpacing: '4px',
-            textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+            textShadow: '0 4px 8px rgba(0,0,0,0.3)'
           }}>
             #{phablobNumber}
           </div>
@@ -168,7 +169,7 @@ export async function GET(
             transform: 'translateX(-50%)',
             fontSize: '18px',
             color: 'white',
-            opacity: 0.9,
+            opacity: 0.9
           }}>
             phablobs.xyz
           </div>
@@ -179,13 +180,12 @@ export async function GET(
         height: 800,
       }
     )
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error:', error)
-    return new Response('Error generating image', { status: 500 })
+    return new Response(`Error generating image: ${error.message}`, { status: 500 })
   }
 }
 
-// Поддержка OPTIONS для CORS
 export async function OPTIONS() {
   return new Response(null, {
     status: 200,
