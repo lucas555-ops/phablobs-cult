@@ -10,7 +10,7 @@ import {
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// --- Вспомогательные функции ---
+// --- Вспомогательные функции (одинаковые с основным роутом) ---
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
 }
@@ -24,17 +24,28 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-// --- НОВАЯ ФУНКЦИЯ: Генерация водяных знаков на основе хэша ---
+function getAvatarColor(publicKey: string): string {
+  const hash = generateHash(publicKey)
+  const tokenBalance = 0
+  const useGradient = hash % 2 === 0
+
+  if (useGradient) {
+    const result = generateGradientFromBalance(publicKey, tokenBalance)
+    return result.avatarColor
+  } else {
+    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
+    return result.avatarColor
+  }
+}
+
+// --- Функция для генерации информации о водяных знаках ---
 function generateWatermarksInfo(publicKey: string) {
   const hash = generateHash(publicKey)
-  
-  // Используем хэш как seed для генерации
   const seed = hash
   const texts = ['PHANTOM', 'PHABLOBS', 'SOLANA', 'NFT', 'WEB3', 'CRYPTO']
   const rotations = [-30, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30]
   const fontSizes = [32, 36, 40, 44, 48, 52, 56, 60]
   
-  // Генерируем 8-12 водяных знаков
   const watermarkCount = 8 + (hash % 5)
   let watermarksTexts: string[] = []
   let watermarksStats = {
@@ -44,7 +55,6 @@ function generateWatermarksInfo(publicKey: string) {
   }
   
   for (let i = 0; i < watermarkCount; i++) {
-    // Используем разные части хэша для разных параметров
     const textIndex = (seed + i * 137) % texts.length
     const rotationIndex = (seed + i * 257) % rotations.length
     const fontSizeIndex = (seed + i * 397) % fontSizes.length
@@ -54,7 +64,6 @@ function generateWatermarksInfo(publicKey: string) {
     watermarksStats.sizes.add(fontSizes[fontSizeIndex])
   }
   
-  // Уникальные значения
   const uniqueTexts = [...new Set(watermarksTexts)]
   const rotationTypes = watermarksStats.rotations.size
   const sizeTypes = watermarksStats.sizes.size
@@ -68,17 +77,18 @@ function generateWatermarksInfo(publicKey: string) {
   }
 }
 
+// --- Основная функция генерации метаданных ---
 function generatePhablobMetadata(publicKey: string) {
   const hash = generateHash(publicKey)
   
-  // УНИКАЛЬНЫЙ HEX номер (синхронизировано с основным файлом)
+  // Уникальный HEX номер (синхронизировано с основным роутом)
   const hexHash = hash.toString(16).toUpperCase().padStart(8, '0')
-  const phablobNumber = `#${hexHash}` // Пример: #1A3F5C7E
+  const phablobNumber = `#${hexHash}`
   
   const useGradient = hash % 2 === 0
   const tokenBalance = 0
 
-  // Получаем информацию о водяных знаках
+  // Информация о водяных знаках
   const watermarksInfo = generateWatermarksInfo(publicKey)
   
   let attributes = []
@@ -87,7 +97,7 @@ function generatePhablobMetadata(publicKey: string) {
   let bgColor: string
   let bgColor2: string | null = null
 
-  // Генерируем цвета как в основном файле
+  // Генерация цветов как в основном роуте
   if (useGradient) {
     const result = generateGradientFromBalance(publicKey, tokenBalance)
     avatarColor = result.avatarColor
@@ -114,7 +124,7 @@ function generatePhablobMetadata(publicKey: string) {
     ]
   }
 
-  // Дополнительные атрибуты на основе хэша
+  // Редкость на основе хэша
   const rarityTiers = ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
   const rarityIndex = (hash % 100) < 50 ? 0 : 
                      (hash % 100) < 75 ? 1 : 
@@ -122,10 +132,11 @@ function generatePhablobMetadata(publicKey: string) {
                      (hash % 100) < 98 ? 3 : 4
   const rarity = rarityTiers[rarityIndex]
   
-  // Атрибут "Watermark Complexity"
+  // Сложность водяных знаков
   const watermarkComplexity = watermarksInfo.count > 10 ? "High" : 
                              watermarksInfo.count > 8 ? "Medium" : "Low"
   
+  // Основные атрибуты
   attributes.push(
     { trait_type: "Rarity", value: rarity },
     { trait_type: "Serial Number", value: phablobNumber },
@@ -136,25 +147,30 @@ function generatePhablobMetadata(publicKey: string) {
     { trait_type: "Background Style", value: bgType }
   )
   
-  // Добавляем атрибуты для водяных знаков (если нужно больше деталей)
+  // Дополнительные атрибуты водяных знаков
   if (watermarksInfo.textVariety > 1) {
     attributes.push(
       { trait_type: "Watermark Variety", value: watermarksInfo.textVariety.toString() }
     )
   }
 
-  // Статистика комбинаций для описания
-  const combinationsCount = Math.floor(hash % 1000000000) + 1000000000
+  // Расчет комбинаций
+  const avatarColors = 69
+  const backgroundTypes = 2 // Solid + Gradient
+  const solidBackgrounds = avatarColors
+  const gradientBackgrounds = avatarColors * avatarColors
+  const totalBackgrounds = solidBackgrounds + gradientBackgrounds
+  const watermarksVariations = Math.pow(6, watermarksInfo.count) // 6 возможных текстов
   
+  const combinationsCount = avatarColors * totalBackgrounds * watermarksVariations
+
+  // Формирование метаданных
   const metadata = {
     name: `Phablob ${phablobNumber}`,
     symbol: "PHBLB",
-    description: `A unique Phantom-inspired avatar generated from Solana wallet address. ` +
-                `Features ${bgType.toLowerCase()} background, ${rarity.toLowerCase()} rarity, ` +
-                `and ${watermarksInfo.count} dynamic watermarks. ` +
-                `One of ${combinationsCount.toLocaleString()} possible combinations.`,
-    image: `https://www.phablobs.xyz/api/phablob/${publicKey}?format=png`,
-    external_url: `https://www.phablobs.xyz/phablob/${publicKey}`,
+    description: `A unique Phantom-inspired avatar generated from Solana wallet address ${publicKey.substring(0, 8)}... Features ${bgType.toLowerCase()} background (${bgColor}${bgColor2 ? ' to ' + bgColor2 : ''}), ${rarity.toLowerCase()} rarity, and ${watermarksInfo.count} dynamic watermarks. One of over 3.3 billion possible combinations.`,
+    image: `https://phablobs.xyz/api/phablob/${publicKey}?format=png`,
+    external_url: `https://phablobs.xyz/phablob/${publicKey}`,
     seller_fee_basis_points: 500, // 5% royalty
     collection: {
       name: "Phablobs Collection",
@@ -164,36 +180,32 @@ function generatePhablobMetadata(publicKey: string) {
     properties: {
       files: [
         {
-          uri: `https://www.phablobs.xyz/api/phablob/${publicKey}?format=png`,
+          uri: `https://phablobs.xyz/api/phablob/${publicKey}?format=png`,
           type: "image/png"
         },
         {
-          uri: `https://www.phablobs.xyz/api/phablob/${publicKey}?format=svg`,
+          uri: `https://phablobs.xyz/api/phablob/${publicKey}?format=svg`,
           type: "image/svg+xml"
         }
       ],
       category: "image",
       creators: [
         {
-          address: publicKey, // Original wallet owner
-          share: 0
-        },
-        {
-          address: "phablobs.xyz", // Platform
+          address: "phablobs.xyz",
           share: 100
         }
       ]
     },
-    // Дополнительная информация для совместимости с рынками
-    marketplace_info: {
-      marketplace: "phablobs.xyz",
-      collection_url: "https://www.phablobs.xyz",
-      token_standard: "Metaplex",
-      blockchain: "Solana"
-    },
     // Технические детали
     technical_details: {
       algorithm: "Deterministic hash-based generation",
+      total_combinations: "3.3B+",
+      avatar_colors: avatarColors,
+      background_types: {
+        solid: solidBackgrounds,
+        gradient: gradientBackgrounds,
+        total: totalBackgrounds
+      },
       watermarks: {
         count: watermarksInfo.count,
         unique_texts: watermarksInfo.uniqueTexts,
@@ -202,8 +214,7 @@ function generatePhablobMetadata(publicKey: string) {
       },
       colors: {
         avatar: avatarColor,
-        background: bgType === "Gradient" ? [bgColor, bgColor2] : [bgColor],
-        total_variants: 69
+        background: bgType === "Gradient" ? [bgColor, bgColor2] : [bgColor]
       }
     }
   }
@@ -211,7 +222,7 @@ function generatePhablobMetadata(publicKey: string) {
   return metadata
 }
 
-// --- Основной обработчик запроса для метаданных ---
+// --- Основной обработчик GET запроса ---
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
@@ -243,21 +254,14 @@ export async function GET(
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=31536000, immutable',
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        // Для лучшей поддержки NFT маркетплейсов
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY'
+        'Access-Control-Allow-Methods': 'GET, OPTIONS'
       }
     })
 
   } catch (error) {
     console.error('❌ Metadata route handler error:', error instanceof Error ? error.message : String(error))
     return NextResponse.json(
-      { 
-        error: 'Failed to generate metadata',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Failed to generate metadata' },
       { status: 500 }
     )
   }
@@ -273,53 +277,4 @@ export async function OPTIONS(request: NextRequest) {
       'Access-Control-Max-Age': '86400'
     }
   })
-}
-
-// --- Обработчик POST для тестирования (опционально) ---
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { address: string } }
-) {
-  try {
-    const address = params.address
-    
-    if (!isValidSolanaAddress(address)) {
-      return NextResponse.json(
-        { error: 'Invalid Solana address' },
-        { status: 400 }
-      )
-    }
-    
-    const body = await request.json()
-    const testMode = body.testMode || false
-    
-    console.log(`🧪 Test metadata generation for: ${address}`)
-    const metadata = generatePhablobMetadata(address)
-    
-    // В тестовом режиме добавляем дополнительную информацию
-    if (testMode) {
-      const hash = generateHash(address)
-      const hexHash = hash.toString(16).toUpperCase().padStart(8, '0')
-      
-      return NextResponse.json({
-        ...metadata,
-        debug_info: {
-          address_hash: hash,
-          hex_hash: hexHash,
-          background_type: hash % 2 === 0 ? "Gradient" : "Solid",
-          watermarks: generateWatermarksInfo(address),
-          combinations_possible: "3.3B+"
-        }
-      })
-    }
-    
-    return NextResponse.json(metadata)
-    
-  } catch (error) {
-    console.error('❌ POST metadata error:', error instanceof Error ? error.message : String(error))
-    return NextResponse.json(
-      { error: 'Invalid request' },
-      { status: 400 }
-    )
-  }
 }
