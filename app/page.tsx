@@ -459,7 +459,14 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Combinations */}
+        {/* The Math Behind Phablobs Section */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+            The Math Behind Phablobs
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Combinations */}
 <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
   <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
     3.3B+
