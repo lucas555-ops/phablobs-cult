@@ -459,25 +459,18 @@ export default function Home() {
           </div>
         </div>
 
-        {/* The Math Behind Phablobs Section */}
-        <div className="max-w-5xl mx-auto mb-12">
-          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-            The Math Behind Phablobs
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Combinations */}
-            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
-              <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-                596,000+
-              </div>
-              <h3 className="text-xl font-bold text-white text-center mb-2">
-                Unique Combinations
-              </h3>
-              <p className="text-gray-400 text-sm text-center">
-                69 avatar colors × 2 background styles (gradient/solid) × wallet addresses = infinite possibilities
-              </p>
-            </div>
+        {/* Combinations */}
+<div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
+  <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+    3.3B+
+  </div>
+  <h3 className="text-xl font-bold text-white text-center mb-2">
+    Unique Combinations
+  </h3>
+  <p className="text-gray-400 text-sm text-center">
+    69 avatars × 4,830 backgrounds × Solana addresses = practically infinite
+  </p>
+</div>
 
             {/* Tiers */}
             <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
@@ -871,6 +864,10 @@ export default function Home() {
                   q: 'Can I mint my Phablob as an NFT?',
                   a: 'Yes! Click "Copy Metadata" or "Download JSON" after generation to get Metaplex-compatible metadata ready for minting on any Solana marketplace.'
                 }
+				{
+  q: 'How unique is my Phablob?',
+  a: 'Each Phablob has a unique HEX identifier like #1A3F5C7E. With 69 avatar colors, 4,830 possible backgrounds, and unique Solana addresses, there are over 3.3 billion possible combinations - your Phablob is truly one-of-a-kind!'
+}
               ].map((faq, index) => (
                 <div key={index} className="border border-[#ab0ff2]/20 rounded-2xl p-6 hover:border-[#ab0ff2]/40 transition-all">
                   <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
