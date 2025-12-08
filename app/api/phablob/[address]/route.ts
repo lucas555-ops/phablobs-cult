@@ -185,6 +185,7 @@ export async function GET(
   }
 }
 
+// Поддержка OPTIONS для CORS
 export async function OPTIONS() {
   return new Response(null, {
     status: 200,
