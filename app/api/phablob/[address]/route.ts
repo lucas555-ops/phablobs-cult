@@ -1,10 +1,17 @@
+// app/api/phablob/[address]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import fs from 'fs'
+import path from 'path'
+import { Resvg } from '@resvg/resvg-js'
 
-// Импортируем цветовую систему
+// Ваша цветовая система (оставлена как есть)
 import { 
   generateGradientFromBalance,
   generateSolidBgFromBalance
 } from '@/lib/color-tiers'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 function isValidSolanaAddress(address: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
@@ -19,13 +26,11 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
-// Получить цвет аватара
 function getAvatarColor(publicKey: string): string {
   const hash = generateHash(publicKey)
   const tokenBalance = 0
-  
   const useGradient = hash % 2 === 0
-  
+
   if (useGradient) {
     const result = generateGradientFromBalance(publicKey, tokenBalance)
     return result.avatarColor
@@ -35,38 +40,44 @@ function getAvatarColor(publicKey: string): string {
   }
 }
 
-// Скачать аватар и конвертировать в base64
+/**
+ * Try local /public/avatars first, then fallback to existing external URL.
+ * Returns data URI `data:image/png;base64,...`
+ */
 async function getAvatarBase64(color: string): Promise<string> {
-  const cleanColor = color.replace('#', '')
-  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
-  
-  console.log(`⬇️ Downloading avatar: ${avatarUrl}`)
-  
-  const response = await fetch(avatarUrl)
-  if (!response.ok) {
-    throw new Error(`Failed to fetch avatar: ${response.status}`)
+  const cleanColor = color.replace('#', '').toLowerCase()
+  const localPath = path.join(process.cwd(), 'public', 'avatars', `blob-avatar-${cleanColor}.png`)
+  try {
+    if (fs.existsSync(localPath)) {
+      const buf = fs.readFileSync(localPath)
+      return `data:image/png;base64,${buf.toString('base64')}`
+    }
+  } catch (e) {
+    console.warn('Local avatar read failed:', e)
   }
-  
-  const buffer = await response.arrayBuffer()
-  const base64 = Buffer.from(buffer).toString('base64')
-  
-  console.log(`✅ Avatar downloaded: ${base64.length} bytes`)
-  
-  return `data:image/png;base64,${base64}`
+
+  // fallback to external hosting (preserve original behavior)
+  const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
+  console.log(`⬇️ Downloading avatar (fallback): ${avatarUrl}`)
+  const resp = await fetch(avatarUrl)
+  if (!resp.ok) {
+    throw new Error(`Failed to fetch avatar: ${resp.status}`)
+  }
+  const arr = await resp.arrayBuffer()
+  return `data:image/png;base64,${Buffer.from(arr).toString('base64')}`
 }
 
-// Генерация полного SVG с встроенным base64 аватаром
 async function generateCompleteSVG(publicKey: string): Promise<string> {
   const hash = generateHash(publicKey)
   const phablobNumber = (hash % 9999).toString().padStart(4, '0')
-  
+
   const useGradient = hash % 2 === 0
   const tokenBalance = 0
-  
+
   let avatarColor: string
   let bgColor: string
   let bgColor2: string | null = null
-  
+
   if (useGradient) {
     const result = generateGradientFromBalance(publicKey, tokenBalance)
     avatarColor = result.avatarColor
@@ -77,12 +88,12 @@ async function generateCompleteSVG(publicKey: string): Promise<string> {
     avatarColor = result.avatarColor
     bgColor = result.bgColor
   }
-  
-  // Скачиваем аватар как base64
+
+  // Получаем base64 аватар (локально или внешне)
   const avatarBase64 = await getAvatarBase64(avatarColor)
-  
+
   console.log(`🎨 Generating Phablob #${phablobNumber}`)
-  
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -178,6 +189,7 @@ export async function GET(
   try {
     const address = params.address
     const { searchParams } = new URL(request.url)
+    // format: svg | png
     const format = searchParams.get('format') || 'svg'
 
     if (request.method === 'HEAD') {
@@ -203,52 +215,33 @@ export async function GET(
 
     if (format === 'png') {
       try {
-        const sharp = (await import('sharp')).default
-        
-        console.log('🔄 Converting SVG to PNG...')
-        
-        // Используем высокий DPI для лучшего рендеринга текста
-        const pngBuffer = await sharp(Buffer.from(svgContent), {
-          density: 144 // Увеличен DPI для четкого текста
+        // Render SVG -> PNG with resvg
+        const resvg = new Resvg(svgContent, {
+          fitTo: { mode: 'width', value: 800 }
         })
-        .png({
-          quality: 100,
-          compressionLevel: 6,
-          adaptiveFiltering: true
-        })
-        .toBuffer()
-        
-        const fileSizeMB = pngBuffer.length / (1024 * 1024)
-        console.log(`📊 PNG size: ${fileSizeMB.toFixed(2)} MB`)
-        
-        // Сжимаем если > 5MB
-        let finalBuffer = pngBuffer
-        if (fileSizeMB > 5) {
-          console.log('⚡ Compressing...')
-          finalBuffer = await sharp(pngBuffer)
-            .resize(600, 600, { fit: 'inside' })
-            .png({ quality: 90 })
-            .toBuffer()
-        }
-        
-        return new NextResponse(new Uint8Array(finalBuffer), {
+
+        const pngData = resvg.render()
+        const pngBuffer = pngData.asPng()
+
+        // Return PNG buffer
+        return new NextResponse(new Uint8Array(pngBuffer), {
           headers: {
             'Content-Type': 'image/png',
             'Cache-Control': 'public, max-age=31536000, immutable',
-            'Content-Disposition': `inline; filename="phablob-${address.substring(0, 8)}.png"`,
-          },
+            'Content-Disposition': `inline; filename="phablob-${address.substring(0,8)}.png"`,
+            'Content-Length': pngBuffer.length.toString()
+          }
         })
-        
-      } catch (error) {
-        console.error('❌ PNG conversion failed:', error)
+      } catch (err) {
+        console.error('❌ PNG render failed:', err)
         return new NextResponse('PNG generation error', { status: 500 })
       }
     }
 
-    // Возвращаем SVG
+    // Возвращаем SVG (для сайта)
     return new NextResponse(svgContent, {
       headers: {
-        'Content-Type': 'image/svg+xml',
+        'Content-Type': 'image/svg+xml; charset=utf-8',
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
     })
