@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 import { Resvg, initWasm } from '@resvg/resvg-wasm'
-import resvgWasmUrl from '@resvg/resvg-wasm/index.wasm'
 
 // Ваша цветовая система (оставлена как есть)
 import { 
@@ -19,8 +18,10 @@ let wasmInitialized = false
 
 async function initializeResvg() {
   if (!wasmInitialized) {
-    // Теперь resvgWasm - это строка с URL, например "/_next/static/media/xxx.wasm"
-    const wasmBuffer = await fetch(resvgWasm).then(res => res.arrayBuffer())
+    // Динамически загружаем WASM-файл по его URL на CDN
+    const wasmUrl = 'https://unpkg.com/@resvg/resvg-wasm@2.6.2/index_bg.wasm'
+    console.log(`⬇️ Loading WASM from: ${wasmUrl}`)
+    const wasmBuffer = await fetch(wasmUrl).then(res => res.arrayBuffer())
     await initWasm(wasmBuffer)
     wasmInitialized = true
   }
@@ -240,7 +241,7 @@ export async function GET(
         const resvg = new Resvg(svgContent, {
           fitTo: { mode: 'width', value: 800 },
           font: {
-            loadSystemFonts: false, // Отключаем загрузку системных шрифтов
+            loadSystemFonts: false,
           },
         })
 
