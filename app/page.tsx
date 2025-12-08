@@ -497,13 +497,13 @@ export default function Home() {
             {/* Tiers */}
             <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
               <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#FFD700] to-[#ff7f00] bg-clip-text text-transparent">
-                4 Tiers
+                Hash Rarity
               </div>
               <h3 className="text-xl font-bold text-white text-center mb-2">
-                Tier-Based Rarity
+                Tier-Based on Wallet
               </h3>
               <p className="text-gray-400 text-sm text-center">
-                Hold more $BLOB to unlock legendary colors: 20 → 40 → 60 → 69 colors
+                Your address unlocks unique tiers: Common to Legendary. Mint-ready NFTs.
               </p>
             </div>
 
