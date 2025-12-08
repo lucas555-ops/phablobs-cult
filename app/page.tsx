@@ -52,7 +52,6 @@ export default function Home() {
     }
   }
 
-  // НОВАЯ ФУНКЦИЯ: Копирование метаданных в буфер обмена
   const handleCopyMetadata = async () => {
     if (!address || !isValidSolanaAddress(address)) return
     
@@ -79,7 +78,6 @@ export default function Home() {
     }
   }
 
-  // Функция для скачивания метаданных как файла JSON
   const handleDownloadMetadata = async () => {
     if (!address || !isValidSolanaAddress(address)) return
     
@@ -115,10 +113,10 @@ export default function Home() {
     
     const shareUrl = `${window.location.origin}${svgUrl}`
     const twitterText = encodeURIComponent(
-      `Check out my unique Phablob! 🎨👻\n\n` +
+      `Just generated my unique Phablob! 🎨👻\n\n` +
+      `Every Phablob has a unique HEX ID like #1A3F5C7E and Metaplex-ready metadata.\n\n` +
       `Generated on phablobs.xyz\n\n` +
-      `Token: ${TOKEN_CONTRACT}\n\n` +
-      `#Phablobs #SolanaNFT #PumpFun`
+      `#Phablobs #SolanaNFT #PumpFun #NFTs`
     )
     const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodeURIComponent(shareUrl)}`
     
@@ -128,7 +126,8 @@ export default function Home() {
   const handleShareToken = () => {
     const twitterText = encodeURIComponent(
       `🚀 Join the Phablobs Cult! 👻\n\n` +
-      `Generate your unique Phantom-inspired avatar on phablobs.xyz\n\n` +
+      `Generate your unique Phantom-inspired avatar with 3.3B+ possible combinations\n\n` +
+      `Each Phablob has Metaplex-ready NFT metadata\n\n` +
       `Token: ${TOKEN_CONTRACT}\n\n` +
       `#Phablobs #SolanaNFT #PumpFun`
     )
@@ -198,7 +197,131 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Token Contract Card */}
+        {/* NFT Generator Header */}
+        <div className="max-w-4xl mx-auto mb-8 text-center">
+          <div className="inline-block px-6 py-3 mb-4 rounded-full border border-[#ab0ff2]/30 bg-gradient-to-r from-[#ab0ff2]/10 to-[#4da7f2]/10">
+            <span className="text-lg font-bold bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+              🎨 NFT-Ready Generator
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b] bg-clip-text text-transparent">
+            Your Wallet, Your Masterpiece
+          </h2>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+            Every Phablob is a <span className="text-[#ab0ff2] font-bold">unique digital art piece</span> with <span className="text-[#4da7f2] font-bold">Metaplex-compatible metadata</span> ready for NFT minting.
+            <br />
+            <span className="text-sm text-gray-400 mt-2 block">
+              Each generation includes: HEX ID • Dynamic Watermarks • Gradient/Solid Background • NFT Metadata
+            </span>
+          </p>
+        </div>
+
+        {/* Generator Card - MOVED UP */}
+        <div className="max-w-2xl mx-auto mb-8 md:mb-12">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
+            <h2 className="text-3xl font-black text-white mb-6 text-center">
+              Generate Your Phablob
+            </h2>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-gray-300 text-sm font-bold mb-2">
+                  Solana Wallet Address
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
+                  placeholder="Enter any Solana address..."
+                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#ab0ff2]/30 text-white placeholder-gray-600 focus:outline-none focus:border-[#ab0ff2] focus:ring-2 focus:ring-[#ab0ff2]/20 text-sm md:text-base"
+                />
+                {error && (
+                  <p className="mt-2 text-red-400 text-sm">{error}</p>
+                )}
+              </div>
+
+              <button
+                onClick={handleGenerate}
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-base md:text-lg hover:shadow-[0_0_30px_rgba(171,15,242,0.4)]"
+              >
+                {isLoading ? 'Generating...' : '✨ Generate Unique Phablob'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Generated Phablob Card */}
+        {svgUrl && (
+          <div className="max-w-2xl mx-auto mb-8 md:mb-12">
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
+              <div className="bg-gradient-to-br from-[#ab0ff2]/10 to-[#4da7f2]/10 rounded-2xl p-4 mb-6 border border-[#ab0ff2]/30">
+                <img 
+                  src={svgUrl} 
+                  alt="Generated Phablob" 
+                  className="w-full h-auto rounded-xl"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button
+                  onClick={handleCopyMetadata}
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(171,15,242,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                >
+                  {metadataCopySuccess ? (
+                    <>
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-white font-bold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-white font-bold">Copy Metadata</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={handleDownloadMetadata}
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] hover:from-[#26a879] hover:to-[#3d96e0] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(46,192,139,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="text-white font-bold">Download JSON</span>
+                </button>
+
+                <button
+                  onClick={handleShareTwitter}
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#1DA1F2] to-[#1d8ef2] hover:from-[#0c8bdc] hover:to-[#0c7bdc] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(29,161,242,0.4)]"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                  <span className="text-white font-bold">Share on X</span>
+                </button>
+              </div>
+
+              <div className="mt-4 text-center">
+                <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
+                  💡 Your Phablob includes: Unique HEX ID • Dynamic Watermarks • Metaplex NFT Metadata
+                </p>
+                <p className="text-gray-600 text-xs mt-1">
+                  Right-click image to save • Copy metadata for NFT minting
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Token Contract Card - MOVED DOWN */}
         <div className="max-w-4xl mx-auto mb-8 md:mb-12">
           <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
             <div className="text-center mb-6">
@@ -258,120 +381,12 @@ export default function Home() {
 
               <div className="mt-4 text-center">
                 <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
-                  💡 Available on pump.fun and Jupiter
+                  💡 Hold $BLOB tokens to qualify for free NFTs in Phase 4
                 </p>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Generator Card */}
-        <div className="max-w-2xl mx-auto mb-8 md:mb-12">
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
-            <h2 className="text-3xl font-black text-white mb-6 text-center">
-              Generate Your Phablob
-            </h2>
-            
-            <div className="space-y-6">
-              <div>
-                <label className="block text-gray-300 text-sm font-bold mb-2">
-                  Solana Wallet Address
-                </label>
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
-                  placeholder="Enter your Solana address..."
-                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-[#ab0ff2]/30 text-white placeholder-gray-600 focus:outline-none focus:border-[#ab0ff2] focus:ring-2 focus:ring-[#ab0ff2]/20 text-sm md:text-base"
-                />
-                {error && (
-                  <p className="mt-2 text-red-400 text-sm">{error}</p>
-                )}
-              </div>
-
-              <button
-                onClick={handleGenerate}
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-base md:text-lg hover:shadow-[0_0_30px_rgba(171,15,242,0.4)]"
-              >
-                {isLoading ? 'Generating...' : '✨ Generate Phablob'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Generated Phablob Card */}
-        {svgUrl && (
-          <div className="max-w-2xl mx-auto mb-8 md:mb-12">
-            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(171,15,242,0.15)]">
-              <div className="bg-gradient-to-br from-[#ab0ff2]/10 to-[#4da7f2]/10 rounded-2xl p-4 mb-6 border border-[#ab0ff2]/30">
-                <img 
-                  src={svgUrl} 
-                  alt="Generated Phablob" 
-                  className="w-full h-auto rounded-xl"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {/* Кнопка копирования метаданных */}
-                <button
-                  onClick={handleCopyMetadata}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(171,15,242,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={isLoading}
-                >
-                  {metadataCopySuccess ? (
-                    <>
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-white font-bold">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <span className="text-white font-bold">Copy Metadata</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Кнопка скачивания метаданных как файла */}
-                <button
-                  onClick={handleDownloadMetadata}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] hover:from-[#26a879] hover:to-[#3d96e0] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(46,192,139,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={isLoading}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span className="text-white font-bold">Download JSON</span>
-                </button>
-
-                {/* Кнопка шаринга в Twitter */}
-                <button
-                  onClick={handleShareTwitter}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#1DA1F2] to-[#1d8ef2] hover:from-[#0c8bdc] hover:to-[#0c7bdc] text-white font-bold py-3 px-4 rounded-xl transition-all transform hover:scale-105 shadow-lg text-sm md:text-base hover:shadow-[0_0_30px_rgba(29,161,242,0.4)]"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                  </svg>
-                  <span className="text-white font-bold">Share on X</span>
-                </button>
-              </div>
-
-              <div className="mt-4 text-center">
-                <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
-                  💡 Right-click image to save. Copy metadata or download JSON for NFT minting.
-                </p>
-                <p className="text-gray-600 text-xs mt-1">
-                  Metadata format: Metaplex NFT Standard
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Gallery Section */}
         <div className="max-w-5xl mx-auto mb-12">
@@ -422,7 +437,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">Truly Unique</h3>
                 <p className="text-gray-400 leading-relaxed">
-                  Every Phablob is generated from your wallet address - completely unique to you with dynamic gradients and watermarks
+                  Every Phablob has a unique HEX ID (like #1A3F5C7E), dynamic watermarks, and is generated deterministically from your wallet address.
                 </p>
               </div>
             </div>
@@ -437,7 +452,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">NFT-Ready</h3>
                 <p className="text-gray-400 leading-relaxed">
-                  Copy or download metadata in Metaplex format - ready to mint on Solana marketplaces like Magic Eden and Tensor
+                  Complete Metaplex metadata included. Copy JSON or download file - ready for minting on any Solana NFT marketplace.
                 </p>
               </div>
             </div>
@@ -452,7 +467,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">Instantly Free</h3>
                 <p className="text-gray-400 leading-relaxed">
-                  Generate unlimited Phablobs at no cost - just enter any Solana wallet address and create your masterpiece
+                  Generate unlimited Phablobs at no cost - just enter any Solana wallet address and create your masterpiece instantly.
                 </p>
               </div>
             </div>
@@ -466,18 +481,18 @@ export default function Home() {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Combinations */}
-<div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
-  <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
-    3.3B+
-  </div>
-  <h3 className="text-xl font-bold text-white text-center mb-2">
-    Unique Combinations
-  </h3>
-  <p className="text-gray-400 text-sm text-center">
-    69 avatars × 4,830 backgrounds × Solana addresses = practically infinite
-  </p>
-</div>
+            {/* Combinations - UPDATED */}
+            <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
+              <div className="text-5xl font-black text-center mb-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
+                3.3B+
+              </div>
+              <h3 className="text-xl font-bold text-white text-center mb-2">
+                Unique Combinations
+              </h3>
+              <p className="text-gray-400 text-sm text-center">
+                69 avatars × 4,830 backgrounds × dynamic watermarks = practically infinite possibilities
+              </p>
+            </div>
 
             {/* Tiers */}
             <div className="bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-8">
@@ -520,98 +535,144 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Roadmap Section */}
+        {/* Roadmap Section - UPDATED FOR MOBILE */}
         <div className="max-w-6xl mx-auto mb-12">
           <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
             Roadmap
           </h2>
           
-          <div className="relative">
-            {/* Vertical line */}
+          {/* Desktop Roadmap */}
+          <div className="hidden md:block relative">
             <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
             
-            {/* Phase 1 */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">🚀</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#ab0ff2]/30 rounded-2xl p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-bold text-white">Phase 1: LAUNCH</h3>
-                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">LIVE</span>
+            {[
+              {
+                phase: "Phase 1: LAUNCH",
+                emoji: "🚀",
+                status: "LIVE",
+                statusColor: "bg-green-500/20 text-green-400",
+                items: ["✅ Token on pump.fun", "✅ Website live", "✅ Free generator", "✅ 69 unique avatars", "✅ NFT metadata export"],
+                gradient: "from-[#ab0ff2] to-[#4da7f2]",
+                borderColor: "border-[#ab0ff2]/30"
+              },
+              {
+                phase: "Phase 2: GROW",
+                emoji: "👻",
+                status: "IN PROGRESS",
+                statusColor: "bg-blue-500/20 text-blue-400",
+                items: ["🔄 Tier system active", "🎯 1,000+ holders", "📱 Viral campaigns", "🤝 Partnerships"],
+                gradient: "from-[#4da7f2] to-[#2ec08b]",
+                borderColor: "border-[#4da7f2]/30",
+                reverse: true
+              },
+              {
+                phase: "Phase 3: EXPAND",
+                emoji: "🌊",
+                items: ["💱 DEX listings", "🎯 10,000+ holders", "💰 $1M+ market cap", "🏆 Competitions"],
+                gradient: "from-[#2ec08b] to-[#fffd13]",
+                borderColor: "border-[#2ec08b]/30"
+              },
+              {
+                phase: "Phase 4: NFT DROP",
+                emoji: "💎",
+                items: ["🎨 10K NFT collection", "🎁 1M+ $BLOB = 3 free NFTs", "🎁 100K+ $BLOB = 2 free NFTs", "🎁 10K+ $BLOB = 1 free NFT", "💰 Public: 0.5 SOL"],
+                gradient: "from-[#FFD700] to-[#ff7f00]",
+                borderColor: "border-[#FFD700]/30",
+                reverse: true
+              }
+            ].map((phase, index) => (
+              <div key={index} className="relative mb-12">
+                <div className={`flex items-center justify-between ${phase.reverse ? 'flex-row-reverse' : ''}`}>
+                  <div className="w-5/12" />
+                  <div className={`w-16 h-16 bg-gradient-to-br ${phase.gradient} rounded-full flex items-center justify-center z-10 border-4 border-black`}>
+                    <span className="text-2xl">{phase.emoji}</span>
                   </div>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>✅ Token on pump.fun</li>
-                    <li>✅ Website live</li>
-                    <li>✅ Free generator</li>
-                    <li>✅ 69 unique avatars</li>
-                    <li>✅ NFT metadata export</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Phase 2 */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between flex-row-reverse">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#4da7f2] to-[#2ec08b] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">👻</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#4da7f2]/30 rounded-2xl p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-bold text-white">Phase 2: GROW</h3>
-                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-bold">IN PROGRESS</span>
+                  <div className={`w-5/12 bg-gradient-to-br from-gray-900 to-black border ${phase.borderColor} rounded-2xl p-6`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-bold text-white">{phase.phase}</h3>
+                      {phase.status && (
+                        <span className={`px-3 py-1 ${phase.statusColor} rounded-full text-xs font-bold`}>
+                          {phase.status}
+                        </span>
+                      )}
+                    </div>
+                    <ul className="text-sm text-gray-400 space-y-1">
+                      {phase.items.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>🔄 Tier system active</li>
-                    <li>🎯 1,000+ holders</li>
-                    <li>📱 Viral campaigns</li>
-                    <li>🤝 Partnerships</li>
-                  </ul>
                 </div>
               </div>
-            </div>
+            ))}
+          </div>
 
-            {/* Phase 3 */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#2ec08b] to-[#fffd13] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">🌊</span>
+          {/* Mobile Roadmap */}
+          <div className="md:hidden">
+            <div className="relative pl-8">
+              {/* Vertical line for mobile */}
+              <div className="absolute left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-[#ab0ff2] via-[#4da7f2] to-[#2ec08b]" />
+              
+              {[
+                {
+                  phase: "Phase 1: LAUNCH",
+                  emoji: "🚀",
+                  status: "LIVE",
+                  statusColor: "bg-green-500/20 text-green-400",
+                  items: ["✅ Token on pump.fun", "✅ Website live", "✅ Free generator", "✅ 69 unique avatars", "✅ NFT metadata export"],
+                  gradient: "from-[#ab0ff2] to-[#4da7f2]",
+                  borderColor: "border-[#ab0ff2]/30"
+                },
+                {
+                  phase: "Phase 2: GROW",
+                  emoji: "👻",
+                  status: "IN PROGRESS",
+                  statusColor: "bg-blue-500/20 text-blue-400",
+                  items: ["🔄 Tier system active", "🎯 1,000+ holders", "📱 Viral campaigns", "🤝 Partnerships"],
+                  gradient: "from-[#4da7f2] to-[#2ec08b]",
+                  borderColor: "border-[#4da7f2]/30"
+                },
+                {
+                  phase: "Phase 3: EXPAND",
+                  emoji: "🌊",
+                  items: ["💱 DEX listings", "🎯 10,000+ holders", "💰 $1M+ market cap", "🏆 Competitions"],
+                  gradient: "from-[#2ec08b] to-[#fffd13]",
+                  borderColor: "border-[#2ec08b]/30"
+                },
+                {
+                  phase: "Phase 4: NFT DROP",
+                  emoji: "💎",
+                  items: ["🎨 10K NFT collection", "🎁 1M+ $BLOB = 3 free NFTs", "🎁 100K+ $BLOB = 2 free NFTs", "🎁 10K+ $BLOB = 1 free NFT", "💰 Public: 0.5 SOL"],
+                  gradient: "from-[#FFD700] to-[#ff7f00]",
+                  borderColor: "border-[#FFD700]/30"
+                }
+              ].map((phase, index) => (
+                <div key={index} className="relative mb-8">
+                  {/* Circle */}
+                  <div className="absolute -left-8 top-1">
+                    <div className={`w-8 h-8 bg-gradient-to-br ${phase.gradient} rounded-full flex items-center justify-center z-10 border-2 border-black`}>
+                      <span className="text-sm">{phase.emoji}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className={`ml-4 bg-gradient-to-br from-gray-900 to-black border ${phase.borderColor} rounded-2xl p-6`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-bold text-white">{phase.phase}</h3>
+                      {phase.status && (
+                        <span className={`px-2 py-1 ${phase.statusColor} rounded-full text-xs font-bold`}>
+                          {phase.status}
+                        </span>
+                      )}
+                    </div>
+                    <ul className="text-sm text-gray-400 space-y-1">
+                      {phase.items.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">Phase 3: EXPAND</h3>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>💱 DEX listings</li>
-                    <li>🎯 10,000+ holders</li>
-                    <li>💰 $1M+ market cap</li>
-                    <li>🏆 Competitions</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Phase 4 */}
-            <div className="relative">
-              <div className="flex items-center justify-between flex-row-reverse">
-                <div className="w-5/12" />
-                <div className="w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#ff7f00] rounded-full flex items-center justify-center z-10 border-4 border-black">
-                  <span className="text-2xl">💎</span>
-                </div>
-                <div className="w-5/12 bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">Phase 4: NFT DROP</h3>
-                  <ul className="text-sm text-gray-400 space-y-1">
-                    <li>🎨 10K NFT collection</li>
-                    <li>🎁 1M+ $BLOB = 3 free NFTs</li>
-                    <li>🎁 100K+ $BLOB = 2 free NFTs</li>
-                    <li>🎁 10K+ $BLOB = 1 free NFT</li>
-                    <li>💰 Public: 0.5 SOL</li>
-                  </ul>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -624,7 +685,7 @@ export default function Home() {
           
           <div className="bg-gradient-to-br from-gray-900 to-black border border-[#FFD700]/30 rounded-2xl p-8">
             
-            {/* MOBILE: Cards */}
+            {/* Mobile: Cards */}
             <div className="md:hidden space-y-4">
               {[
                 {
@@ -680,7 +741,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* DESKTOP: Table */}
+            {/* Desktop: Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -764,12 +825,12 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="#generate"
+              <button
+                onClick={() => document.querySelector('.generator-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="px-8 py-4 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] hover:from-[#9b0ed9] hover:to-[#3d96e0] text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg text-lg hover:shadow-[0_0_40px_rgba(171,15,242,0.5)]"
               >
                 🎨 Generate Your Phablob
-              </a>
+              </button>
               
               <a
                 href="https://pump.fun"
@@ -853,11 +914,15 @@ export default function Home() {
               {[
                 {
                   q: 'What is Phablobs?',
-                  a: 'Phablobs is a unique avatar generator that creates Phantom-inspired art from any Solana wallet address. Each Phablob is completely unique and can be downloaded as NFT-ready metadata.'
+                  a: 'Phablobs is a unique avatar generator that creates Phantom-inspired art from any Solana wallet address. Each Phablob has a unique HEX ID, dynamic watermarks, and Metaplex-ready metadata for NFT minting.'
+                },
+                {
+                  q: 'How unique is my Phablob?',
+                  a: 'Each Phablob has a unique HEX identifier (like #1A3F5C7E) generated from your wallet address. With 69 avatar colors, 4,830 possible backgrounds, and dynamic watermarks, there are over 3.3 billion possible combinations.'
                 },
                 {
                   q: 'Is it really free?',
-                  a: 'Yes! Generating Phablobs is 100% free. Just enter any Solana wallet address and generate unlimited avatars. The $BLOB token is separate and optional.'
+                  a: 'Yes! Generating Phablobs is 100% free. Just enter any Solana wallet address and generate unlimited avatars. The $BLOB token is separate and optional for future NFT rewards.'
                 },
                 {
                   q: 'How do I get free NFTs in Phase 4?',
@@ -869,12 +934,8 @@ export default function Home() {
                 },
                 {
                   q: 'Can I mint my Phablob as an NFT?',
-                  a: 'Yes! Click "Copy Metadata" or "Download JSON" after generation to get Metaplex-compatible metadata ready for minting on any Solana marketplace.'
+                  a: 'Yes! Click "Copy Metadata" or "Download JSON" after generation to get Metaplex-compatible metadata ready for minting on any Solana marketplace like Magic Eden, Tensor, or OpenSea.'
                 }
-				{
-  q: 'How unique is my Phablob?',
-  a: 'Each Phablob has a unique HEX identifier like #1A3F5C7E. With 69 avatar colors, 4,830 possible backgrounds, and unique Solana addresses, there are over 3.3 billion possible combinations - your Phablob is truly one-of-a-kind!'
-}
               ].map((faq, index) => (
                 <div key={index} className="border border-[#ab0ff2]/20 rounded-2xl p-6 hover:border-[#ab0ff2]/40 transition-all">
                   <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
@@ -901,7 +962,6 @@ export default function Home() {
               { name: 'Jupiter', logo: '/logos/jupiter-logo.svg' },
             ].map((brand, index) => (
               <div key={index} className="flex flex-col items-center gap-4">
-                {/* Логотип с тонкой обводкой */}
                 <div className="w-20 h-20 md:w-24 md:h-24 
                                 border border-[#ab0ff2]/20 
                                 rounded-xl flex items-center justify-center p-3
@@ -916,7 +976,6 @@ export default function Home() {
                   />
                 </div>
                 
-                {/* Подпись */}
                 <span className="text-white font-semibold text-lg">
                   {brand.name}
                 </span>
