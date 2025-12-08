@@ -20,9 +20,11 @@ function generateHash(publicKey: string): number {
   return Math.abs(hash)
 }
 
+// Получить цвет аватара
 function getAvatarColor(publicKey: string): string {
   const hash = generateHash(publicKey)
   const tokenBalance = 0
+  
   const useGradient = hash % 2 === 0
   
   if (useGradient) {
@@ -36,10 +38,10 @@ function getAvatarColor(publicKey: string): string {
 
 export async function GET(
   request: NextRequest,
-  context: any
+  { params }: { params: { address: string } }
 ) {
   try {
-    const address = context.params.address
+    const address = params.address
 
     if (!isValidSolanaAddress(address)) {
       return new Response('Invalid address', { status: 400 })
@@ -69,7 +71,7 @@ export async function GET(
     const cleanColor = avatarColor.replace('#', '')
     const avatarUrl = `https://phablobs-cult.vercel.app/avatars/blob-avatar-${cleanColor}.png`
     
-    console.log(`🎨 Generating Phablob #${phablobNumber}`)
+    console.log(`🎨 Generating Phablob #${phablobNumber} with @vercel/og`)
 
     return new ImageResponse(
       (
@@ -86,6 +88,7 @@ export async function GET(
               : bgColor,
           }}
         >
+          {/* ВОДЯНЫЕ ЗНАКИ */}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex' }}>
             <div style={{ position: 'absolute', top: '150px', left: '100px', transform: 'rotate(-15deg)', fontSize: '48px', fontWeight: 900, color: 'white', opacity: 0.08 }}>
               PHANTOM
@@ -111,6 +114,7 @@ export async function GET(
             </div>
           </div>
 
+          {/* АВАТАР */}
           <div style={{ 
             position: 'absolute', 
             top: '220px', 
@@ -126,6 +130,7 @@ export async function GET(
             />
           </div>
 
+          {/* ТЕКСТ PHABLOBS */}
           <div style={{
             position: 'absolute',
             top: '30px',
@@ -140,6 +145,7 @@ export async function GET(
             PHABLOBS
           </div>
 
+          {/* НОМЕР */}
           <div style={{
             position: 'absolute',
             bottom: '100px',
@@ -154,6 +160,7 @@ export async function GET(
             #{phablobNumber}
           </div>
 
+          {/* URL */}
           <div style={{
             position: 'absolute',
             bottom: '40px',
@@ -173,7 +180,18 @@ export async function GET(
       }
     )
   } catch (error) {
-    console.error('Error:', error)
-    return new Response('Error', { status: 500 })
+    console.error('❌ Error:', error)
+    return new Response('Error generating image', { status: 500 })
   }
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
 }
