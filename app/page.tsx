@@ -535,7 +535,7 @@ export default function Home() {
           </div>
         </div>
 
-{/* NFT Upgrade Section - Explaining Current vs Future Minting */}
+        {/* NFT Upgrade Section - Explaining Current vs Future Minting */}
         <div id="nft-upgrade-section" className="max-w-5xl mx-auto mb-12">
           <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] bg-clip-text text-transparent">
             NFT-Ready. Upgrade-Ready.
@@ -599,11 +599,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* --- End of NFT Upgrade Section --- */}
 
-        {/* Roadmap Section - UPDATED FOR MOBILE (Ваш существующий код) */}
-        <div className="max-w-6xl mx-auto mb-12">
-        {/* ... (остальная часть Roadmap) */}
 
 
         {/* Roadmap Section - UPDATED FOR MOBILE */}
