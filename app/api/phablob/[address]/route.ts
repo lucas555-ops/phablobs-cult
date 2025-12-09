@@ -236,20 +236,20 @@ async function generateCompleteSVG(publicKey: string): Promise<string> {
     PHABLOBS
   </text>
   
-  <!-- ТИЕР (Common/Uncommon/Rare/Legendary) -->
-  <text 
-    x="400" 
-    y="140" 
-    text-anchor="middle" 
-    font-family="DejaVu Sans, Roboto, sans-serif" 
-    font-weight="700" 
-    font-size="28" 
-    fill="${tierColor}" 
-    filter="url(#textShadow)" 
-    letter-spacing="2"
-  >
-    ${tierEmoji} ${tierName} Tier
-  </text>
+<!-- ТИЕР (Common/Uncommon/Rare/Legendary) -->
+<text 
+  x="400" 
+  y="140" 
+  text-anchor="middle" 
+  font-family="DejaVu Sans, Roboto, sans-serif" 
+  font-weight="500" 
+  font-size="22" 
+  fill="${tierColor}" 
+  opacity="0.85"
+  letter-spacing="1"
+>
+  ${tierName} TIER
+</text>
   
   <!-- УНИКАЛЬНЫЙ HEX НОМЕР -->
   <text 
