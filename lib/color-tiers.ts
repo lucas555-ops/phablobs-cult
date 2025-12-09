@@ -1,8 +1,7 @@
 // ЦВЕТОВАЯ СИСТЕМА - 69 УНИКАЛЬНЫХ ЦВЕТОВ
-// Распределены по 4 тиерам на основе баланса $BLOB
+// Все цвета доступны сразу, TIERы используются для классификации
 
 export const COLOR_TIERS = {
-  // TIER 1 - COMMONS (доступны всем, 0+ $BLOB) - 20 цветов
   TIER_1: [
     '#1c1c1c', '#5e5e5e', '#a1a1a1', '#e3e3e3',
     '#1e7d32', '#007d00', '#1c583a', '#00c38d',
@@ -11,7 +10,6 @@ export const COLOR_TIERS = {
     '#873c0a', '#5f1e00', '#9b3c00', '#c38c87'
   ],
   
-  // TIER 2 - UNCOMMONS (10,000+ $BLOB) - 20 цветов
   TIER_2: [
     '#1effff', '#e1780f', '#ff960f', '#ffd22d',
     '#e33c87', '#ff7887', '#ff9687', '#e182cd',
@@ -20,7 +18,6 @@ export const COLOR_TIERS = {
     '#d75a00', '#d61e04', '#ff3236', '#e12840'
   ],
   
-  // TIER 3 - RARES (100,000+ $BLOB) - 20 цветов
   TIER_3: [
     '#ffff2d', '#ffff5f', '#ffff91', '#ffffc3',
     '#1ec3ff', '#0087f5', '#faffff', '#cdffe6',
@@ -29,7 +26,6 @@ export const COLOR_TIERS = {
     '#001900', '#003700', '#00003c', '#000514'
   ],
   
-  // TIER 4 - LEGENDARIES (1,000,000+ $BLOB) - 9 цветов
   TIER_4: [
     '#1ce100', '#230000', '#2e0840', 
     '#3e1462', '#2f1944', '#5f2869', 
@@ -37,125 +33,221 @@ export const COLOR_TIERS = {
   ]
 }
 
-// ПОРОГИ БАЛАНСА
-export const BALANCE_TIERS = {
-  TIER_1: 0,           // Commons - доступны всем
-  TIER_2: 10000,       // Uncommons - 10k+ $BLOB
-  TIER_3: 100000,      // Rares - 100k+ $BLOB
-  TIER_4: 1000000      // Legendaries - 1M+ $BLOB
-}
+// Все 69 цветов в одном массиве
+export const ALL_COLORS = [
+  ...COLOR_TIERS.TIER_1,
+  ...COLOR_TIERS.TIER_2,
+  ...COLOR_TIERS.TIER_3,
+  ...COLOR_TIERS.TIER_4
+]
 
-// Получить доступные цвета на основе баланса
-export function getAvailableColors(tokenBalance: number): string[] {
-  let availableColors = [...COLOR_TIERS.TIER_1]
-  
-  if (tokenBalance >= BALANCE_TIERS.TIER_2) {
-    availableColors = [...availableColors, ...COLOR_TIERS.TIER_2]
-  }
-  
-  if (tokenBalance >= BALANCE_TIERS.TIER_3) {
-    availableColors = [...availableColors, ...COLOR_TIERS.TIER_3]
-  }
-  
-  if (tokenBalance >= BALANCE_TIERS.TIER_4) {
-    availableColors = [...availableColors, ...COLOR_TIERS.TIER_4]
-  }
-  
-  return availableColors
-}
+// --- СИСТЕМА ТИЕРОВ ---
 
-// Получить информацию о тиере
-export function getTierInfo(tokenBalance: number) {
-  let tier = 1
-  let tierName = 'Commons'
-  let unlockedColors = 20
-  let nextTier: number | null = 10000
-  
-  if (tokenBalance >= BALANCE_TIERS.TIER_4) {
-    tier = 4
-    tierName = 'Legendaries'
-    unlockedColors = 69
-    nextTier = null
-  } else if (tokenBalance >= BALANCE_TIERS.TIER_3) {
-    tier = 3
-    tierName = 'Rares'
-    unlockedColors = 60
-    nextTier = 1000000
-  } else if (tokenBalance >= BALANCE_TIERS.TIER_2) {
-    tier = 2
-    tierName = 'Uncommons'
-    unlockedColors = 40
-    nextTier = 100000
-  } else {
-    tier = 1
-    tierName = 'Commons'
-    unlockedColors = 20
-    nextTier = 10000
-  }
-  
+export const TIER_NAMES = {
+  1: 'Common',
+  2: 'Uncommon', 
+  3: 'Rare',
+  4: 'Legendary'
+} as const
+
+export const TIER_COLORS = {
+  1: '#FFFFFF',      // Белый для Common
+  2: '#1EFF00',      // Неоново-зеленый для Uncommon
+  3: '#0070FF',      // Синий для Rare
+  4: '#FF8000'       // Оранжевый для Legendary
+} as const
+
+export const TIER_EMOJIS = {
+  1: '⚪',
+  2: '🟢',
+  3: '🔵',
+  4: '🟠'
+} as const
+
+export const TIER_WEIGHTS = {
+  1: 20,  // Common: 20 цветов
+  2: 20,  // Uncommon: 20 цветов
+  3: 20,  // Rare: 20 цветов
+  4: 9    // Legendary: 9 цветов
+} as const
+
+export type TierNumber = 1 | 2 | 3 | 4
+
+// Получить полную информацию о тиере
+export function getTierInfoFull(tier: TierNumber) {
   return {
     tier,
-    tierName,
-    unlockedColors,
-    totalColors: 69,
-    nextTier,
-    needsMore: nextTier ? nextTier - tokenBalance : 0
+    name: TIER_NAMES[tier],
+    color: TIER_COLORS[tier],
+    emoji: TIER_EMOJIS[tier],
+    weight: TIER_WEIGHTS[tier],
+    colors: COLOR_TIERS[`TIER_${tier}` as keyof typeof COLOR_TIERS]
   }
 }
 
-// Генерация одноцветного фона (вместо градиента)
-export function generateSolidBgFromBalance(
-  publicKey: string, 
-  tokenBalance: number
-): { avatarColor: string; bgColor: string; tier: number; tierName: string } {
-  const availableColors = getAvailableColors(tokenBalance)
-  const tierInfo = getTierInfo(tokenBalance)
+// Получить тиер цвета (1-4)
+export function getColorTier(color: string): TierNumber {
+  if (COLOR_TIERS.TIER_1.includes(color)) return 1
+  if (COLOR_TIERS.TIER_2.includes(color)) return 2
+  if (COLOR_TIERS.TIER_3.includes(color)) return 3
+  if (COLOR_TIERS.TIER_4.includes(color)) return 4
+  return 1 // fallback to Common
+}
+
+// Получить название тиера по номеру
+export function getTierName(tier: number): string {
+  return TIER_NAMES[tier as TierNumber] || 'Common'
+}
+
+// Получить цвет тиера для отображения
+export function getTierColor(tier: number): string {
+  return TIER_COLORS[tier as TierNumber] || '#FFFFFF'
+}
+
+// Получить эмодзи тиера
+export function getTierEmoji(tier: number): string {
+  return TIER_EMOJIS[tier as TierNumber] || '⚪'
+}
+
+// Получить распределение вероятностей тиеров
+export function getTierDistribution() {
+  const totalColors = ALL_COLORS.length
+  const distribution: Record<string, { count: number; percentage: number }> = {}
   
+  for (let tier = 1; tier <= 4; tier++) {
+    const count = TIER_WEIGHTS[tier as TierNumber]
+    const percentage = (count / totalColors) * 100
+    distribution[TIER_NAMES[tier as TierNumber]] = {
+      count,
+      percentage: Math.round(percentage * 100) / 100
+    }
+  }
+  
+  return distribution
+}
+
+// --- ФУНКЦИИ ГЕНЕРАЦИИ ---
+
+// Функция хэширования (для детерминированности)
+export function generateHash(publicKey: string): number {
   let hash = 0
   for (let i = 0; i < publicKey.length; i++) {
     hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
     hash = hash & hash
   }
-  hash = Math.abs(hash)
+  return Math.abs(hash)
+}
+
+// Генерация одноцветного фона
+export function generateSolidBgFromBalance(
+  publicKey: string, 
+  tokenBalance: number = 0 // Оставляем параметр для совместимости
+): { 
+  avatarColor: string; 
+  bgColor: string; 
+  tier: TierNumber; 
+  tierName: string;
+  tierColor: string;
+  tierEmoji: string;
+} {
+  const hash = generateHash(publicKey)
   
-  // Цвет аватара
-  const avatarColor = availableColors[hash % availableColors.length]
+  // Цвет аватара из всех цветов
+  const avatarColor = ALL_COLORS[hash % ALL_COLORS.length]
+  const tier = getColorTier(avatarColor)
+  const tierInfo = getTierInfoFull(tier)
   
-  // Получаем комплементарный цвет фона с корректировкой яркости
-  const bgColor = getComplementaryBgColor(avatarColor)
+  // Комплементарный цвет фона
+  const bgColor = getComplementaryColor(avatarColor)
   
   return {
     avatarColor,
     bgColor,
-    tier: tierInfo.tier,
-    tierName: tierInfo.tierName
+    tier,
+    tierName: tierInfo.name,
+    tierColor: tierInfo.color,
+    tierEmoji: tierInfo.emoji
   }
 }
 
-// Комплементарный цвет с автоматической корректировкой яркости
-function getComplementaryBgColor(avatarColor: string): string {
+// Генерация градиентного фона
+export function generateGradientFromBalance(
+  publicKey: string,
+  tokenBalance: number = 0 // Оставляем параметр для совместимости
+): { 
+  avatarColor: string; 
+  bgColor1: string; 
+  bgColor2: string; 
+  tier: TierNumber;
+  tierName: string;
+  tierColor: string;
+  tierEmoji: string;
+} {
+  const hash = generateHash(publicKey)
+  
+  // Цвет аватара
+  const avatarColor = ALL_COLORS[hash % ALL_COLORS.length]
+  const tier = getColorTier(avatarColor)
+  const tierInfo = getTierInfoFull(tier)
+  
+  // Два разных цвета для градиента
+  let bgColor1 = ALL_COLORS[(hash * 3) % ALL_COLORS.length]
+  let bgColor2 = ALL_COLORS[(hash * 5) % ALL_COLORS.length]
+  
+  // Убеждаемся, что цвета фона не совпадают с аватаром
+  let attempts = 0
+  while (bgColor1 === avatarColor && attempts < 10) {
+    bgColor1 = ALL_COLORS[(hash + attempts) % ALL_COLORS.length]
+    attempts++
+  }
+  
+  attempts = 0
+  while ((bgColor2 === avatarColor || bgColor2 === bgColor1) && attempts < 10) {
+    bgColor2 = ALL_COLORS[(hash * 7 + attempts) % ALL_COLORS.length]
+    attempts++
+  }
+  
+  // Улучшение: убедимся, что цвета для градиента контрастные
+  if (!areColorsContrasty(bgColor1, bgColor2)) {
+    // Если цвета слишком похожи, выбираем противоположные
+    const bg1Tier = getColorTier(bgColor1)
+    const oppositeTier = bg1Tier === 1 ? 3 : bg1Tier === 2 ? 4 : 1
+    const oppositeColors = COLOR_TIERS[`TIER_${oppositeTier}` as keyof typeof COLOR_TIERS]
+    bgColor2 = oppositeColors[hash % oppositeColors.length]
+  }
+  
+  return {
+    avatarColor,
+    bgColor1,
+    bgColor2,
+    tier,
+    tierName: tierInfo.name,
+    tierColor: tierInfo.color,
+    tierEmoji: tierInfo.emoji
+  }
+}
+
+// Комплементарный цвет с коррекцией яркости
+function getComplementaryColor(avatarColor: string): string {
   const r = parseInt(avatarColor.slice(1, 3), 16)
   const g = parseInt(avatarColor.slice(3, 5), 16)
   const b = parseInt(avatarColor.slice(5, 7), 16)
   
-  // Инвертируем (комплементарный цвет)
+  // Инвертируем цвет
   let bgR = 255 - r
   let bgG = 255 - g
   let bgB = 255 - b
   
-  // Проверяем контраст яркости
+  // Корректируем контраст
   const avatarBrightness = (r + g + b) / 3
   const bgBrightness = (bgR + bgG + bgB) / 3
   
-  // Корректируем если контраст недостаточный
   if (Math.abs(avatarBrightness - bgBrightness) < 80) {
     if (avatarBrightness > 127) {
-      // Аватар светлый → делаем фон темнее
       bgR = Math.floor(bgR * 0.4)
       bgG = Math.floor(bgG * 0.4)
       bgB = Math.floor(bgB * 0.4)
     } else {
-      // Аватар темный → делаем фон светлее
       bgR = Math.min(255, Math.floor(bgR * 1.6))
       bgG = Math.min(255, Math.floor(bgG * 1.6))
       bgB = Math.min(255, Math.floor(bgB * 1.6))
@@ -165,66 +257,62 @@ function getComplementaryBgColor(avatarColor: string): string {
   return `#${bgR.toString(16).padStart(2, '0')}${bgG.toString(16).padStart(2, '0')}${bgB.toString(16).padStart(2, '0')}`
 }
 
-// Генерация градиента из доступных цветов
-export function generateGradientFromBalance(
-  publicKey: string, 
-  tokenBalance: number
-): { avatarColor: string; bgColor1: string; bgColor2: string; tier: number; tierName: string } {
-  const availableColors = getAvailableColors(tokenBalance)
-  const tierInfo = getTierInfo(tokenBalance)
+// Проверка контрастности двух цветов
+function areColorsContrasty(color1: string, color2: string, threshold: number = 100): boolean {
+  const r1 = parseInt(color1.slice(1, 3), 16)
+  const g1 = parseInt(color1.slice(3, 5), 16)
+  const b1 = parseInt(color1.slice(5, 7), 16)
   
-  // Генерируем хэш из публичного ключа
-  let hash = 0
-  for (let i = 0; i < publicKey.length; i++) {
-    hash = ((hash << 5) - hash) + publicKey.charCodeAt(i)
-    hash = hash & hash
-  }
-  hash = Math.abs(hash)
+  const r2 = parseInt(color2.slice(1, 3), 16)
+  const g2 = parseInt(color2.slice(3, 5), 16)
+  const b2 = parseInt(color2.slice(5, 7), 16)
   
-  // Цвет аватара (первый цвет)
-  const avatarColor = availableColors[hash % availableColors.length]
+  // Вычисляем евклидово расстояние в RGB пространстве
+  const distance = Math.sqrt(
+    Math.pow(r1 - r2, 2) + 
+    Math.pow(g1 - g2, 2) + 
+    Math.pow(b1 - b2, 2)
+  )
   
-  // Цвета фона (РАЗНЫЕ от аватара для контраста!)
-  let bgColor1 = availableColors[(hash * 3) % availableColors.length]
-  let bgColor2 = availableColors[(hash * 5) % availableColors.length]
+  return distance > threshold
+}
+
+// Получить цвет аватара (для совместимости с текущим кодом)
+export function getAvatarColor(publicKey: string): string {
+  const hash = generateHash(publicKey)
+  const useGradient = hash % 2 === 0
   
-  // Убеждаемся что цвета фона не совпадают с аватаром
-  let attempts = 0
-  while (bgColor1 === avatarColor && attempts < 10) {
-    hash++
-    bgColor1 = availableColors[hash % availableColors.length]
-    attempts++
-  }
-  
-  attempts = 0
-  while ((bgColor2 === avatarColor || bgColor2 === bgColor1) && attempts < 10) {
-    hash++
-    bgColor2 = availableColors[hash % availableColors.length]
-    attempts++
-  }
-  
-  return {
-    avatarColor,
-    bgColor1,
-    bgColor2,
-    tier: tierInfo.tier,
-    tierName: tierInfo.tierName
+  if (useGradient) {
+    const result = generateGradientFromBalance(publicKey)
+    return result.avatarColor
+  } else {
+    const result = generateSolidBgFromBalance(publicKey)
+    return result.avatarColor
   }
 }
 
-// Все 69 цветов для справки
-export const ALL_COLORS = [
-  ...COLOR_TIERS.TIER_1,
-  ...COLOR_TIERS.TIER_2,
-  ...COLOR_TIERS.TIER_3,
-  ...COLOR_TIERS.TIER_4
-]
-
-// Проверка: убеждаемся что всего 69 цветов и нет дубликатов
-const uniqueColors = [...new Set(ALL_COLORS)]
-console.log(`Total colors: ${ALL_COLORS.length}`) // Должно быть 69
-console.log(`Unique colors: ${uniqueColors.length}`) // Должно быть 69
-if (ALL_COLORS.length !== uniqueColors.length) {
-  console.error('⚠️ WARNING: Duplicate colors found!')
+// Получить информацию о тиере по публичному ключу
+export function getTierInfoFromPublicKey(publicKey: string) {
+  const hash = generateHash(publicKey)
+  const avatarColor = ALL_COLORS[hash % ALL_COLORS.length]
+  const tier = getColorTier(avatarColor)
+  return getTierInfoFull(tier)
 }
 
+// Проверка уникальности цветов (только на сервере)
+if (typeof window === 'undefined') {
+  const uniqueColors = new Set(ALL_COLORS)
+  console.log(`🎨 Total colors: ${ALL_COLORS.length}`)
+  console.log(`🎨 Unique colors: ${uniqueColors.size}`)
+  
+  if (ALL_COLORS.length !== uniqueColors.size) {
+    console.error('⚠️ WARNING: Duplicate colors found!')
+  }
+  
+  // Выводим распределение тиеров
+  const distribution = getTierDistribution()
+  console.log('🎯 Tier Distribution:')
+  Object.entries(distribution).forEach(([tier, stats]) => {
+    console.log(`   ${tier}: ${stats.count} colors (${stats.percentage}%)`)
+  })
+}
