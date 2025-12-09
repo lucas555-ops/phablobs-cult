@@ -535,71 +535,62 @@ export default function Home() {
           </div>
         </div>
 
-        {/* NFT Upgrade Section - Explaining Current vs Future Minting */}
+        {/* NFT Integration Status Section (Mobile Optimized & Shortened) */}
         <div id="nft-upgrade-section" className="max-w-5xl mx-auto mb-12">
           <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] bg-clip-text text-transparent">
-            NFT-Ready. Upgrade-Ready.
+            NFT Status: Ready for Upgrade
           </h2>
           
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(46,192,139,0.15)]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(46,192,139,0.15)]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               
-              {/* Column 1: Current State */}
-              <div>
-                <div className="text-3xl font-black mb-4 flex items-center gap-3 text-white">
-                  <span className="text-[#4da7f2]">🛠️</span> Текущий Статус (СЕЙЧАС)
+              {/* Column 1: Current State (NOW) */}
+              <div className="p-4 rounded-xl border border-gray-800">
+                <div className="text-2xl font-black mb-3 flex items-center gap-3 text-white">
+                  <span className="text-[#4da7f2]">🛠️</span> CURRENT STATUS
                 </div>
-                <p className="text-gray-300 leading-relaxed mb-4">
-                  Ваш генератор уже создает <span className="text-[#2ec08b] font-bold">полностью готовые NFT-метаданные</span> (JSON), соответствующие стандарту <span className="font-bold text-[#4da7f2]">Metaplex</span> (самый популярный стандарт Solana).
+                <p className="text-gray-300 leading-relaxed mb-4 text-sm">
+                  Your generator produces <span className="font-bold text-[#2ec08b]">Metaplex-Ready NFT Metadata (JSON)</span>. This means your Phablob is technically ready to be minted right now.
                 </p>
-                <ul className="text-gray-400 space-y-2 text-sm">
+                <ul className="text-gray-400 space-y-1 text-xs">
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400">➡️</span> 
-                    <span>
-                      <span className="font-bold text-white">Процесс минта:</span> Вы можете прямо сейчас заминтить свой Phablob на любом маркетплейсе (OpenSea, Magic Eden) через функцию **"Mint Custom NFT"**, используя скачанные JSON и SVG/PNG.
-                    </span>
+                    <span><span className="font-bold text-white">Mint Process:</span> Manual minting is possible on any Solana marketplace using the downloaded JSON and image files.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400">➡️</span> 
-                    <span>
-                      <span className="font-bold text-white">Плюс:</span> Вы контролируете весь процесс минта и его стоимость.
-                    </span>
+                    <span><span className="font-bold text-white">Your Control:</span> You handle the mint and pay the low Solana gas fee directly.</span>
                   </li>
                 </ul>
               </div>
 
-              {/* Column 2: Future Plan */}
-              <div>
-                <div className="text-3xl font-black mb-4 flex items-center gap-3 text-white">
-                  <span className="text-[#ab0ff2]">🚀</span> Ближайшие Планы (СКОРО)
+              {/* Column 2: Future Plan (SOON) */}
+              <div className="p-4 rounded-xl border border-gray-800">
+                <div className="text-2xl font-black mb-3 flex items-center gap-3 text-white">
+                  <span className="text-[#ab0ff2]">🚀</span> NEXT UPGRADE
                 </div>
-                <p className="text-gray-300 leading-relaxed mb-4">
-                  После успешного запуска токена $BLOB мы немедленно интегрируем <span className="text-[#ab0ff2] font-bold">автоматизированный минт</span>, как это делают крупные коллекции.
+                <p className="text-gray-300 leading-relaxed mb-4 text-sm">
+                  The primary focus is $BLOB$ launch success. Afterwards, we will immediately integrate a **fully automated minting service**.
                 </p>
-                <ul className="text-gray-400 space-y-2 text-sm">
+                <ul className="text-gray-400 space-y-1 text-xs">
                   <li className="flex items-start gap-2">
                     <span className="text-[#ab0ff2]">✅</span> 
-                    <span>
-                      <span className="font-bold text-white">Минт с кнопки:</span> Пользователи смогут минтить прямо с сайта нажатием одной кнопки, без ручного копирования/загрузки.
-                    </span>
+                    <span><span className="font-bold text-white">One-Click Mint:</span> Mint directly from the website without manual file handling.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#ab0ff2]">✅</span> 
-                    <span>
-                      <span className="font-bold text-white">Верификация коллекции:</span> Ваши NFT будут автоматически привязываться к нашей официальной коллекции на Magic Eden/OpenSea (см. Roadmap).
-                    </span>
+                    <span><span className="font-bold text-white">Collection Verified:</span> Automatic verification and listing under the Official Phablobs Collection on Magic Eden.</span>
                   </li>
                 </ul>
-                <p className="text-xs text-gray-500 mt-4">
-                  Мы максимально подготовили основу, но для внедрения полной автоматизации и кастомной коллекции (Phase 4) нам требуется поддержка комьюнити.
+                <p className="text-xs text-gray-500 mt-4 text-center border-t border-gray-700 pt-3">
+                  <span className="font-bold text-white">Support $BLOB$ now</span> to accelerate the NFT automation and the **Phase 4 Custom Collection** launch!
                 </p>
               </div>
 
             </div>
           </div>
         </div>
-
-
+        {/* --- End of NFT Integration Status Section --- */}
 
 
         {/* Roadmap Section - UPDATED FOR MOBILE */}
