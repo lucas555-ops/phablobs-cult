@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 // Ваша цветовая система
 import {
   generateGradientFromBalance,
-  generateSolidBgFromBalance
+  generateSolidBgFromBalance,
+  type TierNumber
 } from '@/lib/color-tiers'
 
 export const runtime = 'nodejs'
@@ -96,13 +97,14 @@ function generatePhablobMetadata(publicKey: string) {
   let avatarColor: string
   let bgColor: string
   let bgColor2: string | null = null
+  let tierResult: any
 
   // Генерация цветов как в основном роуте
   if (useGradient) {
-    const result = generateGradientFromBalance(publicKey, tokenBalance)
-    avatarColor = result.avatarColor
-    bgColor = result.bgColor1
-    bgColor2 = result.bgColor2
+    tierResult = generateGradientFromBalance(publicKey, tokenBalance)
+    avatarColor = tierResult.avatarColor
+    bgColor = tierResult.bgColor1
+    bgColor2 = tierResult.bgColor2
     bgType = "Gradient"
     
     attributes = [
@@ -112,9 +114,9 @@ function generatePhablobMetadata(publicKey: string) {
       { trait_type: "Avatar Color", value: avatarColor }
     ]
   } else {
-    const result = generateSolidBgFromBalance(publicKey, tokenBalance)
-    avatarColor = result.avatarColor
-    bgColor = result.bgColor
+    tierResult = generateSolidBgFromBalance(publicKey, tokenBalance)
+    avatarColor = tierResult.avatarColor
+    bgColor = tierResult.bgColor
     bgType = "Solid"
     
     attributes = [
@@ -123,6 +125,10 @@ function generatePhablobMetadata(publicKey: string) {
       { trait_type: "Avatar Color", value: avatarColor }
     ]
   }
+
+  // Получаем данные тиера
+  const tier = tierResult.tier as TierNumber
+  const tierName = tierResult.tierName
 
   // Редкость на основе хэша
   const rarityTiers = ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
@@ -139,6 +145,8 @@ function generatePhablobMetadata(publicKey: string) {
   // Основные атрибуты
   attributes.push(
     { trait_type: "Rarity", value: rarity },
+    { trait_type: "Color Tier", value: tierName },
+    { trait_type: "Tier Weight", value: tier === 4 ? "9/69" : "20/69" },
     { trait_type: "Serial Number", value: phablobNumber },
     { trait_type: "Generation", value: "1" },
     { trait_type: "Unique Hash", value: hexHash },
@@ -168,7 +176,7 @@ function generatePhablobMetadata(publicKey: string) {
   const metadata = {
     name: `Phablob ${phablobNumber}`,
     symbol: "PHBLB",
-    description: `A unique Phantom-inspired avatar generated from Solana wallet address ${publicKey.substring(0, 8)}... Features ${bgType.toLowerCase()} background (${bgColor}${bgColor2 ? ' to ' + bgColor2 : ''}), ${rarity.toLowerCase()} rarity, and ${watermarksInfo.count} dynamic watermarks. One of over 3.3 billion possible combinations.`,
+    description: `A ${rarity.toLowerCase()} ${tierName.toLowerCase()} tier Phablob generated from Solana wallet address ${publicKey.substring(0, 8)}... Features ${bgType.toLowerCase()} background (${bgColor}${bgColor2 ? ' to ' + bgColor2 : ''}), and ${watermarksInfo.count} dynamic watermarks. One of over 3.3 billion possible combinations.`,
     image: `https://phablobs.xyz/api/phablob/${publicKey}?format=png`,
     external_url: `https://phablobs.xyz/phablob/${publicKey}`,
     seller_fee_basis_points: 500, // 5% royalty
@@ -215,6 +223,10 @@ function generatePhablobMetadata(publicKey: string) {
       colors: {
         avatar: avatarColor,
         background: bgType === "Gradient" ? [bgColor, bgColor2] : [bgColor]
+      },
+      tier: {
+        name: tierName,
+        weight: tier === 4 ? 9 : 20,
       }
     }
   }
