@@ -535,6 +535,77 @@ export default function Home() {
           </div>
         </div>
 
+{/* NFT Upgrade Section - Explaining Current vs Future Minting */}
+        <div id="nft-upgrade-section" className="max-w-5xl mx-auto mb-12">
+          <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#2ec08b] to-[#4da7f2] bg-clip-text text-transparent">
+            NFT-Ready. Upgrade-Ready.
+          </h2>
+          
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-[#2ec08b]/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(46,192,139,0.15)]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              
+              {/* Column 1: Current State */}
+              <div>
+                <div className="text-3xl font-black mb-4 flex items-center gap-3 text-white">
+                  <span className="text-[#4da7f2]">🛠️</span> Текущий Статус (СЕЙЧАС)
+                </div>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                  Ваш генератор уже создает <span className="text-[#2ec08b] font-bold">полностью готовые NFT-метаданные</span> (JSON), соответствующие стандарту <span className="font-bold text-[#4da7f2]">Metaplex</span> (самый популярный стандарт Solana).
+                </p>
+                <ul className="text-gray-400 space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400">➡️</span> 
+                    <span>
+                      <span className="font-bold text-white">Процесс минта:</span> Вы можете прямо сейчас заминтить свой Phablob на любом маркетплейсе (OpenSea, Magic Eden) через функцию **"Mint Custom NFT"**, используя скачанные JSON и SVG/PNG.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400">➡️</span> 
+                    <span>
+                      <span className="font-bold text-white">Плюс:</span> Вы контролируете весь процесс минта и его стоимость.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 2: Future Plan */}
+              <div>
+                <div className="text-3xl font-black mb-4 flex items-center gap-3 text-white">
+                  <span className="text-[#ab0ff2]">🚀</span> Ближайшие Планы (СКОРО)
+                </div>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                  После успешного запуска токена $BLOB мы немедленно интегрируем <span className="text-[#ab0ff2] font-bold">автоматизированный минт</span>, как это делают крупные коллекции.
+                </p>
+                <ul className="text-gray-400 space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-[#ab0ff2]">✅</span> 
+                    <span>
+                      <span className="font-bold text-white">Минт с кнопки:</span> Пользователи смогут минтить прямо с сайта нажатием одной кнопки, без ручного копирования/загрузки.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[#ab0ff2]">✅</span> 
+                    <span>
+                      <span className="font-bold text-white">Верификация коллекции:</span> Ваши NFT будут автоматически привязываться к нашей официальной коллекции на Magic Eden/OpenSea (см. Roadmap).
+                    </span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500 mt-4">
+                  Мы максимально подготовили основу, но для внедрения полной автоматизации и кастомной коллекции (Phase 4) нам требуется поддержка комьюнити.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {/* --- End of NFT Upgrade Section --- */}
+
+        {/* Roadmap Section - UPDATED FOR MOBILE (Ваш существующий код) */}
+        <div className="max-w-6xl mx-auto mb-12">
+        {/* ... (остальная часть Roadmap) */}
+
+
         {/* Roadmap Section - UPDATED FOR MOBILE */}
         <div className="max-w-6xl mx-auto mb-12">
           <h2 className="text-4xl font-black text-center mb-12 bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">
