@@ -310,10 +310,10 @@ export default function Home() {
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
+                <p className="text-[#00FFFF]/80 text-xs md:text-sm">
                   💡 Your Phablob includes: Unique HEX ID • Dynamic Watermarks • Metaplex NFT Metadata
                 </p>
-                <p className="text-gray-600 text-xs mt-1">
+                <p className="text-gray-300 text-xs mt-1">
                   Right-click image to save • Copy metadata for NFT minting
                 </p>
               </div>
@@ -339,8 +339,8 @@ export default function Home() {
               </label>
               
               <div className="flex flex-col gap-3">
-                <div className="bg-gray-900/60 rounded-xl px-4 py-4 border border-[#ab0ff2]/20">
-                  <code className="text-[#ab0ff2] font-mono text-xs md:text-sm break-all block text-center">
+                <div className="bg-gray-900/60 rounded-xl px-4 py-4 border border-[#FFFF00]/20">
+                  <code className="text-[#00FF00] font-mono text-xs md:text-sm break-all block text-center">
                     {TOKEN_CONTRACT}
                   </code>
                 </div>
@@ -380,7 +380,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-[#ab0ff2]/80 text-xs md:text-sm">
+                <p className="text-[#7FFFD4]/80 text-xs md:text-sm">
                   💡 Hold $BLOB tokens to qualify for free NFTs in Phase 4
                 </p>
               </div>
