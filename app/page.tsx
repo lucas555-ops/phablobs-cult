@@ -1042,19 +1042,24 @@ export default function Home() {
           </div>
         </div>
        
-{/* Final Footer (Оптимизированный) */}
+{/* Final Footer (Оптимизированный с Grid для идеального выравнивания на ПК) */}
 <footer className="max-w-6xl mx-auto pt-8 pb-12 border-t border-[#ab0ff2]/20">
     
-    {/* Основной Контейнер: Grid на ПК (3 колонки), Flex на Мобильных */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-6">
+    {/* ========================================================= */}
+    {/* 1. Основные блоки: Логотип / Автор / Копирайт */}
+    {/* Grid (1/3/1) на ПК, Flex (сверху вниз) на мобильных */}
+    {/* ========================================================= */}
+    {/* Добавлены отступы px-4 для мобильных, чтобы контент не прилипал к краям */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-6 px-4 md:px-0">
         
-        {/* === Колонка 1: Логотип и Описание (Выравнивание слева) === */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-1">
+        {/* === Колонка 1: Логотип и Описание (Слева на ПК, Центр на Мобильных) === */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left order-1">
             <div className="flex items-center gap-3">
                 <img 
                     src="/phantom-logo.png" 
                     alt="Phablobs Logo" 
                     className="w-10 h-10"
+                    // Логика запасного варианта для изображения
                     onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const fallback = document.createElement('div');
@@ -1070,10 +1075,10 @@ export default function Home() {
             </div>
         </div>
 
-        {/* === Колонка 2: Blobmaster/LinkedIn (Центр) === */}
-        {/* Блок всегда центрирован, занимает среднюю колонку на md */}
+        {/* === Колонка 2: Blobmaster/LinkedIn (Всегда по центру) === */}
+        {/* order-3 на мобильных, чтобы блок с копирайтом был выше на маленьких экранах */}
         <div className="flex justify-center items-center order-3 md:order-2">
-            <div className="text-center text-gray-500 text-sm p-2">
+            <div className="text-center text-gray-500 text-sm">
                 <p>Cooked by <strong>Blobmaster</strong></p>
                 <p className="text-xs mt-1">Founder & Architect of Phablobs</p>
                 <a 
@@ -1091,7 +1096,8 @@ export default function Home() {
             </div>
         </div>
 
-        {/* === Колонка 3: Копирайт и Отказ (Выравнивание справа) === */}
+        {/* === Колонка 3: Копирайт и Отказ (Справа на ПК, Центр на Мобильных) === */}
+        {/* order-2 на мобильных, чтобы блок с копирайтом шел вторым */}
         <div className="text-center md:text-right order-2 md:order-3">
             <p className="text-gray-400 text-sm mb-2">
                 Built with 💜 for the Solana community
@@ -1106,7 +1112,9 @@ export default function Home() {
 
     </div>
 
-    {/* Social Links (Всегда центрированы, вне основного грида) */}
+    {/* ========================================================= */}
+    {/* 2. Социальные ссылки (Всегда по центру) */}
+    {/* ========================================================= */}
     <div className="mt-6 text-center">
         <div className="inline-flex items-center gap-6">
             <a 
@@ -1139,7 +1147,9 @@ export default function Home() {
         </div>
     </div>
     
-    {/* Easter Egg / Fun Note (Фиксированный отступ снизу) */}
+    {/* ========================================================= */}
+    {/* 3. Easter Egg (Всегда по центру) */}
+    {/* ========================================================= */}
     <div className="mt-8 text-center">
         <p className="text-xs text-gray-700">
             Every wallet tells a story. What's yours? 👻
