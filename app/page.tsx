@@ -1143,7 +1143,5 @@ export default function Home() {
             </p>
           </div>
         </footer>
-      </div> {/* закрывающий div для space-y-12 */}
-    </div> {/* закрывающий div для min-h-screen */}
   )
 }
