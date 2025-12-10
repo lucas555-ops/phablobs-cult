@@ -1042,108 +1042,101 @@ export default function Home() {
           </div>
         </div>
        
-        {/* Final Footer */}
-        <footer className="max-w-6xl mx-auto pt-8 pb-12 border-t border-[#ab0ff2]/20">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3">
-              <img 
-                src="/phantom-logo.png" 
-                alt="Phablobs Logo" 
-                className="w-10 h-10"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                  const fallback = document.createElement('div')
-                  fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
-                  fallback.textContent = '👻'
-                  e.currentTarget.parentElement?.appendChild(fallback)
-                }}
-              />
-              <div>
-                <span className="text-2xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">PHABLOBS</span>
-                <p className="text-xs text-gray-500 mt-1">Phantom-inspired avatar generator</p>
-              </div>
-            </div>
-
-{/* ========================================================
-    НОВЫЙ ПРОСТОЙ БЛОК: Blobmaster/LinkedIn
-    ========================================================
-*/}
-<div className="mt-8 mb-4 flex justify-center w-full">
-    <div className="text-center text-gray-500 text-sm p-4">
-        <p>Cooked by <strong>Blobmaster</strong></p>
-        <p className="text-xs mt-1">Founder & Architect of Phablobs</p>
-        <a 
-            href="https://www.linkedin.com/in/rustamlukman/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 mt-2 text-[#4da7f2] hover:text-[#ab0ff2] transition-colors"
-        >
-            {/* SVG для LinkedIn */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 0H5C2.23858 0 0 2.23858 0 5V19C0 21.7614 2.23858 24 5 24H19C21.7614 24 24 21.7614 24 19V5C24 2.23858 21.7614 0 19 0ZM8.1 18.9H5.1V9.9H8.1V18.9ZM6.6 8.6C5.6 8.6 4.8 7.8 4.8 6.8C4.8 5.8 5.6 5 6.6 5C7.6 5 8.4 5.8 8.4 6.8C8.4 7.8 7.6 8.6 6.6 8.6ZM19.9 18.9H16.9V14.5C16.9 13.3 16.9 11.7 15.3 11.7C13.7 11.7 13.4 13.1 13.4 14.4V18.9H10.4V9.9H13.3V11.4H13.3C13.7 10.6 14.8 9.8 16.3 9.8C19.4 9.8 19.9 11.8 19.9 13.9V18.9Z"/>
-            </svg>
-            LinkedIn Profile
-        </a>
-    </div>
-</div>
-{/* КОНЕЦ ПРОСТОГО БЛОКА */}
-           
-            <div className="text-center md:text-right">
-              <p className="text-gray-400 text-sm mb-2">
-                Built with 💜 for the Solana community
-              </p>
-              <p className="text-gray-600 text-xs">
-                © {new Date().getFullYear()} phablobs.xyz | All rights reserved
-              </p>
-              <p className="text-gray-600 text-xs mt-1">
-                Not affiliated with Phantom Wallet. For entertainment purposes only.
-              </p>
-            </div>
-          </div>
-          
-          {/* Social Links */}
-          <div className="mt-6 text-center">
-            <div className="inline-flex items-center gap-6">
-              <a 
-                href="https://twitter.com/phablobs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-gray-400 hover:text-[#1DA1F2] transition-colors text-sm group"
-              >
-                <div className="w-8 h-8 bg-gray-800/50 rounded-full flex items-center justify-center group-hover:bg-[#1DA1F2]/20 transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                  </svg>
-                </div>
-                <span>X / Community</span>
-              </a>
-              
-              <a 
-                href="https://t.me/phablobs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-gray-400 hover:text-[#0088cc] transition-colors text-sm group"
-              >
-                <div className="w-8 h-8 bg-gray-800/50 rounded-full flex items-center justify-center group-hover:bg-[#0088cc]/20 transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.022c.242-.213-.054-.333-.373-.121l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.941z"/>
-                  </svg>
-                </div>
-                <span>Telegram</span>
-              </a>
-            </div>
-          </div>
-          
-          {/* Easter Egg / Fun Note */}
-          <div className="mt-8 text-center">
-            <p className="text-xs text-gray-700">
-              Every wallet tells a story. What's yours? 👻
-              <br />
-              <span className="text-[#ab0ff2]/50">Tip: Try generating Phablobs for famous Solana wallets!</span>
-            </p>
-          </div>
-        </footer>
+{/* Final Footer */}
+<footer className="max-w-6xl mx-auto pt-8 pb-12 border-t border-[#ab0ff2]/20">
+  <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+    <div className="flex items-center gap-3">
+      <img 
+        src="/phantom-logo.png" 
+        alt="Phablobs Logo" 
+        className="w-10 h-10"
+        onError={(e) => {
+          e.currentTarget.style.display = 'none'
+          const fallback = document.createElement('div')
+          fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
+          fallback.textContent = '👻'
+          e.currentTarget.parentElement?.appendChild(fallback)
+        }}
+      />
+      <div>
+        <span className="text-2xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">PHABLOBS</span>
+        <p className="text-xs text-gray-500 mt-1">Phantom-inspired avatar generator</p>
       </div>
     </div>
-  )
-}
+
+    {/* ========================================================
+        НОВЫЙ ПРОСТОЙ БЛОК: Blobmaster/LinkedIn
+        ======================================================== */}
+    <div className="text-center text-gray-500 text-sm">
+      <p>Cooked by <strong>Blobmaster</strong></p>
+      <p className="text-xs mt-1">Founder & Architect of Phablobs</p>
+      <a 
+        href="https://www.linkedin.com/in/rustamlukman/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1 mt-2 text-[#4da7f2] hover:text-[#ab0ff2] transition-colors"
+      >
+        {/* SVG для LinkedIn */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 0H5C2.23858 0 0 2.23858 0 5V19C0 21.7614 2.23858 24 5 24H19C21.7614 24 24 21.7614 24 19V5C24 2.23858 21.7614 0 19 0ZM8.1 18.9H5.1V9.9H8.1V18.9ZM6.6 8.6C5.6 8.6 4.8 7.8 4.8 6.8C4.8 5.8 5.6 5 6.6 5C7.6 5 8.4 5.8 8.4 6.8C8.4 7.8 7.6 8.6 6.6 8.6ZM19.9 18.9H16.9V14.5C16.9 13.3 16.9 11.7 15.3 11.7C13.7 11.7 13.4 13.1 13.4 14.4V18.9H10.4V9.9H13.3V11.4H13.3C13.7 10.6 14.8 9.8 16.3 9.8C19.4 9.8 19.9 11.8 19.9 13.9V18.9Z"/>
+        </svg>
+        LinkedIn Profile
+      </a>
+    </div>
+    {/* КОНЕЦ ПРОСТОГО БЛОКА */}
+           
+    <div className="text-center md:text-right">
+      <p className="text-gray-400 text-sm mb-2">
+        Built with 💜 for the Solana community
+      </p>
+      <p className="text-gray-600 text-xs">
+        © {new Date().getFullYear()} phablobs.xyz | All rights reserved
+      </p>
+      <p className="text-gray-600 text-xs mt-1">
+        Not affiliated with Phantom Wallet. For entertainment purposes only.
+      </p>
+    </div>
+  </div>
+  
+  {/* Social Links */}
+  <div className="mt-8 text-center">
+    <div className="inline-flex items-center gap-6">
+      <a 
+        href="https://twitter.com/phablobs"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 text-gray-400 hover:text-[#1DA1F2] transition-colors text-sm group"
+      >
+        <div className="w-8 h-8 bg-gray-800/50 rounded-full flex items-center justify-center group-hover:bg-[#1DA1F2]/20 transition-colors">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+          </svg>
+        </div>
+        <span>X / Community</span>
+      </a>
+      
+      <a 
+        href="https://t.me/phablobs"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 text-gray-400 hover:text-[#0088cc] transition-colors text-sm group"
+      >
+        <div className="w-8 h-8 bg-gray-800/50 rounded-full flex items-center justify-center group-hover:bg-[#0088cc]/20 transition-colors">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.022c.242-.213-.054-.333-.373-.121l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.941z"/>
+          </svg>
+        </div>
+        <span>Telegram</span>
+      </a>
+    </div>
+  </div>
+  
+  {/* Easter Egg / Fun Note */}
+  <div className="mt-8 text-center">
+    <p className="text-xs text-gray-700">
+      Every wallet tells a story. What's yours? 👻
+      <br />
+      <span className="text-[#ab0ff2]/50">Tip: Try generating Phablobs for famous Solana wallets!</span>
+    </p>
+  </div>
+</footer>
