@@ -1042,6 +1042,30 @@ export default function Home() {
           </div>
         </div>
 
+{/* ========================================================
+    НОВЫЙ ПРОСТОЙ БЛОК: Blobmaster/LinkedIn
+    ========================================================
+*/}
+<div className="mt-8 mb-4 flex justify-center w-full">
+    <div className="text-center text-gray-500 text-sm p-4">
+        <p>Cooked by <strong>Blobmaster</strong></p>
+        <p className="text-xs mt-1">Founder & Architect of Phablobs</p>
+        <a 
+            href="https://www.linkedin.com/in/rustamlukman/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 mt-2 text-[#4da7f2] hover:text-[#ab0ff2] transition-colors"
+        >
+            {/* SVG для LinkedIn */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 0H5C2.23858 0 0 2.23858 0 5V19C0 21.7614 2.23858 24 5 24H19C21.7614 24 24 21.7614 24 19V5C24 2.23858 21.7614 0 19 0ZM8.1 18.9H5.1V9.9H8.1V18.9ZM6.6 8.6C5.6 8.6 4.8 7.8 4.8 6.8C4.8 5.8 5.6 5 6.6 5C7.6 5 8.4 5.8 8.4 6.8C8.4 7.8 7.6 8.6 6.6 8.6ZM19.9 18.9H16.9V14.5C16.9 13.3 16.9 11.7 15.3 11.7C13.7 11.7 13.4 13.1 13.4 14.4V18.9H10.4V9.9H13.3V11.4H13.3C13.7 10.6 14.8 9.8 16.3 9.8C19.4 9.8 19.9 11.8 19.9 13.9V18.9Z"/>
+            </svg>
+            LinkedIn Profile
+        </a>
+    </div>
+</div>
+{/* КОНЕЦ ПРОСТОГО БЛОКА */}
+       
         {/* Final Footer */}
         <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
