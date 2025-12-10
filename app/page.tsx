@@ -1099,7 +1099,7 @@ export default function Home() {
           <div className="mt-8 text-center">
             <div className="inline-flex items-center gap-6">
               <a 
-                href="https://twitter.com/phablobs"
+                href="https://x.com/i/communities/1998716348944302467"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-gray-400 hover:text-[#1DA1F2] transition-colors text-sm group"
