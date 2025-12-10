@@ -1041,13 +1041,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-       
-      </div> {/* Закрывающий div для container mx-auto */}
-
-      {/* Footer и завершающие секции */}
-      <div className="space-y-12 mt-20">
-        {/* CTA Section - Final Call to Action */}
-        {/* ... весь остальной код CTA, Community, FAQ, Partners остается без изменений ... */}
+      
         
         {/* Final Footer */}
         <footer className="max-w-6xl mx-auto pt-8 pb-12 border-t border-[#ab0ff2]/20">
