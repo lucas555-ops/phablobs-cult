@@ -1139,7 +1139,7 @@ export default function Home() {
             <p className="text-xs text-gray-700">
               Every wallet tells a story. What's yours? 👻
               <br />
-              <span className="text-[#ab0ff2]/50">Tip: Try generating Phablobs for famous Solana wallets!</span>
+              <span className="text-[#00FA9A]/50">Tip: Try generating Phablobs for famous Solana wallets!</span>
             </p>
           </div>
         </footer>
