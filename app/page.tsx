@@ -1041,6 +1041,28 @@ export default function Home() {
             ))}
           </div>
         </div>
+       
+        {/* Final Footer */}
+        <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/phantom-logo.png" 
+                alt="Phablobs Logo" 
+                className="w-10 h-10"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  const fallback = document.createElement('div')
+                  fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
+                  fallback.textContent = '👻'
+                  e.currentTarget.parentElement?.appendChild(fallback)
+                }}
+              />
+              <div>
+                <span className="text-2xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">PHABLOBS</span>
+                <p className="text-xs text-gray-500 mt-1">Phantom-inspired avatar generator</p>
+              </div>
+            </div>
 
 {/* ========================================================
     НОВЫЙ ПРОСТОЙ БЛОК: Blobmaster/LinkedIn
@@ -1065,29 +1087,7 @@ export default function Home() {
     </div>
 </div>
 {/* КОНЕЦ ПРОСТОГО БЛОКА */}
-       
-        {/* Final Footer */}
-        <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3">
-              <img 
-                src="/phantom-logo.png" 
-                alt="Phablobs Logo" 
-                className="w-10 h-10"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                  const fallback = document.createElement('div')
-                  fallback.className = 'w-10 h-10 flex items-center justify-center text-2xl'
-                  fallback.textContent = '👻'
-                  e.currentTarget.parentElement?.appendChild(fallback)
-                }}
-              />
-              <div>
-                <span className="text-2xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent">PHABLOBS</span>
-                <p className="text-xs text-gray-500 mt-1">Phantom-inspired avatar generator</p>
-              </div>
-            </div>
-            
+           
             <div className="text-center md:text-right">
               <p className="text-gray-400 text-sm mb-2">
                 Built with 💜 for the Solana community
