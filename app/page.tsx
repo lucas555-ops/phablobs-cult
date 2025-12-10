@@ -927,7 +927,7 @@ export default function Home() {
                   name: 'DEX',
                   fullName: 'Dexscreener',
                   action: 'Track',
-                  url: 'https://dexscreener.com/'
+                  url: 'https://dexscreener.com/solana/bgnykjzyv3exufyc6jvbpwqnz2nmj5fpt83f94kjkl3s'
                 }
               ].map((social, i) => (
                 <a
