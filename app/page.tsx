@@ -11,7 +11,7 @@ export default function Home() {
   const [copySuccess, setCopySuccess] = useState(false)
   const [metadataCopySuccess, setMetadataCopySuccess] = useState(false)
 
-  const TOKEN_CONTRACT = "TBA_AFTER_PUMPFUN_LAUNCH"
+  const TOKEN_CONTRACT = "GwSj8CthKyiHEn97sPvR31BKxiZAwVWrhasY1pScpump"
   
   const isValidSolanaAddress = (addr: string): boolean => {
     try {
