@@ -1043,7 +1043,7 @@ export default function Home() {
         </div>
        
         {/* Final Footer */}
-        <footer className="max-w-6xl mx-auto pt-8 border-t border-[#ab0ff2]/20">
+        <footer className="max-w-6xl mx-auto pt-8 pb-12 border-t border-[#ab0ff2]/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
               <img 
