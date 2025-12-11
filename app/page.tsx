@@ -570,7 +570,7 @@ export default function Home() {
                   <span className="text-[#ab0ff2]">🚀</span> NEXT UPGRADE
                 </div>
                 <p className="text-gray-300 leading-relaxed mb-4 text-sm">
-                  The primary focus is $BLOB$ launch success. Afterwards, we will immediately integrate a **fully automated minting service**.
+                  The primary focus is $BLOB launch success. Afterwards, we will immediately integrate a fully automated minting service.
                 </p>
                 <ul className="text-gray-400 space-y-1 text-xs">
                   <li className="flex items-start gap-2">
