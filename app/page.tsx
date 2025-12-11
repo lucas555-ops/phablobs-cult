@@ -115,9 +115,8 @@ export default function Home() {
     const twitterText = encodeURIComponent(
       `This is the visual DNA of a Phantom wallet 👀🧬\n\n` +
       `Every SOL address has its own hidden color fingerprint this is one of them.\n\n` +
-      `Curious what your on-chain identity looks like?
-       Generate FREE your BLOB here: phablobs.xyz\n\n` +
-      `#Phablobs #SolanaNFT #PumpFun #NFTs`
+      `Curious what your on-chain identity looks like? Generate FREE your BLOB here: phablobs.xyz\n\n` +
+      `#Phablobs #SolanaNFT #PumpFun #NFTs\n\n`
     )
     const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodeURIComponent(shareUrl)}`
     
