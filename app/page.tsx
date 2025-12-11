@@ -113,10 +113,11 @@ export default function Home() {
     
     const shareUrl = `${window.location.origin}${svgUrl}`
     const twitterText = encodeURIComponent(
-      `Just generated my unique Phablob! 🎨👻\n\n` +
-      `Every Phablob has a unique HEX ID like #1A3F5C7E and Metaplex-ready metadata.\n\n` +
-      `Generated on phablobs.xyz\n\n` +
-      `#Phablobs #SolanaNFT #PumpFun #NFTs`
+      `This is the visual DNA of a Phantom wallet 👀🧬\n\n` +
+      `Every SOL address has its own hidden color fingerprint this is one of them.\n\n` +
+      `Curious what your on-chain identity looks like?
+       Generate FREE your BLOB here: phablobs.xyz\n\n` +
+      `#Phablobs #SolanaNFT #PumpFun #NFTs\n` +
     )
     const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodeURIComponent(shareUrl)}`
     
