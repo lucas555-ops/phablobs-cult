@@ -104,8 +104,8 @@ export const metadata: Metadata = {
   // ==========================================
   // VERIFICATION & TRACKING
   // ==========================================
-  verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE", // Заполни после генерации в Google Search Console
+    verification: {
+    google: "-Kmpe_TcPpfGUjNe7R6ubCdzMtquS-pe-0VrIn5C3Fg",
   },
 
   // ==========================================
