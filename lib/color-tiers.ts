@@ -166,32 +166,12 @@ export function generateGradientFromBalance(
   }
 }
 
-// Комплементарный цвет с коррекцией яркости
+// Комплементарный цвет - выбирает из списка 69 цветов
 function getComplementaryColor(avatarColor: string): string {
-  const r = parseInt(avatarColor.slice(1, 3), 16)
-  const g = parseInt(avatarColor.slice(3, 5), 16)
-  const b = parseInt(avatarColor.slice(5, 7), 16)
+  const currentIndex = ALL_COLORS.indexOf(avatarColor)
+  if (currentIndex === -1) return ALL_COLORS[0]
   
-  // Инвертируем цвет
-  let bgR = 255 - r
-  let bgG = 255 - g
-  let bgB = 255 - b
-  
-  // Корректируем контраст
-  const avatarBrightness = (r + g + b) / 3
-  const bgBrightness = (bgR + bgG + bgB) / 3
-  
-  if (Math.abs(avatarBrightness - bgBrightness) < 80) {
-    if (avatarBrightness > 127) {
-      bgR = Math.floor(bgR * 0.4)
-      bgG = Math.floor(bgG * 0.4)
-      bgB = Math.floor(bgB * 0.4)
-    } else {
-      bgR = Math.min(255, Math.floor(bgR * 1.6))
-      bgG = Math.min(255, Math.floor(bgG * 1.6))
-      bgB = Math.min(255, Math.floor(bgB * 1.6))
-    }
-  }
-  
-  return `#${bgR.toString(16).padStart(2, '0')}${bgG.toString(16).padStart(2, '0')}${bgB.toString(16).padStart(2, '0')}`
+  // Берём цвет с противоположной стороны списка
+  const oppositeIndex = (currentIndex + Math.floor(ALL_COLORS.length / 2)) % ALL_COLORS.length
+  return ALL_COLORS[oppositeIndex]
 }
