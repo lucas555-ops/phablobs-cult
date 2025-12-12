@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   // ОСНОВНЫЕ META TAGS
   // ==========================================
   title: "PHABLOBS | Your Wallet. Your Masterpiece.",
-  description: "Generate unique Solana avatar from any wallet address. 3.3B+ combinations, NFT-ready metadata, 100% free. Create your visual identity on Solana.",
+  description: "Generate unique Solana avatar from any wallet address. 3.3B+ combinations, NFT-ready metadata, 100% free. Create your visual identity on Solana and #memetoken $BLOB community!.",
   
   keywords: [
     "Phablobs",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     site: "@phablobs",
     creator: "@phablobs",
     title: "PHABLOBS | Your Wallet. Your Masterpiece.",
-    description: "Generate unique Solana avatar from any wallet. Free, NFT-ready, 3.3B+ combinations.",
+    description: "Generate unique Solana avatar from any wallet. Free, NFT-ready, 3.3B+ combinations and #memetoken $BLOB community!",
     images: ["https://phablobs.xyz/og-image.png"],
   },
 
