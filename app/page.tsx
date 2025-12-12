@@ -1032,7 +1032,7 @@ export default function Home() {
           </div>
         
           
-{/* Final Footer */}
+          {/* Final Footer */}
           <footer className="max-w-6xl mx-auto pt-12 pb-12 border-t border-[#ab0ff2]/20">
             {/* Top Section - Logo, Info, Links */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
@@ -1128,6 +1128,235 @@ export default function Home() {
           </footer>
         </div>
       </div>
+
+      {/* =========================================================================== */}
+      {/* JSON-LD SCHEMAS - ENGLISH ONLY */}
+      {/* =========================================================================== */}
+
+      {/* 1. WebApplication Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "@id": "https://phablobs.xyz",
+            "name": "PHABLOBS",
+            "alternateName": "Phablobs Avatar Generator",
+            "description": "Generate unique Solana avatars with NFT-ready metadata. 3.3B+ combinations, 100% free.",
+            "url": "https://phablobs.xyz",
+            "image": "https://phablobs.xyz/og-image.png",
+            "applicationCategory": "UtilityApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            "creator": {
+              "@type": "Person",
+              "name": "Blobmaster",
+              "sameAs": "https://www.linkedin.com/in/rustamlukman/"
+            },
+            "author": {
+              "@type": "Organization",
+              "name": "PHABLOBS",
+              "url": "https://phablobs.xyz",
+              "logo": "https://phablobs.xyz/logos/phantom-logo.svg",
+              "sameAs": [
+                "https://twitter.com/phablobs",
+                "https://t.me/phablobs"
+              ]
+            },
+            "inLanguage": ["en", "ru"],
+            "isAccessibleForFree": true,
+            "featureList": [
+              "Free NFT-ready avatar generation",
+              "3.3B+ unique combinations",
+              "Deterministic cryptographic generation",
+              "Solana wallet-based identity",
+              "Metaplex NFT metadata",
+              "No transaction fees",
+              "Instant generation"
+            ],
+            "browserRequirements": "Requires JavaScript"
+          })
+        }}
+      />
+
+      {/* 2. Organization Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://phablobs.xyz",
+            "name": "PHABLOBS",
+            "alternateName": "Phablobs Cult",
+            "url": "https://phablobs.xyz",
+            "logo": "https://phablobs.xyz/logos/phantom-logo.svg",
+            "description": "Revolutionary Solana avatar generator with NFT integration",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "Customer Service",
+              "url": "https://t.me/phablobs"
+            },
+            "sameAs": [
+              "https://twitter.com/phablobs",
+              "https://t.me/phablobs",
+              "https://x.com/i/communities/1998716348944302467"
+            ],
+            "address": {
+              "@type": "PostalAddress",
+              "addressCountry": "World"
+            }
+          })
+        }}
+      />
+
+      {/* 3. WebPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "@id": "https://phablobs.xyz",
+            "name": "PHABLOBS | Your Wallet. Your Masterpiece.",
+            "description": "Generate unique Solana avatars with NFT-ready metadata",
+            "url": "https://phablobs.xyz",
+            "image": "https://phablobs.xyz/og-image.png",
+            "primaryImageOfPage": "https://phablobs.xyz/og-image.png",
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://phablobs.xyz/",
+              "name": "PHABLOBS",
+              "url": "https://phablobs.xyz"
+            },
+            "datePublished": "2025-01-01T00:00:00Z",
+            "dateModified": new Date().toISOString(),
+            "inLanguage": "en-US"
+          })
+        }}
+      />
+
+      {/* 4. BreadcrumbList Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://phablobs.xyz"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "How It Works",
+                "item": "https://phablobs.xyz/how-it-works"
+              }
+            ]
+          })
+        }}
+      />
+
+      {/* 5. FAQPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is Phablobs?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Phablobs are unique visual avatars generated cryptographically from your Solana wallet address with NFT-ready metadata."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is it really free?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes! Generating Phablobs is 100% free. Just enter any Solana wallet address and generate unlimited avatars."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I mint my Phablob as an NFT?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes! Download the JSON metadata and image files, then mint on any Solana marketplace like Magic Eden or Tensor."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How unique is my Phablob?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Each Phablob has a unique HEX identifier with over 3.3 billion possible combinations from 69 colors, 4,830 backgrounds, and dynamic watermarks."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      {/* 6. Product Schema (for $BLOB token) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "$BLOB Token",
+            "description": "Official Phablobs Cult token on Solana. Get free NFTs in Phase 4 by holding $BLOB.",
+            "url": "https://phablobs.xyz",
+            "image": "https://phablobs.xyz/og-image.png",
+            "brand": {
+              "@type": "Brand",
+              "name": "PHABLOBS"
+            },
+            "offers": [
+              {
+                "@type": "Offer",
+                "url": "https://pump.fun",
+                "priceCurrency": "USD",
+                "price": "Market dependent",
+                "availability": "https://schema.org/InStock",
+                "seller": {
+                  "@type": "Organization",
+                  "name": "pump.fun"
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      {/* 7. VirtualLocation Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VirtualLocation",
+            "name": "PHABLOBS Avatar Generator",
+            "url": "https://phablobs.xyz",
+            "description": "Online Solana avatar generation platform"
+          })
+        }}
+      />
     </div>
   )
 }
