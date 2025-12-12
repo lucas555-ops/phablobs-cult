@@ -44,7 +44,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    alternateLocale: ["ru_RU"],
     url: "https://phablobs.xyz",
     siteName: "PHABLOBS",
     title: "PHABLOBS | Your Wallet. Your Masterpiece.",
@@ -82,13 +81,8 @@ export const metadata: Metadata = {
   // ==========================================
   // CANONICAL & LINKS
   // ==========================================
-  canonical: "https://phablobs.xyz",
-  
   alternates: {
-    languages: {
-      "en": "https://phablobs.xyz",
-      "ru": "https://phablobs.xyz/ru",
-    },
+    canonical: "https://phablobs.xyz",
   },
 
   // ==========================================
@@ -112,7 +106,6 @@ export const metadata: Metadata = {
   // ==========================================
   verification: {
     google: "YOUR_GOOGLE_VERIFICATION_CODE", // Заполни после генерации в Google Search Console
-    // yandex: "YOUR_YANDEX_VERIFICATION_CODE", // Для русского сегмента
   },
 
   // ==========================================
@@ -156,7 +149,6 @@ export const metadata: Metadata = {
   // ==========================================
   other: {
     "og:locale": "en_US",
-    "og:locale:alternate": "ru_RU",
     "theme-color": "#000000",
     "color-scheme": "dark",
   },
