@@ -14,35 +14,37 @@ export default function HowItWorks() {
           <div className="flex items-center justify-between gap-4">
             {/* LEFT: Logo + Name */}
             <Link href="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity flex-shrink-0">
-              <div className="w-8 md:w-10 h-8 md:h-10 rounded-lg bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] flex items-center justify-center text-white font-black text-sm md:text-lg">
-                👻
-              </div>
-              <span className="text-sm md:text-xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent hidden sm:block">
+              <img 
+                src="/logos/phantom-logo.svg" 
+                alt="Phablobs Logo" 
+                className="w-8 md:w-10 h-8 md:h-10"
+              />
+              <span className="text-sm md:text-xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent hidden sm:block whitespace-nowrap">
                 PHABLOBS
               </span>
             </Link>
 
             {/* CENTER: Page Title */}
-            <div className="flex-1 text-center hidden md:block">
-              <h2 className="text-sm font-bold bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent whitespace-nowrap">
+            <div className="flex-1 text-center hidden md:block px-4">
+              <h2 className="text-xs md:text-sm font-bold bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent whitespace-nowrap">
                 How It Works
               </h2>
             </div>
 
             {/* RIGHT: Navigation */}
             <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-              <Link
+              <a
                 href="/#generator"
-                className="hidden sm:block px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-gray-300 hover:text-white transition-colors"
+                className="hidden sm:block px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-gray-300 hover:text-white transition-colors whitespace-nowrap"
               >
                 Generate
-              </Link>
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] text-white rounded-lg hover:shadow-lg transition-all"
+              </a>
+              <Link
+                href="/"
+                className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] text-white rounded-lg hover:shadow-lg transition-all whitespace-nowrap"
               >
                 Home
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -121,7 +123,11 @@ export default function HowItWorks() {
                       <div className="space-y-4">
                         <div className="bg-gradient-to-br from-[#ab0ff2]/10 to-[#4da7f2]/10 rounded-2xl p-6 md:p-8 border border-[#ab0ff2]/30 flex flex-col items-center justify-center min-h-[280px]">
                           <div className="text-center">
-                            <div className="text-5xl md:text-6xl mb-4">👻</div>
+                            <img 
+                              src="/logos/phantom-logo.svg" 
+                              alt="Phablobs Logo" 
+                              className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4"
+                            />
                             <p className="text-xs md:text-sm text-gray-300 mb-2">Example Phablob</p>
                             <code className="text-[10px] md:text-xs text-[#00FF00] block bg-black/40 p-2 rounded-lg my-3">
                               So11111...11112
