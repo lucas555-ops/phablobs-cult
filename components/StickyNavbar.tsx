@@ -16,9 +16,11 @@ export function StickyNavbar({ pageTitle = 'Your Wallet. Your Masterpiece.' }: S
             href="/" 
             className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity flex-shrink-0"
           >
-            <div className="w-8 md:w-10 h-8 md:h-10 rounded-lg bg-gradient-to-br from-[#ab0ff2] to-[#4da7f2] flex items-center justify-center text-white font-black text-sm md:text-lg flex-shrink-0">
-              👻
-            </div>
+            <img 
+              src="/logos/phantom-logo.svg" 
+              alt="Phablobs Logo" 
+              className="w-8 md:w-10 h-8 md:h-10"
+            />
             <span className="text-sm md:text-xl font-black bg-gradient-to-r from-[#ab0ff2] to-[#4da7f2] bg-clip-text text-transparent hidden sm:block whitespace-nowrap">
               PHABLOBS
             </span>
