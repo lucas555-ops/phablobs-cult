@@ -1032,7 +1032,7 @@ export default function Home() {
           </div>
         
           
-          {/* Final Footer */}
+{/* Final Footer */}
           <footer className="max-w-6xl mx-auto pt-12 pb-12 border-t border-[#ab0ff2]/20">
             {/* Top Section - Logo, Info, Links */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
@@ -1126,3 +1126,8 @@ export default function Home() {
               </p>
             </div>
           </footer>
+        </div>
+      </div>
+    </div>
+  )
+}
