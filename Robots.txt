@@ -1,0 +1,73 @@
+# ============================================
+# PHABLOBS ROBOTS.TXT
+# Разрешить индексацию для всех поисковиков
+# ============================================
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /.next/
+Disallow: /node_modules/
+Disallow: /*.json$
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+
+# ============================================
+# GOOGLE
+# ============================================
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+# ============================================
+# ЯНДЕКС (Rus)
+# ============================================
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
+
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 1
+
+# ============================================
+# BING
+# ============================================
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# ============================================
+# SITEMAPS
+# ============================================
+Sitemap: https://phablobs.xyz/sitemap.xml
+Sitemap: https://phablobs.xyz/sitemap-en.xml
+Sitemap: https://phablobs.xyz/sitemap-ru.xml
+
+# ============================================
+# ADDITIONAL
+# ============================================
+User-agent: MJ12bot
+Allow: /
+
+User-agent: AhrefsBot
+Allow: /
+
+User-agent: SemrushBot
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot-Managed
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
